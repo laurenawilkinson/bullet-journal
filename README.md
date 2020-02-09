@@ -1,4 +1,4 @@
-# bullet-journal
+# Digital Bullet Journal
 
 ## Project setup
 ```
