@@ -32,7 +32,7 @@ class BulletListItem {
     this.state = state || 'default'; // default, completed, removed
     this.priority = priority || false;
     this.content = content || '';
-    id++;
+    itemId++;
   }
 }
 
@@ -64,7 +64,7 @@ export default {
       this.showItemDropdown = !this.showItemDropdown;
     },
     addItem (type) {
-      this.items.push(new BulletListItem(type));
+      this.items.push(new BulletListItem({ type }));
     }
   }
 }

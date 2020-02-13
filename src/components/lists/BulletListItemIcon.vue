@@ -43,8 +43,6 @@ export default {
           break;
       }
 
-      console.log('getting state:', state);
-
       this.$emit('update:state', state);
 
     },
@@ -52,24 +50,20 @@ export default {
       this[`${this.type}State`](state);
     },
     taskState (state) {
-      console.log('task called', state)
       switch (state) {
         case 'default':
           this.icon = '•';
           break;
         case 'completed':
-      console.log('completed')
-      this.icon = 'aaaaaaaaaaaaaa'
+          this.icon = 'aaaaaaaaaaaaaa'
           this.icon = '✅';
           break;
       }
     },
     eventState () {
-      console.log('event called')
       this.icon = '○';
     },
     noteState () {
-      console.log('note called')
       this.icon = '-';
     }
   },
