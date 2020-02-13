@@ -37,19 +37,19 @@ export default {
             {
               type: 'task',
               state: 'default',
-              content: '',
+              content: 'Test task',
               priority: false
             },
             {
               type: 'event',
               state: 'default',
-              content: '',
+              content: 'An important event',
               priority: true
             },
             {
               type: 'note',
               state: 'default',
-              content: '',
+              content: "Don't forget this note!",
               priority: true
             }
           ]
