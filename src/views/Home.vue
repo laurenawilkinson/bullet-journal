@@ -1,16 +1,22 @@
 <template>
   <div class="home">
-    <button @click="createList">Create List</button>
-    <bullet-list 
-      v-for="list in lists"
-      :key="list.id" 
-      :position="list.position"
-      :items="list.items" />
+    <top-bar 
+      @create-list="createList" />
+    <div class="canvas-container">
+      <div class="canvas">
+        <bullet-list 
+          v-for="list in lists"
+          :key="list.id" 
+          :position="list.position"
+          :items="list.items" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import BulletList from '@/components/lists/BulletList.vue'
+import TopBar from '@/components/TopBar.vue'
 
 let id = 0;
 
@@ -26,7 +32,8 @@ class List {
 export default {
   name: 'Home',
   components: {
-    BulletList
+    BulletList,
+    TopBar
   },
   data ()  {
     return {
@@ -64,10 +71,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.home {
-  max-width: 1000px;
-  padding: 0 5rem;
-}
-</style>

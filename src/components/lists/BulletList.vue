@@ -16,9 +16,9 @@
       <material-icon icon="keyboard_arrow_down" />
     </button>
     <div v-show="showItemDropdown">
-      <button class="dropdown__item" @click="addItem('task')">Task</button>
-      <button class="dropdown__item" @click="addItem('event')">Event</button>
-      <button class="dropdown__item" @click="addItem('note')">Note</button>
+      <button class="button dropdown__item" @click="addItem('task')">Task</button>
+      <button class="button dropdown__item" @click="addItem('event')">Event</button>
+      <button class="button dropdown__item" @click="addItem('note')">Note</button>
     </div>
   </div>
 </template>
@@ -71,23 +71,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.bullet-list {
-
-  &__container {
-    text-align: left;
-    list-style-type: none;
-  }
-
-  &__add-button {
-    padding: 0.8rem;
-    border: 2px dashed grey;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-}
-
 .dropdown__item {
   background-color: pink;
 }

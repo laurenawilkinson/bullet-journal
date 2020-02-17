@@ -1,0 +1,96 @@
+.bullet-list {
+  // outline: 3px dashed green;
+  // outline-offset: 3px;
+  width: fit-content;
+
+  &__container {
+    text-align: left;
+    list-style-type: none;
+  }
+
+  &__add-button {
+    padding: 0.8rem;
+    border: 2px dashed grey;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.bullet-list-item {
+  background-color: pink;
+  padding: 0.5rem 0.3rem;
+  display: flex;
+  align-items: center;
+
+  + .bullet-list-item {
+    margin-top: 0.5rem;
+  }
+
+  &__input {
+    background-color: transparent;
+    font-size: 1rem;
+    box-shadow: none;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    padding-left: 0.27rem;
+
+    &:focus {
+      border-bottom-color: grey;
+      outline: 0;
+    }
+  }
+
+  &--removed {
+    .bullet-list-item__input {
+      text-decoration: line-through;
+    }
+
+    .bullet-list-item__content-container {
+      position: relative;
+      
+      &:after {
+        content: '';
+        width: 100%;
+        height: 1px;
+        background-color: black;
+        position: absolute;
+        left: 4px;
+      }
+
+      &--focused {
+        &:after {
+          width: 14px;
+        }
+      }
+    }
+  }
+
+  &__icon {
+    width: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &--signifier {
+      justify-content: flex-end;
+      text-decoration: none !important;
+      
+      i {
+        cursor: pointer;
+        font-size: 1rem;
+      }
+    }
+  }
+
+  &__content-container {
+    display: flex;
+    align-items: center;
+  }
+
+  &__content,
+  &__input {
+    margin-left: 0.5rem;
+  }
+}

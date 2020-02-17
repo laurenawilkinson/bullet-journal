@@ -1,0 +1,20 @@
+.topbar {
+  background-color: $primary;
+  color: $text--light;
+
+  .button {
+    color: $primary-100;
+    background-color: transparent;
+
+    &:hover,
+    &:focus {
+      color: $text--light;
+    }
+  }
+
+  &__buttons {
+    max-width: $canvas-width;
+    text-align: left;
+    margin: 0 auto;
+  }
+}

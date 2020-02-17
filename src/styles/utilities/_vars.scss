@@ -1,1 +1,23 @@
-$primary: pink;
+$primary-50: #f3e5f5;
+$primary-100: #e1bee7;
+$primary-200: #ce93d8;
+$primary-300: #ba68c8;
+$primary-400: #ab47bc;
+$primary-500: #9c27b0;
+$primary-600: #8e24aa;
+$primary-700: #7b1fa2;
+$primary-800: #6a1b9a;
+$primary-900: #4a148c;
+
+$primary: $primary-700;
+$primary--light: #ae52d4;
+$primary--dark: #4a0072;
+
+$secondary: #26c6da;
+$secondary--light: #6ff9ff;
+$secondary--dark: #0095a8;
+
+$text--dark: #2b2b2b;
+$text--light: #fff;
+
+$canvas-width: 1000px;
