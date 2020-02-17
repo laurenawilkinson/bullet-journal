@@ -11,6 +11,12 @@
   &--active {
     outline: 3px dashed $secondary;
     outline-offset: 5px;
+
+    .bullet-list-item {
+      &:hover {
+        background-color: #f1f1f1;
+      }
+    }
   }
 
   &__container {
@@ -48,10 +54,6 @@
   display: flex;
   align-items: center;
   position: relative;
-
-  &:hover {
-    background-color: #f1f1f1;
-  }
 
   + .bullet-list-item {
     margin-top: 0.5rem;

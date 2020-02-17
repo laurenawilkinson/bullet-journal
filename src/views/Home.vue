@@ -10,6 +10,7 @@
           :key="list.id" 
           :position="list.position"
           :items="list.items"
+          @remove-list="removeList(list.id)"
           @set-active="setActive(index)" />
       </div>
     </div>
@@ -73,6 +74,11 @@ export default {
     createList () {
       this.lists.push(new List);
       this.setActive(this.lists.length - 1);
+    },
+    removeList (id) {
+      let index = this.lists.map(i => i.id).indexOf(id);
+      if (index < 0) return;
+      this.lists.splice(index, 1);
     },
     async setActive (activeIndex) {
       await this.$nextTick();

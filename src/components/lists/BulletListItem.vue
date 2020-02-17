@@ -22,7 +22,7 @@
         class="bullet-list-item__input"
         ref="input"
         @change="update('content', localContent)"
-        @blur="toggleEdit = false" />
+        @blur="deselectText" />
       <span 
         v-else
         class="bullet-list-item__content" 
@@ -33,6 +33,7 @@
       </span>
     </span>
     <icon-button  
+      v-if="listActive"
       class="bullet-list-item__menu-button"
       icon="more_vert"
       size="sm"
@@ -101,6 +102,7 @@ export default {
       this.$emit(`update:${prop}`, value);
     },
     async selectText () {
+      this.$emit('set-active');
       this.toggleEdit = true;
       await this.$nextTick();
       this.$refs.input.focus();
@@ -114,6 +116,10 @@ export default {
     },
     closeMenu () {
       this.toggleMenu = false;
+    },
+    async deselectText () {
+      this.toggleEdit = false;
+      if (this.content.length == 0) this.removeItem();
     }
   }
 }

@@ -12,11 +12,12 @@
         :state.sync="item.state"
         :content.sync="item.content"
         :priority.sync="item.priority"
-        :list-active="true"
+        :list-active="active"
         :list-moving="false"
+        @set-active="setActive"
         @remove-item="removeItem(item.id)" />
     </ul>
-    <div class="bullet-list__add-button" >
+    <div v-if="active" class="bullet-list__add-button">
       <icon-button 
         class="button" 
         icon="add" 
@@ -95,6 +96,7 @@ export default {
     },
     deactivateList () {
       this.active = false;
+      if (this.items.length == 0) this.$emit('remove-list')
     }
   }
 }
