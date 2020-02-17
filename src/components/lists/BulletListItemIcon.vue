@@ -55,9 +55,10 @@ export default {
           this.icon = '•';
           break;
         case 'completed':
-          this.icon = 'aaaaaaaaaaaaaa'
-          this.icon = '✅';
+          this.icon = '✔';
           break;
+        case 'migrated':
+          this.icon = '>';
       }
     },
     eventState () {

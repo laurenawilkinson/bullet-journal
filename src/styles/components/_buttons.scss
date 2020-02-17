@@ -1,5 +1,7 @@
 .button {
   border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
 
   &:hover:not(:disabled) {
     cursor: pointer;
@@ -10,6 +12,13 @@
     
     .material-icons {
 
+    }
+  }
+
+  &--sm {
+    font-size: 0.8rem;
+    .material-icons {
+      font-size: 1rem;
     }
   }
 }

@@ -1,9 +1,10 @@
 <template>
-  <li :class="classes" @mouseover="hovered = true" @mouseout="hovered = false">
+  <li 
+    :class="classes">
     <span
       class="bullet-list-item__icon bullet-list-item__icon--signifier">
-      <material-icon 
-        v-show="priority || hovered" 
+      <icon 
+        v-show="priority || (listActive && !listMoving)" 
         :icon="priority ? 'star' : 'star_outline'"
         @click="update('priority', !priority)" />
     </span>
@@ -11,7 +12,10 @@
         'bullet-list-item__content-container': true, 
         'bullet-list-item__content-container--focused': showEditBox 
       }">
-      <list-item-icon :type="type" :state="state" @update:state="update('state', $event)" />
+      <list-item-icon 
+        :type="type" 
+        :state="state" 
+        @update:state="update('state', $event)" />
       <input 
         v-if="showEditBox"
         v-model="localContent" 
@@ -28,12 +32,36 @@
         {{ content }}
       </span>
     </span>
+    <icon-button  
+      class="bullet-list-item__menu-button"
+      icon="more_vert"
+      size="sm"
+      @click="toggleMenu = !toggleMenu"  /> <!-- toggle menu -->
+    <aside 
+      v-if="toggleMenu"
+      class="bullet-list-item__toolbar">
+      <icon-button 
+        v-if="type == 'task'" 
+        icon="done_outline"
+        @click="markAs('completed')"  /> <!-- complete -->
+      <icon-button 
+        v-if="type == 'task'"
+        icon="send"
+        @click="markAs('migrated')" /> <!-- migrate -->
+      <icon-button 
+        icon="strikethrough_s"
+        @click="markAs('removed')"  /> <!-- irrelevant -->
+      <icon-button 
+        icon="delete" 
+        @click="removeItem" /> <!-- remove -->
+    </aside>
   </li>
 </template>
 
 <script>
-import MaterialIcon from '@/components/MaterialIcon.vue';
+import Icon from '@/components/MaterialIcon.vue';
 import ListItemIcon from './BulletListItemIcon.vue';
+import IconButton from '@/components/IconButton.vue';
 
 export default {
   name: 'BulletListItem',
@@ -41,15 +69,18 @@ export default {
     type: String,
     state: String,
     priority: Boolean,
-    content: String
+    content: String,
+    listActive: Boolean,
+    listMoving: Boolean
   },
   components: {
-    MaterialIcon,
-    ListItemIcon
+    Icon,
+    ListItemIcon,
+    IconButton
   },
   data () {
     return {
-      hovered: false,
+      toggleMenu: false,
       localContent: this.content,
       toggleEdit: false
     }
@@ -73,6 +104,16 @@ export default {
       this.toggleEdit = true;
       await this.$nextTick();
       this.$refs.input.focus();
+    },
+    removeItem () {
+      this.$emit('remove-item');
+    },
+    markAs (value) {
+      if (this.state !== value) this.update('state', value);
+      else this.update('state', 'default');
+    },
+    closeMenu () {
+      this.toggleMenu = false;
     }
   }
 }

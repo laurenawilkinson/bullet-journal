@@ -1,24 +1,40 @@
 <template>
-  <div class="bullet-list" ref="list">
-    <ul class="bullet-list__container">
+  <div 
+    :class="{ 'bullet-list': true, 'bullet-list--active': active }" 
+    ref="list"
+    @click="setActive">
+    <ul v-if="items.length > 0" class="bullet-list__container">
       <list-item 
         v-for="item in items" 
         :key="item.id"
+        ref="items"
         :type="item.type"
         :state.sync="item.state"
         :content.sync="item.content"
-        :priority.sync="item.priority" />
+        :priority.sync="item.priority"
+        :list-active="true"
+        :list-moving="false"
+        @remove-item="removeItem(item.id)" />
     </ul>
-    <button 
-      class="bullet-list__add-button" 
-      @click="toggleDropdown">
-      Add new item
-      <material-icon icon="keyboard_arrow_down" />
-    </button>
-    <div v-show="showItemDropdown">
-      <button class="button dropdown__item" @click="addItem('task')">Task</button>
-      <button class="button dropdown__item" @click="addItem('event')">Event</button>
-      <button class="button dropdown__item" @click="addItem('note')">Note</button>
+    <div class="bullet-list__add-button" >
+      <icon-button 
+        class="button" 
+        icon="add" 
+        @click="addItem('task')">
+        Task
+      </icon-button>
+      <icon-button 
+        class="button" 
+        icon="add" 
+        @click="addItem('event')">
+        Event
+      </icon-button>
+      <icon-button 
+        class="button" 
+        icon="add" 
+        @click="addItem('note')">
+        Note
+      </icon-button>
     </div>
   </div>
 </template>
@@ -37,13 +53,13 @@ class BulletListItem {
 }
 
 import ListItem from './BulletListItem.vue'
-import MaterialIcon from '@/components/MaterialIcon.vue'
+import IconButton from '@/components/IconButton.vue'
 
 export default {
   name: 'BulletList',
   components: {
     ListItem,
-    MaterialIcon
+    IconButton
   },
   props: {
     position: Object,
@@ -51,7 +67,7 @@ export default {
   },
   data () {
     return {
-      showItemDropdown: false
+      active: false
     }
   },
   watch: {
@@ -60,18 +76,26 @@ export default {
     }
   },
   methods: {
-    toggleDropdown () {
-      this.showItemDropdown = !this.showItemDropdown;
-    },
-    addItem (type) {
+    async addItem (type) {
+      if (this.$refs.items) this.$refs.items.forEach(item => item.closeMenu());
       this.items.push(new BulletListItem({ type }));
+      await this.$nextTick();
+      this.$refs.items[this.$refs.items.length - 1].selectText();
+    },
+    removeItem (id) {
+      let index = this.items.map(i => i.id).indexOf(id);
+      if (index < 0) return;
+      this.items.splice(index, 1);
+    },
+    setActive () {
+      this.$emit('set-active');
+    },
+    activateList () {
+      this.active = true;
+    },
+    deactivateList () {
+      this.active = false;
     }
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.dropdown__item {
-  background-color: pink;
-}
-</style>
