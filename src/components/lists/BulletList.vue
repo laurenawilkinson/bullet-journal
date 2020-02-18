@@ -2,10 +2,11 @@
   <div 
     :class="{ 'bullet-list': true, 'bullet-list--active': active }" 
     ref="list"
+    v-on-clickaway="deselectList"
     @click="setActive">
     <ul v-if="items.length > 0" class="bullet-list__container">
       <list-item 
-        v-for="item in items" 
+        v-for="(item, index) in items" 
         :key="item.id"
         ref="items"
         :type="item.type"
@@ -15,6 +16,7 @@
         :list-active="active"
         :list-moving="false"
         @set-active="setActive"
+        @opened-menu="closeMenus(index)"
         @remove-item="removeItem(item.id)" />
     </ul>
     <div v-if="active" class="bullet-list__add-button">
@@ -55,9 +57,11 @@ class BulletListItem {
 
 import ListItem from './BulletListItem.vue'
 import IconButton from '@/components/IconButton.vue'
+import { mixin as clickaway } from 'vue-clickaway';
 
 export default {
   name: 'BulletList',
+  mixins: [ clickaway ],
   components: {
     ListItem,
     IconButton
@@ -88,6 +92,12 @@ export default {
       if (index < 0) return;
       this.items.splice(index, 1);
     },
+    closeMenus (excludedIndex) {
+      if (this.$refs.items) this.$refs.items.forEach((item, index) => {
+        if (index == excludedIndex) return;
+        item.closeMenu()
+      });
+    },
     setActive () {
       this.$emit('set-active');
     },
@@ -97,6 +107,10 @@ export default {
     deactivateList () {
       this.active = false;
       if (this.items.length == 0) this.$emit('remove-list')
+    },
+    deselectList () {
+      this.active = false;
+      if (this.$refs.items) this.$refs.items.forEach(item => item.closeMenu());
     }
   }
 }

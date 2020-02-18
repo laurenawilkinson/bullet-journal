@@ -37,9 +37,9 @@
       class="bullet-list-item__menu-button"
       icon="more_vert"
       size="sm"
-      @click="toggleMenu = !toggleMenu"  /> <!-- toggle menu -->
+      @click="toggleMenu"  /> <!-- toggle menu -->
     <aside 
-      v-if="toggleMenu"
+      v-if="menuOpen"
       class="bullet-list-item__toolbar">
       <icon-button 
         v-if="type == 'task'" 
@@ -81,7 +81,7 @@ export default {
   },
   data () {
     return {
-      toggleMenu: false,
+      menuOpen: false,
       localContent: this.content,
       toggleEdit: false
     }
@@ -115,11 +115,15 @@ export default {
       else this.update('state', 'default');
     },
     closeMenu () {
-      this.toggleMenu = false;
+      this.menuOpen = false;
     },
     async deselectText () {
       this.toggleEdit = false;
       if (this.content.length == 0) this.removeItem();
+    },
+    toggleMenu () {
+      this.menuOpen = !this.menuOpen;
+      if (this.menuOpen) this.$emit('opened-menu');
     }
   }
 }
