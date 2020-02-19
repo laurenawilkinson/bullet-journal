@@ -48,6 +48,7 @@ export default {
               id: 100,
               type: 'task',
               state: 'default',
+              removed: false,
               content: 'Test task',
               priority: false
             },
@@ -55,6 +56,7 @@ export default {
               id: 101,
               type: 'event',
               state: 'default',
+              removed: true,
               content: 'An important event',
               priority: true
             },
@@ -62,6 +64,7 @@ export default {
               id: 102,
               type: 'note',
               state: 'default',
+              removed: false,
               content: "Don't forget this note!",
               priority: true
             }

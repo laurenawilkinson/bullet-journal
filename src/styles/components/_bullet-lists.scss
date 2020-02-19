@@ -65,9 +65,10 @@
     box-shadow: none;
     border: 0;
     border-bottom: 2px solid transparent;
+    flex: 1;
 
     &:focus {
-      border-bottom-color: grey;
+      border-bottom-color: $secondary--dark;
       outline: 0;
     }
   }

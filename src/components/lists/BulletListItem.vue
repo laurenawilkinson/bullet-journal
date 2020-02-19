@@ -14,14 +14,17 @@
       }">
       <list-item-icon 
         :type="type" 
-        :state="state" 
-        @update:state="update('state', $event)" />
+        :state="state"
+        :removed="removed"
+        @update:state="update('state', $event)"
+        @update:removed="update('removed', $event)" />
       <input 
         v-if="showEditBox"
         v-model="localContent" 
         class="bullet-list-item__input"
         ref="input"
         @change="update('content', localContent)"
+        @keyup.enter="deselectText"
         @blur="deselectText" />
       <span 
         v-else
@@ -72,7 +75,8 @@ export default {
     priority: Boolean,
     content: String,
     listActive: Boolean,
-    listMoving: Boolean
+    listMoving: Boolean,
+    removed: Boolean
   },
   components: {
     Icon,
@@ -93,7 +97,7 @@ export default {
     classes () {
       return {
         [`bullet-list-item bullet-list-item--${this.type}`]: true,
-        'bullet-list-item--removed': this.state === 'removed'
+        'bullet-list-item--removed': this.removed
       };
     }
   },
@@ -111,6 +115,8 @@ export default {
       this.$emit('remove-item');
     },
     markAs (value) {
+      if (value == 'removed') return this.update('removed', !this.removed);
+
       if (this.state !== value) this.update('state', value);
       else this.update('state', 'default');
     },
@@ -120,6 +126,7 @@ export default {
     async deselectText () {
       this.toggleEdit = false;
       if (this.content.length == 0) this.removeItem();
+      else this.update('content', this.localContent)
     },
     toggleMenu () {
       this.menuOpen = !this.menuOpen;

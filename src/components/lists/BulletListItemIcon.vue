@@ -9,7 +9,8 @@ export default {
   name: 'BulletListItemIcon',
   props: {
     type: String,
-    state: String
+    state: String,
+    removed: Boolean
   },
   data () {
     return {
@@ -29,22 +30,12 @@ export default {
         this.type != 'note'
       ) return;
 
-      let state = this.state;
-
-      switch (this.type) {
-        case 'task':
-          state = state === 'default' ? 'completed' : 'default';
-          break;
-        case 'event':
-          state = state === 'default' ? 'removed' : 'default';
-          break;
-        case 'note':
-          state = state === 'default' ? 'removed' : 'default';
-          break;
+      if (this.type == 'task') {
+        this.$emit('update:state', this.state === 'default' ? 'completed' : 'default');
       }
-
-      this.$emit('update:state', state);
-
+      else {
+        this.$emit('update:removed', !this.removed);
+      }
     },
     getIconFor (state) {
       this[`${this.type}State`](state);

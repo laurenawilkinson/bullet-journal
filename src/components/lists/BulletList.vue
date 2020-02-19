@@ -13,6 +13,7 @@
         :state.sync="item.state"
         :content.sync="item.content"
         :priority.sync="item.priority"
+        :removed.sync="item.removed"
         :list-active="active"
         :list-moving="false"
         @set-active="setActive"
@@ -45,12 +46,14 @@
 <script>
 let itemId = 0;
 class BulletListItem {
-  constructor ({ id, type, state, priority, content }) {
+  constructor ({ id, type, state, priority, content, removed }) {
     this.id = id || itemId;
     this.type = type || 'task';
-    this.state = state || 'default'; // default, completed, removed
+    this.state = state || 'default'; // default, completed, migrated
     this.priority = priority || false;
     this.content = content || '';
+    this.removed = removed || false;
+
     itemId++;
   }
 }
