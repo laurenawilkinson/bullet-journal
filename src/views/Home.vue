@@ -1,8 +1,10 @@
 <template>
   <div class="home">
     <top-bar 
+      :drawing-mode.sync="drawingMode"
       @create-list="createList" />
     <div class="canvas-container">
+      <drawing-canvas :drawing-mode="drawingMode" />
       <div class="canvas">
         <bullet-list 
           v-for="(list, index) in lists"
@@ -20,6 +22,7 @@
 <script>
 import BulletList from '@/components/lists/BulletList.vue'
 import TopBar from '@/components/TopBar.vue'
+import DrawingCanvas from '@/components/DrawingCanvas.vue'
 
 let id = 0;
 
@@ -36,10 +39,12 @@ export default {
   name: 'Home',
   components: {
     BulletList,
-    TopBar
+    TopBar,
+    DrawingCanvas
   },
   data ()  {
     return {
+      drawingMode: false,
       lists: [
         {
           position: { x: 0, y: 0 },
