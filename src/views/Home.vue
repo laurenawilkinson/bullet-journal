@@ -4,8 +4,11 @@
       :drawing-mode.sync="drawingMode"
       @create-list="createList" />
     <div class="canvas-container">
-      <drawing-canvas :drawing-mode="drawingMode" />
-      <div class="canvas">
+      <div class="canvas" ref="canvas">
+        <drawing-canvas 
+          :width="canvasWidth" 
+          :height="canvasHeight" 
+          :drawing-mode="drawingMode" />
         <bullet-list 
           v-for="(list, index) in lists"
           ref="lists"
@@ -75,7 +78,9 @@ export default {
             }
           ]
         }
-      ]
+      ],
+      canvasWidth: 0,
+      canvasHeight: 0
     }
   },
   methods: {
@@ -95,7 +100,17 @@ export default {
         if (index == activeIndex) list.activateList();
         else list.deactivateList();
       })
+    },
+    onWindowResize (event) {
+      this.canvasWidth = this.$refs.canvas.offsetWidth;
+      this.canvasHeight = this.$refs.canvas.offsetHeight;
     }
+  },
+  mounted () {
+    window.addEventListener('resize', this.onWindowResize);
+  },
+  beforeDestroy () {
+    window.removeEventListener('resize', this.onWindowResize);
   }
 }
 </script>

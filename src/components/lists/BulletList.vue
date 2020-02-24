@@ -80,7 +80,6 @@ export default {
   },
   watch: {
     position () {
-      console.log('position change')
     }
   },
   methods: {
