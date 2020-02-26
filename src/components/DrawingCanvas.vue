@@ -21,6 +21,8 @@ class Path {
   }
 }
 
+const C2S = require('canvas2svg');
+
 export default {
   name: 'DrawingCanvas',
   props: {
@@ -79,6 +81,48 @@ export default {
       if (!this.drawingMode) return;
 
       this.isDrawing = false;
+      this.resizeCanvas();
+    },
+    createPath (context, smallestX, smallestY, pixels, padding) {
+      let xOffset = 0 - smallestX + padding;
+      let yOffset = 0 - smallestY + padding;
+      context.beginPath();
+      context.moveTo( pixels[0].x + xOffset, pixels[0].y + yOffset );
+      pixels.forEach((p, i) => {
+        context.lineTo( p.x + xOffset, p.y +yOffset );
+      })
+      context.stroke();
+    },
+    resizeCanvas () {
+      if (this.paths.length === 0) return;
+      console.log('resizingCanvas');
+
+      let smallestX = this.paths[0].smallestX;
+      let smallestY = this.paths[0].smallestY;
+      let largestX = this.paths[0].largestX;
+      let largestY = this.paths[0].largestY;
+
+      this.paths.forEach(p => {
+        smallestX = p.smallestX < smallestX ? p.smallestX : smallestX;
+        smallestY = p.smallestY < smallestY ? p.smallestY : smallestY;
+        largestX = p.largestX > largestX ? p.largestX : largestX;
+        largestY = p.largestY > largestY ? p.largestY : largestY;
+      })
+      
+      let svgPadding = 2;
+
+      let width = largestX - smallestX + svgPadding;
+      let height = largestY - smallestY + svgPadding;
+
+      var ctx = new C2S(width, height);
+
+      this.paths.forEach(p => this.createPath(ctx, smallestX, smallestY, p.pixels, svgPadding / 2))
+
+      var myPath = ctx.getSerializedSvg(true);
+
+      this.$emit('draw-path', { svg: myPath, x: smallestX, y: smallestY });
+      this.paths = []; // clear paths
+      this.context.clearRect(0, 0, this.width, this.height); // clear canvas
     }
   },
   mounted () {

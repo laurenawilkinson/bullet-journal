@@ -7,8 +7,14 @@
     background-color: transparent;
 
     &:hover,
-    &:focus {
+    &:focus,
+    &.active {
       color: $text--light;
+    }
+
+    &:focus,
+    &.active {
+      background-color: $primary-800;
     }
   }
 

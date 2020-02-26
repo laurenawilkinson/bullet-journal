@@ -3,7 +3,8 @@
     type="button"
     :class="{
       'button button--icon': true,
-      'button--sm': size == 'sm'
+      'button--sm': size == 'sm',
+      'active': active 
     }"
     :disabled="disabled"
     v-on="$listeners"
@@ -23,7 +24,8 @@ export default {
   props: {
     icon: String,
     disabled: Boolean,
-    size: String
+    size: String,
+    active: Boolean
   }
 }
 </script>

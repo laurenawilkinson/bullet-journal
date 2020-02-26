@@ -5,10 +5,6 @@
       @create-list="createList" />
     <div class="canvas-container">
       <div class="canvas" ref="canvas">
-        <drawing-canvas 
-          :width="canvasWidth" 
-          :height="canvasHeight" 
-          :drawing-mode="drawingMode" />
         <bullet-list 
           v-for="(list, index) in lists"
           ref="lists"
@@ -17,6 +13,17 @@
           :items="list.items"
           @remove-list="removeList(list.id)"
           @set-active="setActive(index)" />
+        <drawing-canvas 
+          :width="canvasWidth" 
+          :height="canvasHeight" 
+          :drawing-mode="drawingMode"
+          @draw-path="drawPath" />
+        <div 
+          v-for="(svg, i) in svgs" 
+          :key="i" 
+          v-html="svg.svg"
+          class="path-container"
+          :style="{ left: svg.x + 'px', top: svg.y + 'px' }"></div>
       </div>
     </div>
   </div>
@@ -48,6 +55,7 @@ export default {
   data ()  {
     return {
       drawingMode: false,
+      svgs: [],
       lists: [
         {
           position: { x: 0, y: 0 },
@@ -101,13 +109,17 @@ export default {
         else list.deactivateList();
       })
     },
-    onWindowResize (event) {
+    onWindowResize () {
       this.canvasWidth = this.$refs.canvas.offsetWidth;
       this.canvasHeight = this.$refs.canvas.offsetHeight;
+    },
+    drawPath (svg) {
+      this.svgs.push(svg);
     }
   },
   mounted () {
     window.addEventListener('resize', this.onWindowResize);
+    this.onWindowResize();
   },
   beforeDestroy () {
     window.removeEventListener('resize', this.onWindowResize);
