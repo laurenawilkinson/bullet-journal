@@ -6,14 +6,6 @@
       @change-pen="pen = $event" />
     <div class="canvas-container">
       <div class="canvas" ref="canvas">
-        <bullet-list 
-          v-for="(list, index) in lists"
-          ref="lists"
-          :key="list.id" 
-          :position="list.position"
-          :items="list.items"
-          @remove-list="removeList(list.id)"
-          @set-active="setActive(index)" />
         <drawing-canvas 
           :width="canvasWidth" 
           :height="canvasHeight" 
@@ -26,6 +18,14 @@
           v-html="svg.svg"
           class="path-container"
           :style="{ left: svg.x + 'px', top: svg.y + 'px' }"></div>
+        <bullet-list 
+          v-for="(list, index) in lists"
+          ref="lists"
+          :key="list.id" 
+          :position="list.position"
+          :items="list.items"
+          @remove-list="removeList(list.id)"
+          @set-active="setActive(index)" />
       </div>
     </div>
   </div>
