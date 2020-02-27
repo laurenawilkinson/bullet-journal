@@ -13,6 +13,7 @@
       icon="format_list_bulleted" 
       :active="active == 'list'"
       @click="activateList" />
+    <div class="red-circle" @click="redPen"></div>
   </nav>
 </header>
 </template>
@@ -47,7 +48,21 @@ export default {
     activateList () {
       this.active = 'list';
       this.$emit('create-list');
+    },
+    redPen () {
+      this.$emit('change-pen', 'red');
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.red-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50px;
+  background-color: red;
+  display: inline-block;
+  justify-self: flex-end;
+}
+</style>

@@ -28,7 +28,8 @@ export default {
   props: {
     drawingMode: Boolean,
     width: Number,
-    height: Number
+    height: Number,
+    color: String
   },
   data () {
     return {
@@ -60,6 +61,7 @@ export default {
       this.paths[pathIndex].pixels.push({ x: newX, y: newY });
 
       this.context.beginPath();
+      this.context.strokeStyle = this.color;
       this.context.moveTo(x, y);
       this.context.lineTo(newX, newY);
       this.context.stroke();
@@ -86,6 +88,7 @@ export default {
     createPath (context, smallestX, smallestY, pixels, padding) {
       let xOffset = 0 - smallestX + padding;
       let yOffset = 0 - smallestY + padding;
+      context.strokeStyle = this.color;
       context.beginPath();
       context.moveTo( pixels[0].x + xOffset, pixels[0].y + yOffset );
       pixels.forEach((p, i) => {
@@ -95,7 +98,6 @@ export default {
     },
     resizeCanvas () {
       if (this.paths.length === 0) return;
-      console.log('resizingCanvas');
 
       let smallestX = this.paths[0].smallestX;
       let smallestY = this.paths[0].smallestY;
@@ -120,7 +122,7 @@ export default {
 
       var myPath = ctx.getSerializedSvg(true);
 
-      this.$emit('draw-path', { svg: myPath, x: smallestX, y: smallestY });
+      this.$emit('draw-path', { svg: myPath, x: smallestX, y: smallestY, color: this.color });
       this.paths = []; // clear paths
       this.context.clearRect(0, 0, this.width, this.height); // clear canvas
     }

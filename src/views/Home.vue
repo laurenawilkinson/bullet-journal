@@ -2,7 +2,8 @@
   <div class="home">
     <top-bar 
       :drawing-mode.sync="drawingMode"
-      @create-list="createList" />
+      @create-list="createList"
+      @change-pen="pen = $event" />
     <div class="canvas-container">
       <div class="canvas" ref="canvas">
         <bullet-list 
@@ -17,6 +18,7 @@
           :width="canvasWidth" 
           :height="canvasHeight" 
           :drawing-mode="drawingMode"
+          :color="pen"
           @draw-path="drawPath" />
         <div 
           v-for="(svg, i) in svgs" 
@@ -56,6 +58,7 @@ export default {
     return {
       drawingMode: false,
       svgs: [],
+      pen: 'black',
       lists: [
         {
           position: { x: 0, y: 0 },
