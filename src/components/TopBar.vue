@@ -13,24 +13,49 @@
       icon="format_list_bulleted" 
       :active="active == 'list'"
       @click="activateList" />
-    <div class="red-circle" @click="redPen"></div>
   </nav>
+  <stroke-width-slider v-model="localPenWidth" />
+  <colour-picker v-model="localPenColor" />
 </header>
 </template>
 
 <script>
 import IconButton from '@/components/IconButton.vue';
+import ColourPicker from '@/components/drawing/ColourPicker.vue';
+import StrokeWidthSlider from '@/components/drawing/StrokeWidthSlider.vue';
 export default {
   name: 'TopBar',
   components: {
-    IconButton
+    IconButton,
+    ColourPicker,
+    StrokeWidthSlider
   },
   props: {
-    drawingMode: Boolean
+    drawingMode: Boolean,
+    penColor: String,
+    penWidth: Number
   },
   data () {
     return {
-      active: 'move'
+      active: 'move',
+    }
+  },
+  computed: {
+    localPenColor: {
+      get () {
+        return this.penColor;
+      },
+      set (value) {
+        this.update('pen-color', value)
+      }
+    },
+    localPenWidth: {
+      get () {
+        return this.penWidth;
+      },
+      set (value) {
+        this.update('pen-width', value)
+      }
     }
   },
   methods: {
@@ -46,23 +71,12 @@ export default {
       this.update('drawing-mode', true);
     },
     activateList () {
-      this.active = 'list';
+      this.active = 'move';
       this.$emit('create-list');
     },
     redPen () {
-      this.$emit('change-pen', 'red');
+      this.$emit('change-pen', this.penColor);
     }
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.red-circle {
-  width: 24px;
-  height: 24px;
-  border-radius: 50px;
-  background-color: red;
-  display: inline-block;
-  justify-self: flex-end;
-}
-</style>

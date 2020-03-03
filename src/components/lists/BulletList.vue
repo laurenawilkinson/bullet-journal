@@ -1,6 +1,12 @@
 <template>
   <div 
-    :class="{ 'bullet-list': true, 'bullet-list--active': active }" 
+    v-draggable:[moveMode]="draggableData"
+    :class="{ 
+      'bullet-list': true, 
+      'bullet-list--active': active, 
+      'draggable': moveMode,
+      'dragging': draggableData.active
+    }" 
     ref="list"
     v-on-clickaway="deselectList"
     @click="setActive">
@@ -9,6 +15,7 @@
         v-for="(item, index) in items" 
         :key="item.id"
         ref="items"
+        :disabled="!moveMode || draggableData.active"
         :type="item.type"
         :state.sync="item.state"
         :content.sync="item.content"
@@ -61,25 +68,41 @@ class BulletListItem {
 import ListItem from './BulletListItem.vue'
 import IconButton from '@/components/IconButton.vue'
 import { mixin as clickaway } from 'vue-clickaway';
+import draggableDirective from '@/directives/Draggable';
+import Draggable from '@/models/Draggable';
 
 export default {
   name: 'BulletList',
   mixins: [ clickaway ],
+  directives: {
+    draggable: draggableDirective
+  },
   components: {
     ListItem,
     IconButton
   },
   props: {
     position: Object,
-    items: Array
+    items: Array,
+    moveMode: Boolean
   },
   data () {
     return {
-      active: false
+      active: false,
+      draggableData: new Draggable(this.position.x, this.position.y, this.moveMode)
     }
   },
-  watch: {
-    position () {
+  computed: {
+    localPos: {
+      get () {
+        return { 
+          ...this.position, 
+          draggable: this.moveMode
+        };
+      },
+      set (val) {
+        this.$emit('update:position', { x: val.x, y: val.y })
+      }
     }
   },
   methods: {
@@ -101,6 +124,8 @@ export default {
       });
     },
     setActive () {
+      if (this.draggableData.active) return console.log('returning');
+      console.log('setting active!')
       this.$emit('set-active');
     },
     activateList () {

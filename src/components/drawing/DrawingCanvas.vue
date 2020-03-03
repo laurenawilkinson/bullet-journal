@@ -29,7 +29,8 @@ export default {
     drawingMode: Boolean,
     width: Number,
     height: Number,
-    color: String
+    color: String,
+    strokeWidth: Number
   },
   data () {
     return {
@@ -39,6 +40,10 @@ export default {
     }
   },
   methods: {
+    setupPen (context) {
+      context.strokeStyle = this.color;
+      context.lineWidth = this.strokeWidth;
+    },
     onMouseDown (event) {
       if (!this.drawingMode) return;
 
@@ -46,6 +51,11 @@ export default {
       this.paths.push(new Path (event.offsetX, event.offsetY))
     },
     onMouseMove (event) {
+      // need to rewrite to make smooth lines, not just printing pixel by pixel!
+      // http://jsfiddle.net/MartinThoma/vSDTW/2/
+      // http://paperjs.org/ 
+      // https://stackoverflow.com/questions/22891827/how-do-i-hand-draw-on-canvas-with-javascript
+
       if (!this.isDrawing || !this.drawingMode) return;
 
       const pathIndex = this.paths.length - 1;
@@ -61,7 +71,7 @@ export default {
       this.paths[pathIndex].pixels.push({ x: newX, y: newY });
 
       this.context.beginPath();
-      this.context.strokeStyle = this.color;
+      this.setupPen(this.context);
       this.context.moveTo(x, y);
       this.context.lineTo(newX, newY);
       this.context.stroke();
@@ -88,7 +98,7 @@ export default {
     createPath (context, smallestX, smallestY, pixels, padding) {
       let xOffset = 0 - smallestX + padding;
       let yOffset = 0 - smallestY + padding;
-      context.strokeStyle = this.color;
+      this.setupPen(context);
       context.beginPath();
       context.moveTo( pixels[0].x + xOffset, pixels[0].y + yOffset );
       pixels.forEach((p, i) => {
@@ -111,7 +121,7 @@ export default {
         largestY = p.largestY > largestY ? p.largestY : largestY;
       })
       
-      let svgPadding = 2;
+      let svgPadding = 1 + this.strokeWidth;
 
       let width = largestX - smallestX + svgPadding;
       let height = largestY - smallestY + svgPadding;

@@ -1,4 +1,7 @@
 .bullet-list {
+  position: absolute;
+  top: 0;
+  left: 0;
   
   @include up('sm') {
     width: fit-content;
@@ -11,6 +14,7 @@
   &--active {
     outline: 3px dashed $secondary;
     outline-offset: 5px;
+    background-color: $page-color;
 
     .bullet-list-item {
       &:hover {
@@ -126,6 +130,7 @@
   &__content,
   &__input {
     margin-left: 0.5rem;
+    cursor: text;
   }
 
   &__toolbar {

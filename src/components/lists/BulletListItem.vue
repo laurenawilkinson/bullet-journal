@@ -76,7 +76,8 @@ export default {
     content: String,
     listActive: Boolean,
     listMoving: Boolean,
-    removed: Boolean
+    removed: Boolean,
+    disabled: Boolean
   },
   components: {
     Icon,
@@ -103,9 +104,12 @@ export default {
   },
   methods: {
     update (prop, value) {
+      if (this.disabled) return;
       this.$emit(`update:${prop}`, value);
     },
     async selectText () {
+      if (this.disabled) return;
+
       this.$emit('set-active');
       this.toggleEdit = true;
       await this.$nextTick();
@@ -115,6 +119,8 @@ export default {
       this.$emit('remove-item');
     },
     markAs (value) {
+      if (this.disabled) return;
+
       if (value == 'removed') return this.update('removed', !this.removed);
 
       if (this.state !== value) this.update('state', value);
