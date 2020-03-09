@@ -43,51 +43,66 @@ export default {
     setupPen (context) {
       context.strokeStyle = this.color;
       context.lineWidth = this.strokeWidth;
+      context.lineJoin = "round";
+    },
+    drawPixel (event) {
+      const currentPath = this.paths[this.paths.length - 1];
+      const x = currentPath.pixels.length > 0 
+                  ? currentPath.pixels[currentPath.pixels.length - 1].x
+                  : event.offsetX;
+      const y = currentPath.pixels.length > 0 
+                  ? currentPath.pixels[currentPath.pixels.length - 1].y
+                  : event.offsetY;
+      const newX = event.offsetX;
+      const newY = event.offsetY;
+      
+
+      currentPath.pixels.push({ x: newX, y: newY });
+
+      const currentPixelIndex = currentPath.pixels.length - 1;
+
+
+      if (currentPixelIndex == 0) {
+        this.context.beginPath();
+        this.setupPen(this.context);
+        this.context.moveTo(
+          currentPath.pixels[currentPixelIndex].x,
+          currentPath.pixels[currentPixelIndex].y);
+        this.context.lineTo(
+          currentPath.pixels[currentPixelIndex].x,
+          currentPath.pixels[currentPixelIndex].y);
+        this.context.stroke();
+      } else {
+        this.context.lineTo(
+          currentPath.pixels[currentPixelIndex].x,
+          currentPath.pixels[currentPixelIndex].y);
+        this.context.stroke();
+      }
+
+      currentPath.smallestX = newX < currentPath.smallestX 
+          ? newX 
+          : currentPath.smallestX;
+      currentPath.largestX = newX > currentPath.largestX 
+          ? newX 
+          : currentPath.largestX;
+      currentPath.smallestY = newY < currentPath.smallestY 
+          ? newY 
+          : currentPath.smallestY;
+      currentPath.largestY = newY > currentPath.largestY 
+          ? newY 
+          : currentPath.largestY;
     },
     onMouseDown (event) {
       if (!this.drawingMode) return;
 
       this.isDrawing = true;
       this.paths.push(new Path (event.offsetX, event.offsetY))
+      this.drawPixel(event);
     },
     onMouseMove (event) {
-      // need to rewrite to make smooth lines, not just printing pixel by pixel!
-      // http://jsfiddle.net/MartinThoma/vSDTW/2/
-      // http://paperjs.org/ 
-      // https://stackoverflow.com/questions/22891827/how-do-i-hand-draw-on-canvas-with-javascript
-
       if (!this.isDrawing || !this.drawingMode) return;
 
-      const pathIndex = this.paths.length - 1;
-      const x = this.paths[pathIndex].pixels.length > 0 
-                  ? this.paths[pathIndex].pixels[this.paths[pathIndex].pixels.length - 1].x
-                  : event.offsetX;
-      const y = this.paths[pathIndex].pixels.length > 0 
-                  ? this.paths[pathIndex].pixels[this.paths[pathIndex].pixels.length - 1].y
-                  : event.offsetY;
-      const newX = event.offsetX;
-      const newY = event.offsetY;
-
-      this.paths[pathIndex].pixels.push({ x: newX, y: newY });
-
-      this.context.beginPath();
-      this.setupPen(this.context);
-      this.context.moveTo(x, y);
-      this.context.lineTo(newX, newY);
-      this.context.stroke();
-
-      this.paths[pathIndex].smallestX = newX < this.paths[pathIndex].smallestX 
-          ? newX 
-          : this.paths[pathIndex].smallestX;
-      this.paths[pathIndex].largestX = newX > this.paths[pathIndex].largestX 
-          ? newX 
-          : this.paths[pathIndex].largestX;
-      this.paths[pathIndex].smallestY = newY < this.paths[pathIndex].smallestY 
-          ? newY 
-          : this.paths[pathIndex].smallestY;
-      this.paths[pathIndex].largestY = newY > this.paths[pathIndex].largestY 
-          ? newY 
-          : this.paths[pathIndex].largestY;
+      this.drawPixel(event);
     },
     onMouseUp () {
       if (!this.drawingMode) return;
@@ -95,16 +110,24 @@ export default {
       this.isDrawing = false;
       this.resizeCanvas();
     },
-    createPath (context, smallestX, smallestY, pixels, padding) {
+    redrawPath (context, smallestX, smallestY, pixels, padding) {
       let xOffset = 0 - smallestX + padding;
       let yOffset = 0 - smallestY + padding;
       this.setupPen(context);
-      context.beginPath();
-      context.moveTo( pixels[0].x + xOffset, pixels[0].y + yOffset );
       pixels.forEach((p, i) => {
-        context.lineTo( p.x + xOffset, p.y +yOffset );
+        if (i == 0) {
+          context.beginPath();
+          context.moveTo(p.x + xOffset, p.y + yOffset);
+          context.stroke();
+        } else if (i !== pixels.length - 1) {
+          context.lineTo(p.x + xOffset, p.y + yOffset);
+          context.stroke();
+        } else {
+          context.lineTo(p.x + xOffset, p.y + yOffset);
+          context.stroke();
+          context.closePath();
+        }
       })
-      context.stroke();
     },
     resizeCanvas () {
       if (this.paths.length === 0) return;
@@ -122,17 +145,18 @@ export default {
       })
       
       let svgPadding = 1 + this.strokeWidth;
+      let svgPathPadding = svgPadding / 2;
 
       let width = largestX - smallestX + svgPadding;
       let height = largestY - smallestY + svgPadding;
 
       var ctx = new C2S(width, height);
 
-      this.paths.forEach(p => this.createPath(ctx, smallestX, smallestY, p.pixels, svgPadding / 2))
+      this.paths.forEach(p => this.redrawPath(ctx, smallestX, smallestY, p.pixels, svgPathPadding))
 
       var myPath = ctx.getSerializedSvg(true);
 
-      this.$emit('draw-path', { svg: myPath, x: smallestX, y: smallestY, color: this.color });
+      this.$emit('draw-path', { svg: myPath, x: smallestX - svgPathPadding, y: smallestY - svgPathPadding, color: this.color });
       this.paths = []; // clear paths
       this.context.clearRect(0, 0, this.width, this.height); // clear canvas
     }

@@ -2,6 +2,7 @@
   <component 
     :is="component" 
     :style="componentStyle"
+    :class="{ draggable: !disabled, 'draggable--dragging': dragging }"
     @mousedown="onDragStart"
     @touchstart="onDragStart">
     <slot></slot>
@@ -24,6 +25,10 @@ export default {
     y: {
       type: Number,
       default: 0
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   model: {

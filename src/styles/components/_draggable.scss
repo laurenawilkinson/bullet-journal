@@ -1,7 +1,7 @@
 .draggable {
   cursor: move;
 
-  &.dragging {
+  &--dragging {
     outline: 3px dashed $secondary;
     outline-offset: 5px;
     // pointer-events: none;

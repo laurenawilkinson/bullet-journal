@@ -33,7 +33,7 @@ export default {
     return {
       drawingMode: false,
       penColor: 'rgba(0,0,0,1)',
-      penWidth: 1,
+      penWidth: 3,
       lists: [
         {
           position: { x: 0, y: 0 },
