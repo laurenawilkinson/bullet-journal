@@ -17,7 +17,7 @@
         v-for="(item, index) in items" 
         :key="item.id"
         ref="items"
-        :disabled="!moveMode"
+        :disabled="!moveMode || dragActive"
         :type="item.type"
         :state.sync="item.state"
         :content.sync="item.content"

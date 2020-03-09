@@ -11,7 +11,6 @@
       @click="activateDraw" />
     <icon-button 
       icon="format_list_bulleted" 
-      :active="active == 'list'"
       @click="activateList" />
   </nav>
   <stroke-width-slider v-model="localPenWidth" />
@@ -71,7 +70,7 @@ export default {
       this.update('drawing-mode', true);
     },
     activateList () {
-      this.active = 'move';
+      this.activateMove();
       this.$emit('create-list');
     },
     redPen () {

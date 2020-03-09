@@ -24,12 +24,14 @@
       :drawing-mode="drawingMode"
       :color="penColor"
       :stroke-width="penWidth"
+      :canvas-offset="canvasOffset"
       @draw-path="drawPath" />
     <div v-if="showListOverlay" class="overlay" @click="createList"></div>
     <div 
       v-if="showListOverlay"
       class="tooltip"
-      :style="{ position: 'absolute', top: mouse.y + 'px', left: mouse.x + 'px' }">
+      :style="{ position: 'absolute', top: mouse.y + 'px', left: mouse.x + 'px', pointer: 'crosshair' }"
+       @click="createList">
       Click to place list
     </div>
   </div>
@@ -45,7 +47,7 @@ let lid = 0;
 
 class List {
   constructor ({ id, position, items }) {
-    this.id = id ? id : lid;
+    this.id = id ? id : 'list--' + lid;
     this.position = position ? position : { x: 0, y: 0 };
     this.items = items ? items : [];
     lid++;

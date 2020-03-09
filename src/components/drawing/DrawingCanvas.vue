@@ -5,9 +5,12 @@
     ref="canvas" 
     class="drawing-canvas"
     @mousedown="onMouseDown"
+    @touchstart="onMouseDown"
     @mousemove="onMouseMove"
+    @touchmove="onMouseMove"
     @mouseout="onMouseUp"
-    @mouseup="onMouseUp"></canvas>
+    @mouseup="onMouseUp"
+    @touchend="onMouseUp"></canvas>
 </template>
 
 <script>
@@ -30,7 +33,8 @@ export default {
     width: Number,
     height: Number,
     color: String,
-    strokeWidth: Number
+    strokeWidth: Number,
+    canvasOffset: Object
   },
   data () {
     return {
@@ -45,16 +49,16 @@ export default {
       context.lineWidth = this.strokeWidth;
       context.lineJoin = "round";
     },
-    drawPixel (event) {
+    drawPixel (offsetX, offsetY) {
       const currentPath = this.paths[this.paths.length - 1];
       const x = currentPath.pixels.length > 0 
                   ? currentPath.pixels[currentPath.pixels.length - 1].x
-                  : event.offsetX;
+                  : offsetX;
       const y = currentPath.pixels.length > 0 
                   ? currentPath.pixels[currentPath.pixels.length - 1].y
-                  : event.offsetY;
-      const newX = event.offsetX;
-      const newY = event.offsetY;
+                  : offsetY;
+      const newX = offsetX;
+      const newY = offsetY;
       
 
       currentPath.pixels.push({ x: newX, y: newY });
@@ -95,14 +99,28 @@ export default {
     onMouseDown (event) {
       if (!this.drawingMode) return;
 
+      let pathX = event.type == 'touchstart' 
+        ? event.touches[0].clientX - (this.canvasOffset.x / 2)
+        : event.offsetX;
+      let pathY = event.type == 'touchstart' 
+        ? event.touches[0].clientY - (this.canvasOffset.y / 2)
+        : event.offsetY; 
+
       this.isDrawing = true;
-      this.paths.push(new Path (event.offsetX, event.offsetY))
-      this.drawPixel(event);
+      this.paths.push(new Path (pathX, pathY))
+      this.drawPixel(pathX, pathY);
     },
     onMouseMove (event) {
       if (!this.isDrawing || !this.drawingMode) return;
 
-      this.drawPixel(event);
+      let pathX = event.type == 'touchmove' 
+        ? event.touches[0].clientX - (this.canvasOffset.x / 2)
+        : event.offsetX;
+      let pathY = event.type == 'touchmove' 
+        ? event.touches[0].clientY - (this.canvasOffset.y / 2)
+        : event.offsetY;
+
+      this.drawPixel(pathX, pathY);
     },
     onMouseUp () {
       if (!this.drawingMode) return;
