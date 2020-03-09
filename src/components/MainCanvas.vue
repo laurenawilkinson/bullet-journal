@@ -19,12 +19,15 @@
       :y.sync="svg.y" />
     <drawing-canvas 
       v-if="drawingMode"
+      ref="drawingCanvas"
       :width="canvasWidth" 
       :height="canvasHeight" 
       :drawing-mode="drawingMode"
       :color="penColor"
       :stroke-width="penWidth"
       :canvas-offset="canvasOffset"
+      :draw-multi="drawMulti"
+      :paths.sync="paths"
       @draw-path="drawPath" />
     <div v-if="showListOverlay" class="overlay" @click="createList"></div>
     <div 
@@ -35,6 +38,12 @@
       Click to place list
     </div>
   </div>
+    <aside 
+      v-if="showDrawMultiOverlay"
+      class="multi-draw-overlay"
+      @click="$refs.drawingCanvas.completeDrawing">
+      Finish group drawing
+    </aside>
 </main>
 </template>
 
@@ -63,6 +72,7 @@ export default {
   },
   props: {
     drawingMode: Boolean,
+    drawMulti: Boolean,
     penColor: String,
     penWidth: Number,
     canvasOffset: Object
@@ -74,7 +84,13 @@ export default {
       canvasHeight: 0,
       showListOverlay: false,
       lists: [],
-      mouse: { x: 0, y: 0 }
+      mouse: { x: 0, y: 0 },
+      paths: []
+    }
+  },
+  computed: {
+    showDrawMultiOverlay () {
+      return this.drawMulti && this.drawingMode && this.paths.length > 0;
     }
   },
   methods: {
@@ -88,7 +104,6 @@ export default {
       this.showListOverlay = true;
     },
     createList () {
-      console.log(this.mouse);
       this.showListOverlay = false;
       this.lists.push(new List({ position: { x: this.mouse.x, y: this.mouse.y }}));
       this.setActive(this.lists.length - 1);

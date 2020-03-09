@@ -4,6 +4,7 @@
       :drawing-mode.sync="drawingMode"
       :pen-color.sync="penColor"
       :pen-width.sync="penWidth"
+      :drawMulti.sync="drawMulti"
       @create-list="createList" />
     <main-canvas 
       ref="canvas"
@@ -13,7 +14,8 @@
         drawingMode,
         penColor,
         penWidth,
-        canvasOffset
+        canvasOffset,
+        drawMulti
       }"
       @resize="getCanvasOffset" />
   </div>
@@ -34,6 +36,7 @@ export default {
       drawingMode: false,
       penColor: 'rgba(0,0,0,1)',
       penWidth: 3,
+      drawMulti: false,
       lists: [
         {
           position: { x: 0, y: 0 },

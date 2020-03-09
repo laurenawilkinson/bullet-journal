@@ -13,6 +13,10 @@
       icon="format_list_bulleted" 
       @click="activateList" />
   </nav>
+  <label for="draw-multi">
+    <input v-model="localDrawMulti" id="draw-multi" type="checkbox" />
+    Group Drawing
+  </label>
   <stroke-width-slider v-model="localPenWidth" />
   <colour-picker v-model="localPenColor" />
 </header>
@@ -32,11 +36,12 @@ export default {
   props: {
     drawingMode: Boolean,
     penColor: String,
-    penWidth: Number
+    penWidth: Number,
+    drawMulti: Boolean
   },
   data () {
     return {
-      active: 'move',
+      active: 'move'
     }
   },
   computed: {
@@ -54,6 +59,14 @@ export default {
       },
       set (value) {
         this.update('pen-width', value)
+      }
+    },
+    localDrawMulti: {
+      get () {
+        return this.drawMulti;
+      },
+      set (value) {
+        this.update('draw-multi', value)
       }
     }
   },

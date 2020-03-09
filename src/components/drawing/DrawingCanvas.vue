@@ -30,6 +30,7 @@ export default {
   name: 'DrawingCanvas',
   props: {
     drawingMode: Boolean,
+    drawMulti: Boolean,
     width: Number,
     height: Number,
     color: String,
@@ -41,6 +42,11 @@ export default {
       context: null,
       paths: [],
       isDrawing: false
+    }
+  },
+  watch: {
+    paths (paths) {
+      this.$emit('update:paths', paths);
     }
   },
   methods: {
@@ -126,7 +132,7 @@ export default {
       if (!this.drawingMode) return;
 
       this.isDrawing = false;
-      this.resizeCanvas();
+      if (!this.drawMulti) this.completeDrawing();
     },
     redrawPath (context, smallestX, smallestY, pixels, padding) {
       let xOffset = 0 - smallestX + padding;
@@ -147,7 +153,7 @@ export default {
         }
       })
     },
-    resizeCanvas () {
+    completeDrawing () {
       if (this.paths.length === 0) return;
 
       let smallestX = this.paths[0].smallestX;
@@ -161,26 +167,38 @@ export default {
         largestX = p.largestX > largestX ? p.largestX : largestX;
         largestY = p.largestY > largestY ? p.largestY : largestY;
       })
-      
+
+      /* resize paths canvas */
+
       let svgPadding = 1 + this.strokeWidth;
       let svgPathPadding = svgPadding / 2;
 
       let width = largestX - smallestX + svgPadding;
       let height = largestY - smallestY + svgPadding;
 
+      /* redraw on mock canvas */
+
       var ctx = new C2S(width, height);
 
-      this.paths.forEach(p => this.redrawPath(ctx, smallestX, smallestY, p.pixels, svgPathPadding))
+      this.paths.forEach(p => 
+        this.redrawPath(ctx, smallestX, smallestY, p.pixels, svgPathPadding))
 
       var myPath = ctx.getSerializedSvg(true);
 
-      this.$emit('draw-path', { svg: myPath, x: smallestX - svgPathPadding, y: smallestY - svgPathPadding, color: this.color });
+      this.$emit('draw-path', { 
+        svg: myPath, 
+        x: smallestX - svgPathPadding, 
+        y: smallestY - svgPathPadding, 
+        color: this.color });
       this.paths = []; // clear paths
       this.context.clearRect(0, 0, this.width, this.height); // clear canvas
     }
   },
   mounted () {
     this.context = this.$refs.canvas.getContext('2d');
+  },
+  beforeDestroy () {
+    if (this.paths.length > 0) this.completeDrawing();
   }
 }
 </script>
