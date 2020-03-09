@@ -40,7 +40,6 @@ export default {
   },
   methods: {
     onColourChange (color) {
-      console.log(color);
       this.localValue = color.hex8;
     }
   }

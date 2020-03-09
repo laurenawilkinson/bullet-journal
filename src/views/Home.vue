@@ -12,25 +12,16 @@
         lists,
         drawingMode,
         penColor,
-        penWidth
-      }" />
+        penWidth,
+        canvasOffset
+      }"
+      @resize="getCanvasOffset" />
   </div>
 </template>
 
 <script>
 import TopBar from '@/components/TopBar.vue'
 import MainCanvas from '@/components/MainCanvas.vue'
-
-let id = 0;
-
-class List {
-  constructor (list) {
-    this.id = list ? list.id : id;
-    this.position = list ? list.position : { x: 0, y: 0 };
-    this.items = list ? list.items : [];
-    id++;
-  }
-}
 
 export default {
   name: 'Home',
@@ -73,14 +64,23 @@ export default {
             }
           ]
         }
-      ]
+      ],
+      canvasOffset: {}
     }
   },
   methods: {
     createList () {
-      this.lists.push(new List);
-      this.$refs.canvas.setActive(this.lists.length - 1);
+      this.$refs.canvas.openListOverlay();
+    },
+    getCanvasOffset () {
+      this.canvasOffset = {
+        x: document.querySelector('body').clientWidth - document.querySelector('#canvas').clientWidth,
+        y: document.querySelector('body').clientHeight - document.querySelector('#canvas').clientHeight
+      }
     }
+  },
+  mounted () {
+    this.getCanvasOffset();
   }
 }
 </script>

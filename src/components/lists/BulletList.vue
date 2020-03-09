@@ -1,21 +1,23 @@
 <template>
-  <div 
-    v-draggable:[moveMode]="draggableData"
+  <draggable 
     :class="{ 
       'bullet-list': true, 
       'bullet-list--active': active, 
       'draggable': moveMode,
-      'dragging': draggableData.active
-    }" 
+      'dragging': dragActive
+    }"
     ref="list"
+    :x.sync="position.x"
+    :y.sync="position.y"
     v-on-clickaway="deselectList"
+    v-model="dragActive"
     @click="setActive">
     <ul v-if="items.length > 0" class="bullet-list__container">
       <list-item 
         v-for="(item, index) in items" 
         :key="item.id"
         ref="items"
-        :disabled="!moveMode || draggableData.active"
+        :disabled="!moveMode"
         :type="item.type"
         :state.sync="item.state"
         :content.sync="item.content"
@@ -47,7 +49,7 @@
         Note
       </icon-button>
     </div>
-  </div>
+  </draggable>
 </template>
 
 <script>
@@ -68,18 +70,15 @@ class BulletListItem {
 import ListItem from './BulletListItem.vue'
 import IconButton from '@/components/IconButton.vue'
 import { mixin as clickaway } from 'vue-clickaway';
-import draggableDirective from '@/directives/Draggable';
-import Draggable from '@/models/Draggable';
+import Draggable from '@/components/Draggable.vue';
 
 export default {
   name: 'BulletList',
   mixins: [ clickaway ],
-  directives: {
-    draggable: draggableDirective
-  },
   components: {
     ListItem,
-    IconButton
+    IconButton,
+    Draggable
   },
   props: {
     position: Object,
@@ -89,20 +88,7 @@ export default {
   data () {
     return {
       active: false,
-      draggableData: new Draggable(this.position.x, this.position.y, this.moveMode)
-    }
-  },
-  computed: {
-    localPos: {
-      get () {
-        return { 
-          ...this.position, 
-          draggable: this.moveMode
-        };
-      },
-      set (val) {
-        this.$emit('update:position', { x: val.x, y: val.y })
-      }
+      dragActive: false
     }
   },
   methods: {
@@ -124,9 +110,7 @@ export default {
       });
     },
     setActive () {
-      if (this.draggableData.active) return console.log('returning');
-      console.log('setting active!')
-      this.$emit('set-active');
+      if (!this.active) this.$emit('set-active');
     },
     activateList () {
       this.active = true;
