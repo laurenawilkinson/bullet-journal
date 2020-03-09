@@ -15,8 +15,10 @@
 
 <script>
 class Path {
-  constructor (initialX, initialY) {
+  constructor (initialX, initialY, strokeWidth, color) {
     this.pixels = [];
+    this.lineWidth = strokeWidth;
+    this.strokeStyle = color;
     this.smallestX = initialX;
     this.largestX = initialX;
     this.smallestY = initialY;
@@ -50,9 +52,9 @@ export default {
     }
   },
   methods: {
-    setupPen (context) {
-      context.strokeStyle = this.color;
-      context.lineWidth = this.strokeWidth;
+    setupPen (context, path) {
+      context.strokeStyle = path.strokeStyle;
+      context.lineWidth = path.lineWidth;
       context.lineJoin = "round";
     },
     drawPixel (offsetX, offsetY) {
@@ -74,7 +76,7 @@ export default {
 
       if (currentPixelIndex == 0) {
         this.context.beginPath();
-        this.setupPen(this.context);
+        this.setupPen(this.context, currentPath);
         this.context.moveTo(
           currentPath.pixels[currentPixelIndex].x,
           currentPath.pixels[currentPixelIndex].y);
@@ -113,7 +115,7 @@ export default {
         : event.offsetY; 
 
       this.isDrawing = true;
-      this.paths.push(new Path (pathX, pathY))
+      this.paths.push(new Path (pathX, pathY, this.strokeWidth, this.color))
       this.drawPixel(pathX, pathY);
     },
     onMouseMove (event) {
@@ -134,10 +136,10 @@ export default {
       this.isDrawing = false;
       if (!this.drawMulti) this.completeDrawing();
     },
-    redrawPath (context, smallestX, smallestY, pixels, padding) {
+    redrawPath (context, smallestX, smallestY, pixels, padding, path) {
       let xOffset = 0 - smallestX + padding;
       let yOffset = 0 - smallestY + padding;
-      this.setupPen(context);
+      this.setupPen(context, path);
       pixels.forEach((p, i) => {
         if (i == 0) {
           context.beginPath();
@@ -181,7 +183,7 @@ export default {
       var ctx = new C2S(width, height);
 
       this.paths.forEach(p => 
-        this.redrawPath(ctx, smallestX, smallestY, p.pixels, svgPathPadding))
+        this.redrawPath(ctx, smallestX, smallestY, p.pixels, svgPathPadding, p))
 
       var myPath = ctx.getSerializedSvg(true);
 
