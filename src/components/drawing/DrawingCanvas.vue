@@ -59,12 +59,12 @@ export default {
     },
     drawPixel (offsetX, offsetY) {
       const currentPath = this.paths[this.paths.length - 1];
-      const x = currentPath.pixels.length > 0 
-                  ? currentPath.pixels[currentPath.pixels.length - 1].x
-                  : offsetX;
-      const y = currentPath.pixels.length > 0 
-                  ? currentPath.pixels[currentPath.pixels.length - 1].y
-                  : offsetY;
+      // const x = currentPath.pixels.length > 0 
+      //             ? currentPath.pixels[currentPath.pixels.length - 1].x
+      //             : offsetX;
+      // const y = currentPath.pixels.length > 0 
+      //             ? currentPath.pixels[currentPath.pixels.length - 1].y
+      //             : offsetY;
       const newX = offsetX;
       const newY = offsetY;
       
