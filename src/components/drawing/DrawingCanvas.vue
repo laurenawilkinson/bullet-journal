@@ -32,7 +32,7 @@ export default {
   name: 'DrawingCanvas',
   props: {
     drawingMode: Boolean,
-    drawMulti: Boolean,
+    drawTool: String,
     width: Number,
     height: Number,
     color: String,
@@ -46,12 +46,10 @@ export default {
       isDrawing: false
     }
   },
-  watch: {
-    paths (paths) {
-      this.$emit('update:paths', paths);
-    }
-  },
   methods: {
+    updatePaths () {
+      this.$emit('update:paths', this.paths);
+    },
     setupPen (context, path) {
       context.strokeStyle = path.strokeStyle;
       context.lineWidth = path.lineWidth;
@@ -59,20 +57,11 @@ export default {
     },
     drawPixel (offsetX, offsetY) {
       const currentPath = this.paths[this.paths.length - 1];
-      // const x = currentPath.pixels.length > 0 
-      //             ? currentPath.pixels[currentPath.pixels.length - 1].x
-      //             : offsetX;
-      // const y = currentPath.pixels.length > 0 
-      //             ? currentPath.pixels[currentPath.pixels.length - 1].y
-      //             : offsetY;
       const newX = offsetX;
       const newY = offsetY;
-      
-
       currentPath.pixels.push({ x: newX, y: newY });
 
       const currentPixelIndex = currentPath.pixels.length - 1;
-
 
       if (currentPixelIndex == 0) {
         this.context.beginPath();
@@ -134,7 +123,8 @@ export default {
       if (!this.drawingMode) return;
 
       this.isDrawing = false;
-      if (!this.drawMulti) this.completeDrawing();
+      this.updatePaths();
+      if (this.drawTool != 'group') this.completeDrawing();
     },
     redrawPath (context, smallestX, smallestY, pixels, padding, path) {
       let xOffset = 0 - smallestX + padding;
@@ -193,6 +183,7 @@ export default {
         y: smallestY - svgPathPadding, 
         color: this.color });
       this.paths = []; // clear paths
+      this.updatePaths();
       this.context.clearRect(0, 0, this.width, this.height); // clear canvas
     }
   },

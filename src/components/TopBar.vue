@@ -8,17 +8,16 @@
     <button-dropdown
       :buttons="buttons"
       :active="active"
-      @draw-active="activateDraw"
-      @draw-multi-active="activateDraw(true)"
+      @draw-active="activateDraw('path')"
+      @draw-multi-active="activateDraw('group')"
       />
     <icon-button 
       icon="format_list_bulleted" 
       @click="activateList" />
+    <icon-button
+      icon="line_tool"
+      @click="activateDrawTool('line')" />
   </nav>
-  <!-- <label for="draw-multi">
-    <input v-model="localDrawMulti" id="draw-multi" type="checkbox" />
-    Group Drawing
-  </label> -->
   <stroke-width-slider v-model="localPenWidth" />
   <colour-picker v-model="localPenColor" />
 </header>
@@ -42,7 +41,7 @@ export default {
     drawingMode: Boolean,
     penColor: String,
     penWidth: Number,
-    drawMulti: Boolean
+    drawTool: String
   },
   data () {
     return {
@@ -57,16 +56,24 @@ export default {
           key: 'draw',
           icon: 'edit',
           text: 'Draw Path',
-          active: this.active == 'draw' && !this.localDrawMulti
+          active: this.active == 'draw' && this.drawTool == 'path' 
         },
         {
           key: 'draw-multi',
           icon: 'draw_group',
           custom: true,
           text: 'Draw Group',
-          active: this.active == 'draw' && this.localDrawMulti
+          active: this.active == 'draw' && this.drawTool == 'group'
         }
       ]
+    },
+    localDrawTool: {
+      get () {
+        return this.drawTool;
+      },
+      set (value) {
+        this.update('draw-tool', value)
+      }
     },
     localPenColor: {
       get () {
@@ -83,14 +90,6 @@ export default {
       set (value) {
         this.update('pen-width', value)
       }
-    },
-    localDrawMulti: {
-      get () {
-        return this.drawMulti;
-      },
-      set (value) {
-        this.update('draw-multi', value)
-      }
     }
   },
   methods: {
@@ -101,10 +100,10 @@ export default {
       this.active = 'move';
       this.update('drawing-mode', false);
     },
-    activateDraw (multiDraw = false) {
+    activateDraw (drawTool) {
       this.active = 'draw';
       this.update('drawing-mode', true);
-      this.localDrawMulti = multiDraw;
+      this.localDrawTool = drawTool;
     },
     activateList () {
       this.activateMove();

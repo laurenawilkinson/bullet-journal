@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
+  <defs>
+    <clipPath id="clip-line_tool">
+      <rect width="24" height="24"/>
+    </clipPath>
+  </defs>
+  <g id="line_tool" clip-path="url(#clip-line_tool)">
+    <line id="Line_2" data-name="Line 2" y1="14" x2="14" transform="translate(5.5 5.5)" fill="none" stroke="#1d1d1d" stroke-linecap="round" stroke-width="3"/>
+  </g>
+</svg>

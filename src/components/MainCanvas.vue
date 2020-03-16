@@ -26,7 +26,7 @@
       :color="penColor"
       :stroke-width="penWidth"
       :canvas-offset="canvasOffset"
-      :draw-multi="drawMulti"
+      :draw-tool="drawTool"
       :paths.sync="paths"
       @draw-path="drawPath" />
     <div v-if="showListOverlay" class="overlay" @click="createList"></div>
@@ -41,7 +41,7 @@
     <aside 
       v-if="showDrawMultiOverlay"
       class="multi-draw-overlay"
-      @click="$refs.drawingCanvas.completeDrawing">
+      @click="completeDrawing">
       Finish group drawing
     </aside>
 </main>
@@ -72,7 +72,7 @@ export default {
   },
   props: {
     drawingMode: Boolean,
-    drawMulti: Boolean,
+    drawTool: String,
     penColor: String,
     penWidth: Number,
     canvasOffset: Object
@@ -90,7 +90,7 @@ export default {
   },
   computed: {
     showDrawMultiOverlay () {
-      return this.drawMulti && this.drawingMode && this.paths.length > 0;
+      return this.drawTool == 'group' && this.drawingMode && this.paths.length > 0;
     }
   },
   methods: {
@@ -128,6 +128,12 @@ export default {
       this.canvasWidth = this.$refs.canvas.offsetWidth;
       this.canvasHeight = this.$refs.canvas.offsetHeight;
       this.$emit('resize');
+    },
+    completeDrawing () {
+      this.$nextTick(() => {
+        console.log(this.$refs);
+        this.$refs.drawingCanvas.completeDrawing()
+      })
     }
   },
   watch: {
