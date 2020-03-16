@@ -14,8 +14,8 @@
   &--icon {
     padding: 0.4rem;
     
-    .material-icons {
-
+    .material-icons + span {
+      margin-left: 0.5rem;
     }
 
     &.active {

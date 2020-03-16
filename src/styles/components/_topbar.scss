@@ -1,8 +1,11 @@
+$topbar-height: 40px;
+
 .topbar {
   background-color: $primary;
   color: $text--light;
   display: flex;
   align-items: center;
+  height: $topbar-height;
 
   .button {
     color: $primary-100;
@@ -25,5 +28,31 @@
     text-align: left;
     margin: 0 auto;
     flex: 1;
+    height: 100%;
+  }
+}
+
+.dropdown-button {
+  display: inline-block;
+  position: relative;
+  height: 100%;
+
+  &__dropdown {
+    position: absolute;
+    background-color: $primary;
+    top: $topbar-height;
+    left: 0;
+    width: 150px;
+    z-index: 3;
+    box-shadow: 0 0 7px $primary--dark;
+
+    .button {
+      width: 100%;
+    }
+  }
+
+  &__caret {
+    padding-left: 0;
+    padding-right: 0;
   }
 }

@@ -9,8 +9,10 @@
     :disabled="disabled"
     v-on="$listeners"
     >
-    <icon :icon="icon" />
-    <slot></slot>
+    <icon :icon="icon" :custom="custom" />
+    <span v-if="$slots.default">
+      <slot></slot>
+    </span>
   </button>
 </template>
 <script>
@@ -25,7 +27,8 @@ export default {
     icon: String,
     disabled: Boolean,
     size: String,
-    active: Boolean
+    active: Boolean,
+    custom: Boolean
   }
 }
 </script>

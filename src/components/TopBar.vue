@@ -5,18 +5,20 @@
       icon="format_shapes" 
       :active="active == 'move'"
       @click="activateMove" />
-    <icon-button 
-      icon="edit" 
-      :active="active == 'draw'"
-      @click="activateDraw" />
+    <button-dropdown
+      :buttons="buttons"
+      :active="active"
+      @draw-active="activateDraw"
+      @draw-multi-active="activateDraw(true)"
+      />
     <icon-button 
       icon="format_list_bulleted" 
       @click="activateList" />
   </nav>
-  <label for="draw-multi">
+  <!-- <label for="draw-multi">
     <input v-model="localDrawMulti" id="draw-multi" type="checkbox" />
     Group Drawing
-  </label>
+  </label> -->
   <stroke-width-slider v-model="localPenWidth" />
   <colour-picker v-model="localPenColor" />
 </header>
@@ -26,12 +28,15 @@
 import IconButton from '@/components/IconButton.vue';
 import ColourPicker from '@/components/drawing/ColourPicker.vue';
 import StrokeWidthSlider from '@/components/drawing/StrokeWidthSlider.vue';
+import ButtonDropdown from '@/components/TopBarButtonDropdown.vue'
+
 export default {
   name: 'TopBar',
   components: {
     IconButton,
     ColourPicker,
-    StrokeWidthSlider
+    StrokeWidthSlider,
+    ButtonDropdown
   },
   props: {
     drawingMode: Boolean,
@@ -41,10 +46,28 @@ export default {
   },
   data () {
     return {
-      active: 'move'
+      active: 'move',
+      showDropdown: false
     }
   },
   computed: {
+    buttons () {
+      return [
+        {
+          key: 'draw',
+          icon: 'edit',
+          text: 'Draw Path',
+          active: this.active == 'draw' && !this.localDrawMulti
+        },
+        {
+          key: 'draw-multi',
+          icon: 'draw_group',
+          custom: true,
+          text: 'Draw Group',
+          active: this.active == 'draw' && this.localDrawMulti
+        }
+      ]
+    },
     localPenColor: {
       get () {
         return this.penColor;
@@ -78,9 +101,10 @@ export default {
       this.active = 'move';
       this.update('drawing-mode', false);
     },
-    activateDraw () {
+    activateDraw (multiDraw = false) {
       this.active = 'draw';
       this.update('drawing-mode', true);
+      this.localDrawMulti = multiDraw;
     },
     activateList () {
       this.activateMove();

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
+  <defs>
+    <clipPath id="clip-Draw_Groups">
+      <rect width="24" height="24"/>
+    </clipPath>
+  </defs>
+  <g id="Draw_Groups" clip-path="url(#clip-Draw_Groups)">
+    <path id="Icon" d="M582.54,2789H579.5a.5.5,0,0,1-.5-.5v-3.04a.493.493,0,0,1,.15-.36l10.91-10.91,3.75,3.75-10.92,10.91A.47.47,0,0,1,582.54,2789Zm12.34-12.13h0l-3.75-3.75,1.83-1.83a1,1,0,0,1,1.41,0l2.34,2.34a1,1,0,0,1,0,1.409l-1.829,1.83Z" transform="translate(-576 -2768)" fill="#1d1d1d"/>
+    <path id="Icon-2" data-name="Icon" d="M417.712,1490.356a.481.481,0,0,0-.479-.479h-2.4v-2.4a.479.479,0,0,0-.959,0v2.4h-2.4a.479.479,0,1,0,0,.959h2.4v2.4a.479.479,0,1,0,.959,0v-2.4h2.4A.481.481,0,0,0,417.712,1490.356Z" transform="translate(-397.109 -1472.109)" fill="#1d1d1d"/>
+  </g>
+</svg>
