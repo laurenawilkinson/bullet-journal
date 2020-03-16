@@ -2,7 +2,7 @@
   <svgicon 
     v-if="custom" 
     :name="icon"
-    class="material-icons" />
+    :class="`material-icons icon--${icon}`" />
   <i v-else class="material-icons" v-on="$listeners">{{ icon }}</i>
 </template>
 

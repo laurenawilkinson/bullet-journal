@@ -16,7 +16,19 @@
       @click="activateList" />
     <icon-button
       icon="line_tool"
-      @click="activateDrawTool('line')" />
+      :custom="true"
+      :active="active == 'draw' && drawTool == 'line'"
+      @click="activateDraw('line')" />
+    <icon-button
+      icon="square_tool"
+      :custom="true"
+      :active="active == 'draw' && drawTool == 'rect'"
+      @click="activateDraw('rect')" />
+    <icon-button
+      icon="circle_tool"
+      :custom="true"
+      :active="active == 'draw' && drawTool == 'ellipse'"
+      @click="activateDraw('ellipse')" />
   </nav>
   <stroke-width-slider v-model="localPenWidth" />
   <colour-picker v-model="localPenColor" />

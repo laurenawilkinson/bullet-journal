@@ -26,5 +26,10 @@ body {
 
 .svg-fill {
   fill: currentColor;
-  stroke: none;
+  stroke: currentColor;
+
+  &.icon--square_tool,
+  &.icon--circle_tool {
+    fill: none;
+  }
 }

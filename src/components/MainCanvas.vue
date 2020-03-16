@@ -28,7 +28,8 @@
       :canvas-offset="canvasOffset"
       :draw-tool="drawTool"
       :paths.sync="paths"
-      @draw-path="drawPath" />
+      @draw-path="drawPath"
+      @draw-rect="drawPath" />
     <div v-if="showListOverlay" class="overlay" @click="createList"></div>
     <div 
       v-if="showListOverlay"
