@@ -21,6 +21,10 @@
   position: relative;
   overflow: hidden;
   flex: 1;
+
+  &--drawing {
+    cursor: crosshair;
+  }
 }
 
 .drawing-canvas {

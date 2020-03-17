@@ -1,6 +1,11 @@
 <template>
 <main class="canvas-container">
-  <div id="canvas" class="canvas" ref="canvas" @mousemove="trackMouse" @touchmove="trackMouse">
+  <div 
+    id="canvas" 
+    :class="{ canvas: true, 'canvas--drawing': drawingMode }" 
+    ref="canvas" 
+    @mousemove="trackMouse" 
+    @touchmove="trackMouse">
     <bullet-list 
       v-for="(list, index) in lists"
       ref="lists"
@@ -132,8 +137,7 @@ export default {
     },
     completeDrawing () {
       this.$nextTick(() => {
-        console.log(this.$refs);
-        this.$refs.drawingCanvas.completeDrawing()
+        this.$refs.drawingCanvas.completePathDrawing()
       })
     }
   },
