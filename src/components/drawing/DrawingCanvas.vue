@@ -158,8 +158,11 @@ export default {
       if (this.lines.length === 0) return;
 
       this.lines.forEach(line => {
-        let width = line.endX - line.startX + line.svgPadding;
-        let height = line.endY - line.startY + line.svgPadding;
+        let w = line.endX - line.startX;
+        let h = line.endY - line.startY;
+
+        let width = Math.abs(w) + line.svgPadding;
+        let height = Math.abs(h) + line.svgPadding;
         let endX = line.endX - line.startX + line.svgPathPadding;
         let endY = line.endY - line.startY + line.svgPathPadding;
   

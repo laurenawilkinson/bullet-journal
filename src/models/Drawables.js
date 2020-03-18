@@ -91,6 +91,8 @@ export class Line extends Drawable {
   constructor (initialX, initialY, strokeWidth, color) {
     super(strokeWidth, color);
 
+    this.initialX = initialX;
+    this.initialY = initialY;
     this.startX = initialX;
     this.startY = initialY;
     this.endX = initialX;
@@ -124,6 +126,8 @@ export class Rectangle extends Drawable {
   constructor (initialX, initialY, strokeWidth, color) {
     super(strokeWidth, color);
 
+    this.initialX = initialX;
+    this.initialY = initialY;
     this.startX = initialX;
     this.startY = initialY;
     this.width = 0;
@@ -131,10 +135,16 @@ export class Rectangle extends Drawable {
   }
 
   draw (ctx, x, y) {
-    // can't draw backwards rect ?    
+    const width = x - this.initialX;
+    const height = y - this.initialY;
 
-    this.width = Math.abs(x - this.startX);
-    this.height = Math.abs(y - this.startY);
+    if (width < 0)
+      this.startX = this.initialX + width;
+    if (height < 0)
+      this.startY = this.initialY + height;
+
+    this.width = Math.abs(width);
+    this.height = Math.abs(height);
   }
 
   finish (ctx) {
