@@ -35,6 +35,9 @@
       :paths.sync="paths"
       @draw-path="drawPath"
       @draw-rect="drawPath" />
+    <draggable v-for="(image, i) in images" :key="image.src + i" :x.sync="image.x" :y.sync="image.y">
+      <img :src="image.src" draggable="false" />
+    </draggable>
     <div v-if="showListOverlay" class="overlay" @click="createList"></div>
     <div 
       v-if="showListOverlay"
@@ -81,7 +84,8 @@ export default {
     drawTool: String,
     penColor: String,
     penWidth: Number,
-    canvasOffset: Object
+    canvasOffset: Object,
+    images: Array
   },
   data () {
     return {
@@ -97,6 +101,19 @@ export default {
   computed: {
     showDrawMultiOverlay () {
       return this.drawTool == 'group' && this.drawingMode && this.paths.length > 0;
+    },
+    layers () {
+      const svgs = this.svgs.map(x => {
+        return {
+          ...x,
+          component: 'draggable'
+        }
+      })
+      const lists = this.lists.map(x => {
+        return { ...x, component: 'bullet-list'}
+      })
+
+      return [ ...svgs, ...lists ].sort((a, b) => a.order - b.order);
     }
   },
   methods: {

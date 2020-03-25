@@ -4,6 +4,7 @@ import router from './router'
 import './registerServiceWorker'
 import './styles/main.scss'
 import * as svgicon from 'vue-svgicon';
+import './stores/store'
 
 Vue.config.productionTip = false
 

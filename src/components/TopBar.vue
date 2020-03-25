@@ -29,6 +29,8 @@
       :custom="true"
       :active="active == 'draw' && drawTool == 'ellipse'"
       @click="activateDraw('ellipse')" />
+    <image-upload-button
+      @display-image="$emit('display-image', $event)" />
   </nav>
   <stroke-width-slider v-model="localPenWidth" />
   <colour-picker v-model="localPenColor" />
@@ -40,6 +42,7 @@ import IconButton from '@/components/IconButton.vue';
 import ColourPicker from '@/components/drawing/ColourPicker.vue';
 import StrokeWidthSlider from '@/components/drawing/StrokeWidthSlider.vue';
 import ButtonDropdown from '@/components/TopBarButtonDropdown.vue'
+import ImageUploadButton from '@/components/ImageUploadButton.vue'
 
 export default {
   name: 'TopBar',
@@ -47,7 +50,8 @@ export default {
     IconButton,
     ColourPicker,
     StrokeWidthSlider,
-    ButtonDropdown
+    ButtonDropdown,
+    ImageUploadButton
   },
   props: {
     drawingMode: Boolean,
@@ -120,6 +124,10 @@ export default {
     activateList () {
       this.activateMove();
       this.$emit('create-list');
+    },
+    activateImage () {
+      this.activateMove();
+      this.$emit('create-image');
     },
     redPen () {
       this.$emit('change-pen', this.penColor);

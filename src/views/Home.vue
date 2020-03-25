@@ -5,7 +5,8 @@
       :pen-color.sync="penColor"
       :pen-width.sync="penWidth"
       :draw-tool.sync="drawTool"
-      @create-list="createList" />
+      @create-list="createList"
+      @display-image="images.push($event)" />
     <main-canvas 
       ref="canvas"
       :lists.sync="lists"
@@ -15,7 +16,8 @@
         penColor,
         penWidth,
         canvasOffset,
-        drawTool
+        drawTool,
+        images
       }"
       @resize="getCanvasOffset" />
   </div>
@@ -37,6 +39,7 @@ export default {
       penColor: 'rgba(0,0,0,1)',
       penWidth: 3,
       drawTool: 'path',
+      images: [],
       lists: [
         {
           position: { x: 0, y: 0 },
