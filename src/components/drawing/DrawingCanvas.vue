@@ -209,12 +209,14 @@ export default {
       this.paths.forEach(p => 
         p.createMock(ctx, smallestX, smallestY))
 
-      var myPath = ctx.getSerializedSvg(true);
+      var svgEl = ctx.getSvg();
 
       this.$emit('draw-path', { 
-        svg: myPath, 
+        el: svgEl,
         x: smallestX - svgPathPadding, 
-        y: smallestY - svgPathPadding });
+        y: smallestY - svgPathPadding,
+        width,
+        height });
       this.clearCanvas();
       this.updatePaths();
     },

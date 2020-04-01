@@ -22,16 +22,15 @@ export default {
     Draggable
   },
   model: {
-    event: 'change',
-    prop: 'img'
+    event: 'change'
   },
   props: {
-    img: SaveableImage
+    value: SaveableImage
   },
   computed: {
     image: {
       get () {
-        return this.img;
+        return this.value;
       },
       set (value) {
         this.$emit('change', value);

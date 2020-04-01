@@ -15,13 +15,10 @@
       :move-mode="!drawingMode"
       @remove-list="removeList(list.id)"
       @set-active="setActive(index)" />
-    <draggable 
+    <canvas-svg 
       v-for="(svg, i) in svgs" 
-      :key="i" 
-      v-html="svg.svg"
-      class="path-container"
-      :x.sync="svg.x"
-      :y.sync="svg.y" />
+      :key="i"
+      v-model="svgs[i]" />
     <drawing-canvas 
       v-if="drawingMode"
       ref="drawingCanvas"
@@ -38,11 +35,7 @@
     <canvas-image 
       v-for="(image, i) in images" 
       :key="image.src + i"
-      v-model="images[i]"
-    />
-    <!-- <draggable  :x.sync="image.x" :y.sync="image.y">
-      <img :src="image.src" draggable="false" />
-    </draggable> -->
+      v-model="images[i]" />
     <div v-if="showListOverlay" class="overlay" @click="createList"></div>
     <div 
       v-if="showListOverlay"
@@ -64,8 +57,9 @@
 <script>
 import BulletList from '@/components/lists/BulletList.vue'
 import DrawingCanvas from '@/components/drawing/DrawingCanvas.vue'
-import Draggable from '@/components/Draggable.vue'
 import CanvasImage from '@/components/canvas-elements/CanvasImage.vue'
+import CanvasSvg from '@/components/canvas-elements/CanvasSvg.vue'
+import SaveableSvg from '@/models/SaveableSvg';
 
 let lid = 0;
 
@@ -83,8 +77,8 @@ export default {
   components: {
     BulletList,
     DrawingCanvas,
-    Draggable,
-    CanvasImage
+    CanvasImage,
+    CanvasSvg
   },
   props: {
     drawingMode: Boolean,
@@ -152,7 +146,7 @@ export default {
       })
     },
     drawPath (svg) {
-      this.svgs.push(svg);
+      this.svgs.push(new SaveableSvg (svg));
     },
     onWindowResize () {
       this.canvasWidth = this.$refs.canvas.offsetWidth;
