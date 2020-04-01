@@ -7,10 +7,12 @@
       'dragging': dragActive
     }"
     ref="list"
+    :resizable="false"
     :x.sync="position.x"
     :y.sync="position.y"
+    width="unset"
+    height="unset"
     v-on-clickaway="deselectList"
-    v-model="dragActive"
     @click="setActive">
     <ul v-if="items.length > 0" class="bullet-list__container">
       <list-item 

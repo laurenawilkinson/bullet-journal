@@ -13,11 +13,10 @@ import VueDraggableResizable from 'vue-draggable-resizable'
 export default {
   name: 'Draggable',
   props: {
-    component: {
-      type: String,
-      default: 'div'
+    resizable: {
+      type: Boolean,
+      default: true
     },
-    id: Number,
     x: {
       type: Number,
       default: 0
@@ -30,19 +29,8 @@ export default {
       type: Boolean,
       default: false
     },
-    allowResize: {
-      type: Boolean,
-      default: false
-    },
     width: Number,
     height: Number
-  },
-  model: {
-    event: 'change'
-  },
-  data () {
-    return {
-    }
   },
   computed: {
     draggableBinding () {
@@ -51,14 +39,10 @@ export default {
         h: this.height,
         x: this.x,
         y: this.y,
-        'lock-aspect-ratio': true
+        'lock-aspect-ratio': true,
+        resizable: this.resizable && !this.disabled,
+        draggable: !this.disabled
       }
-    }
-  },
-  watch: {
-    x (val) {
-    },
-    y (val) {
     }
   },
   methods: {

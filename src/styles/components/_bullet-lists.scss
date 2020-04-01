@@ -12,8 +12,6 @@
   }
 
   &--active {
-    outline: 3px dashed $secondary;
-    outline-offset: 5px;
     background-color: $page-color;
 
     .bullet-list-item {
