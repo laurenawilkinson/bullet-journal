@@ -35,9 +35,14 @@
       :paths.sync="paths"
       @draw-path="drawPath"
       @draw-rect="drawPath" />
-    <draggable v-for="(image, i) in images" :key="image.src + i" :x.sync="image.x" :y.sync="image.y">
+    <canvas-image 
+      v-for="(image, i) in images" 
+      :key="image.src + i"
+      v-model="images[i]"
+    />
+    <!-- <draggable  :x.sync="image.x" :y.sync="image.y">
       <img :src="image.src" draggable="false" />
-    </draggable>
+    </draggable> -->
     <div v-if="showListOverlay" class="overlay" @click="createList"></div>
     <div 
       v-if="showListOverlay"
@@ -60,6 +65,7 @@
 import BulletList from '@/components/lists/BulletList.vue'
 import DrawingCanvas from '@/components/drawing/DrawingCanvas.vue'
 import Draggable from '@/components/Draggable.vue'
+import CanvasImage from '@/components/canvas-elements/CanvasImage.vue'
 
 let lid = 0;
 
@@ -77,7 +83,8 @@ export default {
   components: {
     BulletList,
     DrawingCanvas,
-    Draggable
+    Draggable,
+    CanvasImage
   },
   props: {
     drawingMode: Boolean,

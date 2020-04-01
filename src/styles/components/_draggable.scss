@@ -1,9 +1,17 @@
 .draggable {
   cursor: move;
 
-  &--dragging {
-    outline: 3px dashed $secondary;
-    outline-offset: 5px;
-    // pointer-events: none;
+  &.active.vdr {
+    border-color: $secondary;
+  }
+
+  &.vdr {
+    border: 2px dashed transparent;
+  }
+  
+  .handle {
+    border: 2px solid $secondary;
+    border-radius: 50px;
+    background-color: white;
   }
 }

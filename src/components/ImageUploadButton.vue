@@ -36,14 +36,23 @@ export default {
         let reader = new FileReader();
         reader.readAsDataURL(image);
         reader.onload = (e) => {
-          const fileToSave = new SaveableImage(0, 0, e.target.result);
+          const img  = new Image();
+          const src = e.target.result;
+          img.src = src;
 
-          this.$emit('display-image', fileToSave);
-          this.images = [];
-          this.$refs.images.value = '';
+          img.addEventListener('load', (e) => {
+            const width = e.path[0].width;
+            const height = e.path[0].height;
+
+            const fileToSave = new SaveableImage(
+            { x: 0, y: 0, src, width, height });
+
+            this.$emit('display-image', fileToSave);
+            this.images = [];
+            this.$refs.images.value = '';
+          });
         }
       }
-
     }
   }
 }
