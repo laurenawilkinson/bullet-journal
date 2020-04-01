@@ -125,11 +125,14 @@ export default {
 
         rect.createMock(ctx);
 
-        let myRect = ctx.getSerializedSvg(true);
+        const svgEl = ctx.getSvg();
+        
         this.$emit('draw-rect', { 
-          svg: myRect, 
+          el: svgEl, 
           x: rect.startX, 
-          y: rect.startY });
+          y: rect.startY,
+          width,
+          height });
       })
       this.clearCanvas();
     },
@@ -142,14 +145,17 @@ export default {
         let x = ellipse.radiusX * 2 + ellipse.svgPathPadding;
         let y = ellipse.radiusY * 2 + ellipse.svgPathPadding;
 
-        var ctx = new C2S(width, height);
+        const ctx = new C2S(width, height);
         ellipse.createMock(ctx, x, y);
         
-        const myEllipse = ctx.getSerializedSvg(true);
+        const svgEl = ctx.getSvg();
+
         this.$emit('draw-path', { 
-          svg: myEllipse, 
+          el: svgEl, 
           x: ellipse.startX - ellipse.radiusX, 
-          y: ellipse.startY - ellipse.radiusY });
+          y: ellipse.startY - ellipse.radiusY,
+          width,
+          height });
       })
 
       this.clearCanvas();
@@ -168,12 +174,15 @@ export default {
   
         const ctx = new C2S(width, height);
         line.createMock(ctx, endX, endY);
-        
-        var myLine = ctx.getSerializedSvg(true);
+
+        const svgEl = ctx.getSvg();
+
         this.$emit('draw-path', { 
-          svg: myLine, 
+          el: svgEl, 
           x: line.startX, 
-          y: line.startY });
+          y: line.startY,
+          width,
+          height });
 
       })
 
@@ -204,12 +213,12 @@ export default {
 
       /* redraw on mock canvas */
 
-      var ctx = new C2S(width, height);
+      const ctx = new C2S(width, height);
 
       this.paths.forEach(p => 
         p.createMock(ctx, smallestX, smallestY))
 
-      var svgEl = ctx.getSvg();
+      const svgEl = ctx.getSvg();
 
       this.$emit('draw-path', { 
         el: svgEl,
