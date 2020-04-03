@@ -1,0 +1,89 @@
+.tracker {
+  $light-grey: #dadada;
+  $dark-grey: #bababa;
+  $box-size: 25px;
+
+  border-collapse: collapse;
+  // border: 1px solid $dark-grey;
+
+
+  &:not(.tracker--vertical) {
+    td {
+      border-top: 1px solid $light-grey;
+      border-right: 1px solid $light-grey;
+    }
+  }
+
+
+  &--vertical {
+    td {
+      border-top: 1px solid $light-grey;
+      border-right: 1px solid $light-grey;
+    }
+
+    .tracker__title {
+      $title-size: 150px;
+
+      min-width: $box-size;
+      max-width: $box-size;
+      min-height: 100px;
+      height: $title-size;
+      padding: 0;
+      position: relative;
+      word-break: break-all;
+      
+      input {
+        box-shadow: 1px 1px 6px rgba($secondary, 0.5);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+      }
+      
+      span {
+        display: block;
+        transform: rotate(-90deg);
+        transform-origin: top left;
+        width: $title-size;
+        position: absolute;
+        left: 0;
+        bottom: -10px;
+        text-align: left;
+        // top: 100px;
+
+      }
+    }
+  }
+
+  &__title {
+    min-width: 150px;
+    max-width: 200px;
+  }
+  
+  &__item-title {
+    cursor: text;
+  }
+
+  &__box {
+    min-width: $box-size;
+    height: $box-size;
+
+    &--circle,
+    &--block {
+      cursor: pointer;
+      .tracker__tickmark {
+        background-color: $secondary;
+      }
+    }
+
+    &--circle {
+      .tracker__tickmark {
+        border-radius: 50px;
+      }
+    }
+  }
+
+  &__tickmark {
+    width: 100%;
+    height: 100%;
+  }
+}

@@ -21,7 +21,7 @@
       <input 
         v-if="showEditBox"
         v-model="localContent" 
-        class="bullet-list-item__input"
+        class="text-input bullet-list-item__input"
         ref="input"
         @change="update('content', localContent)"
         @keyup.enter="deselectText"

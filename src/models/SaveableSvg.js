@@ -1,4 +1,3 @@
-import store from '@/stores/store';
 import Stackable from './Stackable';
 
 export default class SaveableSvg extends Stackable {

@@ -14,6 +14,9 @@
     <icon-button 
       icon="format_list_bulleted" 
       @click="activateList" />
+    <icon-button 
+      icon="alarm" 
+      @click="activateTracker" />
     <icon-button
       icon="line_tool"
       :custom="true"
@@ -125,12 +128,9 @@ export default {
       this.activateMove();
       this.$emit('create-list');
     },
-    activateImage () {
+    activateTracker () {
       this.activateMove();
-      this.$emit('create-image');
-    },
-    redPen () {
-      this.$emit('change-pen', this.penColor);
+      this.$emit('create-tracker');
     }
   }
 }

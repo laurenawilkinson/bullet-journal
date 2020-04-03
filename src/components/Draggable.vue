@@ -12,6 +12,9 @@ import VueDraggableResizable from 'vue-draggable-resizable'
 
 export default {
   name: 'Draggable',
+  components: {
+    VueDraggableResizable
+  },
   props: {
     resizable: {
       type: Boolean,
@@ -46,7 +49,7 @@ export default {
     }
   },
   methods: {
-    setNewPosition (x, y, width, height) {
+    setNewPosition (x, y) {
       this.$emit('update:x', x);
       this.$emit('update:y', y);
     },

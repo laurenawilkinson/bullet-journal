@@ -15,6 +15,11 @@
       :move-mode="!drawingMode"
       @remove-list="removeList(list.id)"
       @set-active="setActive(index)" />
+    <base-tracker 
+      v-for="tracker in trackers" 
+      :key="tracker.id"
+      :position="tracker.position"
+      :items="tracker.items" />
     <canvas-svg 
       v-for="(svg, i) in svgs" 
       :key="i"
@@ -36,13 +41,13 @@
       v-for="(image, i) in images" 
       :key="image.src + i"
       v-model="images[i]" />
-    <div v-if="showListOverlay" class="overlay" @click="createList"></div>
+    <div v-if="showOverlay" class="overlay" @click="createItem"></div>
     <div 
-      v-if="showListOverlay"
+      v-if="showOverlay"
       class="tooltip"
       :style="{ position: 'absolute', top: mouse.y + 'px', left: mouse.x + 'px', pointer: 'crosshair' }"
-       @click="createList">
-      Click to place list
+      @click="createItem">
+      Click to place {{ overlayType }}
     </div>
   </div>
     <aside 
@@ -56,21 +61,13 @@
 
 <script>
 import BulletList from '@/components/lists/BulletList.vue'
+import BaseTracker from '@/components/trackers/BaseTracker.vue'
 import DrawingCanvas from '@/components/drawing/DrawingCanvas.vue'
 import CanvasImage from '@/components/canvas-elements/CanvasImage.vue'
 import CanvasSvg from '@/components/canvas-elements/CanvasSvg.vue'
 import SaveableSvg from '@/models/SaveableSvg';
-
-let lid = 0;
-
-class List {
-  constructor ({ id, position, items }) {
-    this.id = id ? id : 'list--' + lid;
-    this.position = position ? position : { x: 0, y: 0 };
-    this.items = items ? items : [];
-    lid++;
-  }
-}
+import List from '@/models/List';
+import Tracker from '@/models/Tracker';
 
 export default {
   name: 'MainCanvas',
@@ -78,7 +75,8 @@ export default {
     BulletList,
     DrawingCanvas,
     CanvasImage,
-    CanvasSvg
+    CanvasSvg,
+    BaseTracker
   },
   props: {
     drawingMode: Boolean,
@@ -93,10 +91,12 @@ export default {
       svgs: [],
       canvasWidth: 0,
       canvasHeight: 0,
-      showListOverlay: false,
+      showOverlay: false,
+      overlayType: 'list',
       lists: [],
       mouse: { x: 0, y: 0 },
-      paths: []
+      paths: [],
+      trackers: []
     }
   },
   computed: {
@@ -119,18 +119,23 @@ export default {
   },
   methods: {
     trackMouse (event) {
-      if (!this.showListOverlay) return;
+      if (!this.showOverlay) return;
 
       this.mouse.x = event.clientX - this.canvasOffset.x / 2;
       this.mouse.y = event.clientY - this.canvasOffset.y / 2;
     },
-    openListOverlay () {
-      this.showListOverlay = true;
+    openOverlay (overlay) {
+      this.overlayType = overlay;
+      this.showOverlay = true;
     },
-    createList () {
-      this.showListOverlay = false;
-      this.lists.push(new List({ position: { x: this.mouse.x, y: this.mouse.y }}));
-      this.setActive(this.lists.length - 1);
+    createItem () {
+      this.showOverlay = false;
+      if (this.overlayType == 'list') {
+        this.lists.push(new List({ position: { x: this.mouse.x, y: this.mouse.y }}));
+        this.setActive(this.lists.length - 1);
+      } else if (this.overlayType == 'tracker') {
+        this.trackers.push(new Tracker({ position: { x: this.mouse.x, y: this.mouse.y }}));
+      }
     },
     removeList (id) {
       let index = this.lists.map(i => i.id).indexOf(id);
@@ -161,7 +166,7 @@ export default {
   },
   watch: {
     drawingMode () {
-      if (this.drawingMode) this.showListOverlay = false;
+      if (this.drawingMode) this.showOverlay = false;
     }
   },
   mounted () {

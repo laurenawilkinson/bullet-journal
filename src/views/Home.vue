@@ -5,7 +5,8 @@
       :pen-color.sync="penColor"
       :pen-width.sync="penWidth"
       :draw-tool.sync="drawTool"
-      @create-list="createList"
+      @create-list="createItem('list')"
+      @create-tracker="createItem('tracker')"
       @display-image="images.push($event)" />
     <main-canvas 
       ref="canvas"
@@ -75,8 +76,8 @@ export default {
     }
   },
   methods: {
-    createList () {
-      this.$refs.canvas.openListOverlay();
+    createItem (type) {
+      this.$refs.canvas.openOverlay(type);
     },
     getCanvasOffset () {
       this.canvasOffset = {

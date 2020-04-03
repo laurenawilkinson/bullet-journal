@@ -1,0 +1,12 @@
+.text-input {
+  background-color: transparent;
+  font-size: 1rem;
+  box-shadow: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+
+  &:focus {
+    border-bottom-color: $secondary--dark;
+    outline: 0;
+  }
+}
