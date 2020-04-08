@@ -32,14 +32,26 @@ export default {
       type: Boolean,
       default: false
     },
-    width: Number,
-    height: Number
+    width: {
+      type: Number,
+      default: 0
+    },
+    height: {
+      type: Number,
+      default: 0
+    }
+  },
+  data () {
+    return {
+      localWidth: 0,
+      localHeight: 0
+    }
   },
   computed: {
     draggableBinding () {
       return {
-        w: this.width,
-        h: this.height,
+        w: this.width ? this.width : this.localWidth,
+        h: this.height ? this.height : this.localHeight,
         x: this.x,
         y: this.y,
         'lock-aspect-ratio': true,
@@ -57,6 +69,19 @@ export default {
       this.$emit('update:width', width);
       this.$emit('update:height', height);
     }
+  },
+  mounted () {
+    // const width = this.$slots.default.reduce((highest, current) => {
+    //   return current.elm.clientWidth > highest ? current.elm.clientWidth : highest;
+    // }, 0)
+    // let height = 0;
+    // this.$slots.default.forEach(slot => height += slot.elm.clientHeight);
+
+    // this.localWidth = width;
+    // this.localHeight = height;
+    // console.log(width);
+    // console.log(this.$slots.default);
+    // console.log(height);
   }
 }
 </script>

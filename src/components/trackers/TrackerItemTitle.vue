@@ -1,5 +1,5 @@
 <template>
-  <component :is="component" class="tracker__title" @click="editTitle">
+  <component :is="component" class="tracker__item-title" @click="editTitle">
     <input 
       v-if="editingTitle"
       v-model="title"

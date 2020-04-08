@@ -14,12 +14,15 @@
       :items="list.items"
       :move-mode="!drawingMode"
       @remove-list="removeList(list.id)"
-      @set-active="setActive(index)" />
+      @set-active="setActive(index, 'lists')" />
     <base-tracker 
-      v-for="tracker in trackers" 
+      v-for="(tracker, index) in trackers" 
+      ref="trackers"
       :key="tracker.id"
       :position="tracker.position"
-      :items="tracker.items" />
+      :items="tracker.items"
+      :options="tracker.options"
+      @set-active="setActive(index, 'trackers')" />
     <canvas-svg 
       v-for="(svg, i) in svgs" 
       :key="i"
@@ -132,9 +135,10 @@ export default {
       this.showOverlay = false;
       if (this.overlayType == 'list') {
         this.lists.push(new List({ position: { x: this.mouse.x, y: this.mouse.y }}));
-        this.setActive(this.lists.length - 1);
+        this.setActive(this.lists.length - 1, 'lists');
       } else if (this.overlayType == 'tracker') {
         this.trackers.push(new Tracker({ position: { x: this.mouse.x, y: this.mouse.y }}));
+        this.setActive(this.trackers.length - 1, 'trackers');
       }
     },
     removeList (id) {
@@ -142,12 +146,14 @@ export default {
       if (index < 0) return;
       this.$emit('update:lists', this.lists.splice(index, 1));
     },
-    async setActive (activeIndex) {
+    async setActive (activeIndex, ref) {
       await this.$nextTick();
+      console.log(ref);
+      console.log(this.$refs[ref]);
 
-      this.$refs.lists.forEach((list, index) => {
-        if (index == activeIndex) list.activateList();
-        else list.deactivateList();
+      this.$refs[ref].forEach((item, index) => {
+        if (index == activeIndex) item.activate();
+        else item.deactivate();
       })
     },
     drawPath (svg) {

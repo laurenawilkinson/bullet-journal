@@ -1,0 +1,16 @@
+.home {
+  position: relative;
+}
+
+.info-sidebar {
+  $info-bar-width: 200px;
+  position: absolute;
+  background-color: #fafafa;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.5);
+  height: 100%;
+  right: 0;
+  top: $topbar-height;
+  z-index: 10;
+  width: $info-bar-width;
+  padding: 1rem;
+}

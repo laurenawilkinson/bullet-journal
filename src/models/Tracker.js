@@ -2,10 +2,15 @@ let tid = 0;
 let iid = 1;
 
 export default class Tracker {
-  constructor ({ id, position, items }, amount = 7) {
+  constructor ({ id, position, items, options }) {
     this.id = id ? id : 'tracker--' + tid;
     this.position = position ? position : { x: 0, y: 0 };
-    this.items = items ? items : [ new TrackerItem(0, {}, amount)];
+    this.options = options ? options : {
+      boxAmount: 7,
+      tickType: 'circle',
+      layout: 'horizontal'
+    }
+    this.items = items ? items : [ new TrackerItem(0, {}, this.options.boxAmount)];
     tid++;
   }
 }

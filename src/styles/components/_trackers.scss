@@ -21,7 +21,7 @@
       border-right: 1px solid $light-grey;
     }
 
-    .tracker__title {
+    .tracker__item-title {
       $title-size: 150px;
 
       min-width: $box-size;
@@ -37,6 +37,8 @@
         position: absolute;
         bottom: 0;
         left: 0;
+        z-index: 100;
+        background-color: white;
       }
       
       span {

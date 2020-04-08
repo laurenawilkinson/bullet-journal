@@ -114,10 +114,10 @@ export default {
     setActive () {
       if (!this.active) this.$emit('set-active');
     },
-    activateList () {
+    activate () {
       this.active = true;
     },
-    deactivateList () {
+    deactivate () {
       this.active = false;
       if (this.items.length == 0) this.$emit('remove-list')
     },

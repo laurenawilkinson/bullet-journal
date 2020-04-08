@@ -8,6 +8,9 @@
       @create-list="createItem('list')"
       @create-tracker="createItem('tracker')"
       @display-image="images.push($event)" />
+    <info-bar 
+      v-if="activeItem !== null"
+      v-model="activeItem" />
     <main-canvas 
       ref="canvas"
       :lists.sync="lists"
@@ -26,13 +29,16 @@
 
 <script>
 import TopBar from '@/components/TopBar.vue'
+import InfoBar from '@/components/InfoBar.vue'
 import MainCanvas from '@/components/MainCanvas.vue'
+import { InfoBarTracker } from '@/models/InfoBarItems';
 
 export default {
   name: 'Home',
   components: {
     TopBar,
-    MainCanvas
+    MainCanvas,
+    InfoBar
   },
   data ()  {
     return {
@@ -40,6 +46,7 @@ export default {
       penColor: 'rgba(0,0,0,1)',
       penWidth: 3,
       drawTool: 'path',
+      activeItem: new InfoBarTracker(),
       images: [],
       lists: [
         {
