@@ -22,7 +22,7 @@ export default {
         return this.value;
       },
       set (val) {
-        if (!this.invalid) this.$emit('input', val)
+        if (!this.invalid) this.$emit('input', this.binding.type == 'number' ? parseInt(val) : val)
       }
     },
     invalid () {

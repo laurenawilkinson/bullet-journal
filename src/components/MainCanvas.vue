@@ -11,7 +11,7 @@
       ref="lists"
       :key="list.id" 
       :position="list.position"
-      :items="list.items"
+      :items.sync="list.items"
       :move-mode="!drawingMode"
       @remove-list="removeList(list.id)"
       @set-active="setActive(index, 'lists')" />
@@ -21,7 +21,7 @@
       :key="tracker.id"
       :position="tracker.position"
       :items="tracker.items"
-      :options="tracker.options"
+      :options.sync="tracker.options"
       @set-active="setActive(index, 'trackers')" />
     <canvas-svg 
       v-for="(svg, i) in svgs" 
@@ -148,8 +148,6 @@ export default {
     },
     async setActive (activeIndex, ref) {
       await this.$nextTick();
-      console.log(ref);
-      console.log(this.$refs[ref]);
 
       this.$refs[ref].forEach((item, index) => {
         if (index == activeIndex) item.activate();

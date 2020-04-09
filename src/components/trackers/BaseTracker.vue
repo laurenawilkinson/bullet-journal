@@ -5,7 +5,6 @@
   :resizable="false"
   v-on-clickaway="deactivate"
   @click="setActive">
-  {{ active }}
   <table :class="{ 'tracker': true, 'tracker--vertical': useVerticalLayout }">
     <thead>
       <tr v-if="useVerticalLayout">
@@ -36,7 +35,7 @@
           v-for="item in items" 
           :key="item.id" 
           :class="{ 
-            ['tracker__box tracker__box--' + options.tickType]: true,
+            ['tracker__box tracker__box--' + localOptions.tickType]: true,
             'tracker__box--checked': item.values[box]
           }"
           @click="item.setChecked(box)">
@@ -50,23 +49,13 @@
         :key="item.id"
         v-model="items[i]"
         :boxes="boxes"
-        :tick-type="options.tickType" />
+        :tick-type="localOptions.tickType" />
     </tbody>
   </table>
   <div>
     <icon-button icon="add" @click="addItem">
       Add Item
     </icon-button>
-    Boxes: <input v-model="options.boxAmount" type="number" min="1" />
-    Tick type: 
-    <select v-model="options.tickType">
-      <option value="circle">Circle</option>
-      <option value="block">Block</option>
-    </select>
-    <label>
-      Vertical layout
-      <input type="checkbox" v-model="useVerticalLayout" />
-    </label>
   </div>
 </draggable>
 </template>
@@ -79,6 +68,7 @@ import IconButton from '@/components/IconButton.vue'
 import { TrackerItem } from '@/models/Tracker'
 import { mixin as clickaway } from 'vue-clickaway';
 import { InfoBarTracker } from '@/models/InfoBarItems'
+import { mapState } from 'vuex' 
 
 export default {
   name: 'BaseTracker',
@@ -96,20 +86,40 @@ export default {
   },
   data () {
     return {
-      active: false
+      isActive: false
+    }
+  },
+  watch: {
+    localOptions (value) {
+      if (!this.active) return;
+
+      for (const opt in this.options) {
+        if (this.options[opt] !== value[opt]) {
+          this.$emit('update:options', value)
+        }
+      }
     }
   },
   computed: {
-    // localOptions: {
-    //   boxAmount: this.active ? this.$store.activeItem.boxAmount : this.options.boxAmount,
-    //   tickType: this.active ? this.$store.activeItem.tickType : this.options.boxAmount
-    // },
+    localOptions () {
+      return {
+        boxAmount: this.active && this.$store.getters.activeItemProps !== null 
+          ? this.$store.getters.activeItemProps.boxAmount 
+          : this.options.boxAmount,
+        tickType: this.active && this.$store.getters.activeItemProps !== null 
+          ? this.$store.getters.activeItemProps.tickType 
+          : this.options.tickType,
+        layout: this.active && this.$store.getters.activeItemProps !== null 
+          ? this.$store.getters.activeItemProps.layout 
+          : this.options.layout
+      }
+    },
     useVerticalLayout () {
-      return this.options.layout == 'vertical';
+      return this.localOptions.layout == 'vertical';
     },
     boxes () {
       let boxes = [];
-      for (let i = 0; i < this.options.boxAmount; i++) {
+      for (let i = 0; i < this.localOptions.boxAmount; i++) {
         boxes.push(i + 1);
       }
       return boxes;
@@ -121,23 +131,28 @@ export default {
       set (value) {
         this.$emit('update:items', value);
       }
-    } 
+    },
+    active () {
+      return this.isActive || this.$store.state.keepAlive;
+    }
   },
   methods: {
     addItem () {
-      this.localItems.push(new TrackerItem(this.items.length, {}, this.options.boxAmount))
+      this.localItems.push(new TrackerItem(this.items.length, {}, this.localOptions.boxAmount))
     },
     setActive () {
       if (!this.active) this.$emit('set-active');
     },
     activate () {
-      this.active = true;
+      this.isActive = true;
       // connect to store 
       
-      // this.$store.dispatch('setActiveItem', new InfoBarTracker(this.options.boxAmount, this.options.tickType, this.options.trackerLayout))
+      this.$store.dispatch('setActiveItem', new InfoBarTracker(this.localOptions.boxAmount, this.localOptions.tickType, this.localOptions.trackerLayout))
     },
     deactivate () {
-      this.active = false;
+      this.isActive = false;
+      if (!this.active)
+        this.$store.dispatch('setActiveItem', null);
     }
   }
 }

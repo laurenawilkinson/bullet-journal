@@ -7,7 +7,7 @@ export class BaseTrackerItem {
 }
 
 export class InfoBarTracker extends BaseTrackerItem {
-  constructor (boxAmount = 7, tickType = 'circle', trackerLayout = 'horizontal') {
+  constructor (boxAmount = 7, tickType = 'circle', layout = 'horizontal') {
     let options = [
       {
         type: 'text-input',
@@ -17,7 +17,8 @@ export class InfoBarTracker extends BaseTrackerItem {
           max: 31
         },
         value: boxAmount,
-        text: 'Box Amount'
+        text: 'Box Amount',
+        prop: 'boxAmount'
       },
       {
         type: 'select-list',
@@ -32,11 +33,12 @@ export class InfoBarTracker extends BaseTrackerItem {
             text: 'Block',
             value: 'block'
           }
-        ]
+        ],
+        prop: 'tickType'
       },
       {
         type: 'radio-list',
-        value: trackerLayout,
+        value: layout,
         text: 'Tracker Layout',
         options: [
           {
@@ -47,7 +49,8 @@ export class InfoBarTracker extends BaseTrackerItem {
             value: 'vertical',
             text: 'Vertical'
           }
-        ]
+        ],
+        prop: 'layout'
       }
     ]
     

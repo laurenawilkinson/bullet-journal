@@ -16,7 +16,7 @@
     @click="setActive">
     <ul v-if="items.length > 0" class="bullet-list__container">
       <list-item 
-        v-for="(item, index) in items" 
+        v-for="(item, index) in localItems" 
         :key="item.id"
         ref="items"
         :disabled="!moveMode || dragActive"
@@ -93,17 +93,27 @@ export default {
       dragActive: false
     }
   },
+  computed: {
+    localItems: {
+      get () {
+        return this.items
+      },
+      set (value) {
+        this.$emit('update:items', value)
+      }
+    }
+  },
   methods: {
     async addItem (type) {
       if (this.$refs.items) this.$refs.items.forEach(item => item.closeMenu());
-      this.items.push(new BulletListItem({ type }));
+      this.localItems.push(new BulletListItem({ type }));
       await this.$nextTick();
       this.$refs.items[this.$refs.items.length - 1].selectText();
     },
     removeItem (id) {
       let index = this.items.map(i => i.id).indexOf(id);
       if (index < 0) return;
-      this.items.splice(index, 1);
+      this.localItems.splice(index, 1);
     },
     closeMenus (excludedIndex) {
       if (this.$refs.items) this.$refs.items.forEach((item, index) => {

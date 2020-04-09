@@ -9,8 +9,7 @@
       @create-tracker="createItem('tracker')"
       @display-image="images.push($event)" />
     <info-bar 
-      v-if="activeItem !== null"
-      v-model="activeItem" />
+      v-if="activeItem !== null" />
     <main-canvas 
       ref="canvas"
       :lists.sync="lists"
@@ -46,7 +45,6 @@ export default {
       penColor: 'rgba(0,0,0,1)',
       penWidth: 3,
       drawTool: 'path',
-      activeItem: new InfoBarTracker(),
       images: [],
       lists: [
         {
@@ -80,6 +78,11 @@ export default {
         }
       ],
       canvasOffset: {}
+    }
+  },
+  computed: {
+    activeItem () {
+      return this.$store.state.activeItem;
     }
   },
   methods: {

@@ -69,19 +69,6 @@ export default {
       this.$emit('update:width', width);
       this.$emit('update:height', height);
     }
-  },
-  mounted () {
-    // const width = this.$slots.default.reduce((highest, current) => {
-    //   return current.elm.clientWidth > highest ? current.elm.clientWidth : highest;
-    // }, 0)
-    // let height = 0;
-    // this.$slots.default.forEach(slot => height += slot.elm.clientHeight);
-
-    // this.localWidth = width;
-    // this.localHeight = height;
-    // console.log(width);
-    // console.log(this.$slots.default);
-    // console.log(height);
   }
 }
 </script>
