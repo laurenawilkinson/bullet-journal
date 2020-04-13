@@ -1,6 +1,5 @@
 <template>
   <div class="home">
-    {{ $store.state.keepAlive }}
     <top-bar 
       :drawing-mode.sync="drawingMode"
       :pen-color.sync="penColor"

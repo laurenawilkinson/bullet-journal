@@ -156,7 +156,7 @@ export default {
     activate () {
       setTimeout(() => {
         this.isActive = true;
-        this.$store.dispatch('setActiveItem', new InfoBarTracker(this.id, this.localOptions.boxAmount, this.localOptions.tickType, this.localOptions.trackerLayout))
+        this.$store.dispatch('setActiveItem', new InfoBarTracker(this.id, this.localOptions.boxAmount, this.localOptions.tickType, this.localOptions.layout))
       }, 40)
     },
     deactivate () {
