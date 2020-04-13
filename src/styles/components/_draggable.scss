@@ -3,6 +3,7 @@
 
   &.active.vdr {
     border-color: $secondary;
+    user-select: none;
   }
 
   &.vdr {

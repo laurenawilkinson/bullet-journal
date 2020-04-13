@@ -3,6 +3,7 @@
   :x.sync="position.x"
   :y.sync="position.y"
   :resizable="false"
+  :active="active"
   v-on-clickaway="deactivate"
   @click="setActive">
   <table :class="{ 'tracker': true, 'tracker--vertical': useVerticalLayout }">
@@ -138,7 +139,7 @@ export default {
   },
   methods: {
     addItem () {
-      this.localItems.push(new TrackerItem(this.items.length, {}, this.localOptions.boxAmount))
+      this.localItems.push(new TrackerItem(this.items.length + 1, {}, this.localOptions.boxAmount))
     },
     setActive () {
       if (!this.active) this.$emit('set-active');

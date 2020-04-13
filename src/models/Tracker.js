@@ -1,5 +1,4 @@
 let tid = 0;
-let iid = 1;
 
 export default class Tracker {
   constructor ({ id, position, items, options }) {
@@ -10,7 +9,7 @@ export default class Tracker {
       tickType: 'circle',
       layout: 'horizontal'
     }
-    this.items = items ? items : [ new TrackerItem(0, {}, this.options.boxAmount)];
+    this.items = items ? items : [ new TrackerItem(1, {}, this.options.boxAmount)];
     tid++;
   }
 }
@@ -18,12 +17,10 @@ export default class Tracker {
 export class TrackerItem {
   constructor (id, { title, values } = null, amount = 0) {
     this.id = 'tracker-item--' + id;
-    this.title = title ? title : 'New Item ' + iid;
+    this.title = title ? title : 'New Item ' + id;
     this.values = values ? values : {}; 
 
     this.updateValues(amount)
-
-    iid++;
   }
 
   updateValues (amount) {
