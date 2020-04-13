@@ -14,6 +14,12 @@
         v-model="opt.value"
         :text="opt.text"
         :options="opt.options" />
+      <icon-button 
+        v-else-if="opt.type == 'icon-button'" 
+        v-bind="opt.binding"
+        @click="raiseEvent(opt.click)">
+        {{ opt.text }}
+      </icon-button>
       <option-text
         v-else
         v-model="opt.value"
@@ -27,9 +33,10 @@
 import OptionText from '@/components/info-bar/InfoBarOptionText.vue'
 import OptionRadios from '@/components/info-bar/InfoBarOptionRadios.vue'
 import OptionSelect from '@/components/info-bar/InfoBarOptionSelect.vue'
-import { InfoBarTracker } from '@/models/InfoBarItems'
+import IconButton from '@/components/IconButton.vue'
 import { mapState } from 'vuex'
 import { mixin as clickaway } from 'vue-clickaway';
+import EventBus from '../EventBus'
 
 export default {
   name: 'InfoBar',
@@ -37,7 +44,8 @@ export default {
   components: {
     OptionRadios,
     OptionText,
-    OptionSelect
+    OptionSelect,
+    IconButton
   },
   data () {
     return {
@@ -67,6 +75,9 @@ export default {
     },
     stopKeepComponentAlive () {
       this.$store.dispatch('keepAlive', false);
+    },
+    raiseEvent (event) {
+      EventBus.$emit(event.name, event.payload)
     }
   },
   mounted () {

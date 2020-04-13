@@ -6,20 +6,18 @@
   border-collapse: collapse;
   // border: 1px solid $dark-grey;
 
-
-  &:not(.tracker--vertical) {
+  tr {
     td {
       border-top: 1px solid $light-grey;
       border-right: 1px solid $light-grey;
+    }
+    &:last-child td {
+      border-bottom: 1px solid $light-grey;
     }
   }
 
 
   &--vertical {
-    td {
-      border-top: 1px solid $light-grey;
-      border-right: 1px solid $light-grey;
-    }
 
     .tracker__item-title {
       $title-size: 150px;

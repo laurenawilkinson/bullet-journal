@@ -5,6 +5,7 @@
   :resizable="false"
   :active="active"
   v-on-clickaway="removeActiveItem"
+  @drag-start="setActive"
   @click="setActive">
   <table :class="{ 'tracker': true, 'tracker--vertical': useVerticalLayout }">
     <thead>
@@ -33,31 +34,26 @@
         :key="box">
         <td class="tracker__box">{{ box }}</td>
         <td 
-          v-for="item in items" 
+          v-for="(item, index) in localItems" 
           :key="item.id" 
           :class="{ 
             ['tracker__box tracker__box--' + localOptions.tickType]: true,
-            'tracker__box--checked': item.values[box]
+            'tracker__box--checked': localItems[index].values[box]
           }"
           @click="item.setChecked(box)">
-          <div v-if="item.values[box]" class="tracker__tickmark"></div>
+          <div v-if="localItems[index].values[box]" class="tracker__tickmark"></div>
         </td>
       </tr>
     </tbody>
     <tbody v-else>
       <item 
-        v-for="(item, i) in items" 
+        v-for="(item, i) in localItems" 
         :key="item.id"
         v-model="items[i]"
         :boxes="boxes"
         :tick-type="localOptions.tickType" />
     </tbody>
   </table>
-  <div>
-    <icon-button icon="add" @click="addItem">
-      Add Item
-    </icon-button>
-  </div>
 </draggable>
 </template>
 
@@ -65,11 +61,10 @@
 import Draggable from '@/components/Draggable.vue'
 import Item from '@/components/trackers/TrackerItem.vue'
 import TrackerItemTitle from '@/components/trackers/TrackerItemTitle.vue'
-import IconButton from '@/components/IconButton.vue'
 import { TrackerItem } from '@/models/Tracker'
 import { mixin as clickaway } from 'vue-clickaway';
 import { InfoBarTracker } from '@/models/InfoBarItems'
-import { mapState } from 'vuex' 
+import EventBus from '../../EventBus'
 
 export default {
   name: 'BaseTracker',
@@ -77,7 +72,6 @@ export default {
   components: {
     Draggable,
     Item,
-    IconButton,
     TrackerItemTitle
   },
   props: {
@@ -162,6 +156,11 @@ export default {
     deactivate () {
       this.isActive = false;
     }
+  },
+  created () {
+    EventBus.$on('tracker:add-item', id => {
+      if (id === this.id) this.addItem();
+    })
   }
 }
 </script>

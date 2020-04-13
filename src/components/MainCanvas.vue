@@ -151,7 +151,7 @@ export default {
       await this.$nextTick();
       this.$store.dispatch('setActiveItem', null);
 
-      this.$refs[ref].forEach((item, index) => {
+      this.$refs[ref].forEach(item => {
         item.deactivate();
       })
 

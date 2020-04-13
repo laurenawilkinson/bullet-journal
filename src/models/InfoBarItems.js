@@ -52,6 +52,18 @@ export class InfoBarTracker extends BaseTrackerItem {
           }
         ],
         prop: 'layout'
+      },
+      {
+        type: 'icon-button',
+        text: 'Add Item',
+        binding: {
+          icon: 'add',
+          className: 'button--block'
+        },
+        click: {
+          name: 'tracker:add-item',
+          payload: id 
+        }
       }
     ]
     

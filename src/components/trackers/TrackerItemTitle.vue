@@ -5,7 +5,8 @@
       v-model="title"
       class="text-input"
       ref="title" 
-      @blur="editingTitle = false" />
+      @blur="editingTitle = false"
+      @keyup.enter="editingTitle = false" />
     <span v-else>{{ title }}</span>
   </component>
 </template>

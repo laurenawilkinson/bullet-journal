@@ -120,7 +120,7 @@ export default {
 
       this.setNewPosition(x, y)
     },
-    onDragEnd (e) {
+    onDragEnd () {
       this.dragging = false;
       this.destroyContainerListeners();
     },

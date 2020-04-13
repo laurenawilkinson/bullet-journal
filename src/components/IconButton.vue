@@ -4,7 +4,8 @@
     :class="{
       'button button--icon': true,
       'button--sm': size == 'sm',
-      'active': active 
+      'active': active,
+      [className]: true
     }"
     :disabled="disabled"
     v-on="$listeners"
@@ -25,6 +26,7 @@ export default {
   },
   props: {
     icon: String,
+    className: String,
     disabled: Boolean,
     size: String,
     active: Boolean,

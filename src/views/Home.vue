@@ -8,8 +8,9 @@
       @create-list="createItem('list')"
       @create-tracker="createItem('tracker')"
       @display-image="images.push($event)" />
-    <info-bar 
-      v-if="activeItem !== null" />
+    <transition name="slide-from-right" mode="out-in">
+      <info-bar v-if="activeItem !== null" />
+    </transition>
     <main-canvas 
       ref="canvas"
       :lists.sync="lists"
@@ -30,7 +31,6 @@
 import TopBar from '@/components/TopBar.vue'
 import InfoBar from '@/components/InfoBar.vue'
 import MainCanvas from '@/components/MainCanvas.vue'
-import { InfoBarTracker } from '@/models/InfoBarItems';
 
 export default {
   name: 'Home',
