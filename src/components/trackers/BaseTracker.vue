@@ -4,7 +4,7 @@
   :y.sync="position.y"
   :resizable="false"
   :active="active"
-  v-on-clickaway="deactivate"
+  v-on-clickaway="removeActiveItem"
   @click="setActive">
   <table :class="{ 'tracker': true, 'tracker--vertical': useVerticalLayout }">
     <thead>
@@ -83,7 +83,8 @@ export default {
   props: {
     position: Object,
     items: Array,
-    options: Object
+    options: Object,
+    id: String
   },
   data () {
     return {
@@ -134,7 +135,7 @@ export default {
       }
     },
     active () {
-      return this.isActive || this.$store.state.keepAlive;
+      return this.isActive || this.$store.state.keepAlive && this.$store.state.activeItem !== null && this.$store.state.activeItem.id == this.id;
     }
   },
   methods: {
@@ -144,16 +145,22 @@ export default {
     setActive () {
       if (!this.active) this.$emit('set-active');
     },
+    removeActiveItem () {
+      setTimeout(() => {
+        if (!this.$store.state.keepAlive && this.isActive){
+          this.$store.dispatch('setActiveItem', null);
+        }
+        this.deactivate();
+      }, 20)
+    },
     activate () {
-      this.isActive = true;
-      // connect to store 
-      
-      this.$store.dispatch('setActiveItem', new InfoBarTracker(this.localOptions.boxAmount, this.localOptions.tickType, this.localOptions.trackerLayout))
+      setTimeout(() => {
+        this.isActive = true;
+        this.$store.dispatch('setActiveItem', new InfoBarTracker(this.id, this.localOptions.boxAmount, this.localOptions.tickType, this.localOptions.trackerLayout))
+      }, 40)
     },
     deactivate () {
       this.isActive = false;
-      if (!this.active)
-        this.$store.dispatch('setActiveItem', null);
     }
   }
 }

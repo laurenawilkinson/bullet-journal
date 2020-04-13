@@ -1,5 +1,6 @@
 export class BaseTrackerItem {
-  constructor (type, title, options = []) {
+  constructor (id, type, title, options = []) {
+    this.id = id;
     this.type = type;
     this.title = title;
     this.options = options;
@@ -7,7 +8,7 @@ export class BaseTrackerItem {
 }
 
 export class InfoBarTracker extends BaseTrackerItem {
-  constructor (boxAmount = 7, tickType = 'circle', layout = 'horizontal') {
+  constructor (id, boxAmount = 7, tickType = 'circle', layout = 'horizontal') {
     let options = [
       {
         type: 'text-input',
@@ -54,6 +55,6 @@ export class InfoBarTracker extends BaseTrackerItem {
       }
     ]
     
-    super('tracker', 'Tracker', options)
+    super(id, 'tracker', 'Tracker', options)
   }
 }

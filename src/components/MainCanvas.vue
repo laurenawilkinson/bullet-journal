@@ -19,6 +19,7 @@
       v-for="(tracker, index) in trackers" 
       ref="trackers"
       :key="tracker.id"
+      :id="tracker.id"
       :position="tracker.position"
       :items="tracker.items"
       :options.sync="tracker.options"
@@ -148,11 +149,13 @@ export default {
     },
     async setActive (activeIndex, ref) {
       await this.$nextTick();
+      this.$store.dispatch('setActiveItem', null);
 
       this.$refs[ref].forEach((item, index) => {
-        if (index == activeIndex) item.activate();
-        else item.deactivate();
+        item.deactivate();
       })
+
+      this.$refs[ref][activeIndex].activate();
     },
     drawPath (svg) {
       this.svgs.push(new SaveableSvg (svg));

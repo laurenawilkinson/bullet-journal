@@ -20,7 +20,6 @@
         :text="opt.text"
         :binding="opt.binding" />
     </div>
-    {{ $store.state.keepAlive }}
   </aside>
 </template>
 
@@ -60,19 +59,7 @@ export default {
     ...mapState({
       options: state => state.activeItem.options || [],
       title: state => state.activeItem.title
-    }),
-    // value () {
-    //   let activeItem = null;
-
-    //   if (this.type == 'tracker') {
-    //     const boxAmount = this.options.find(x => x.text == 'Box Amount');
-    //     const tickType = this.options.find(x => x.text == 'Tick Type');
-    //     const trackerLayout = this.options.find(x => x.text == 'Tracker Layout');
-    //     activeItem = new InfoBarTracker(boxAmount.value, tickType.value, trackerLayout.value)
-    //   }
-
-    //   return activeItem;
-    // }
+    })
   },
   methods: {
     keepComponentAlive () {
