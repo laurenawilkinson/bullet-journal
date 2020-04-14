@@ -15,6 +15,7 @@
 <script>
 import Icon from '@/components/MaterialIcon.vue'
 import SaveableImage from '@/models/SaveableImage'
+import EventBus from '../EventBus'
 
 export default {
   name: 'ImageUploadButton',
@@ -45,9 +46,8 @@ export default {
             const height = e.path[0].height;
 
             const fileToSave = new SaveableImage(
-            { x: 0, y: 0, src, width, height });
-
-            this.$emit('display-image', fileToSave);
+              { x: 0, y: 0, src, width, height });
+            EventBus.$emit('dbup:add', { storeName: 'imageStore', value: fileToSave });
             this.images = [];
             this.$refs.images.value = '';
           });

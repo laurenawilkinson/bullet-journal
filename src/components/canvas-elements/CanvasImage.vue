@@ -3,7 +3,9 @@
     :x.sync="image.x" 
     :y.sync="image.y"
     :width.sync="image.width"
-    :height.sync="image.height">
+    :height.sync="image.height"
+    @dragstop="convertToImageStoreObject"
+    @resizestop="convertToImageStoreObject">
     <img 
       :src="image.src" 
       :width="image.width" 
@@ -27,15 +29,33 @@ export default {
   props: {
     value: SaveableImage
   },
-  computed: {
-    image: {
-      get () {
-        return this.value;
-      },
-      set (value) {
-        this.$emit('change', value);
-      }
+  data () {
+    return {
+      image: this.value
     }
+  },
+  watch: {
+    image: {
+      handler (value) {
+        this.$emit('change', value);
+      },
+      deep: true
+    }
+  },
+  methods: {
+    convertToImageStoreObject () {
+      const obj = {
+        x: this.image.x,
+        y: this.image.y,
+        width: this.image.width,
+        height: this.image.height,
+        src: this.image.src,
+      };
+      this.$emit('update', { id: this.image.id, value: obj });
+    }
+  },
+  mounted () {
+    this.image = this.value;
   }
 }
 </script>

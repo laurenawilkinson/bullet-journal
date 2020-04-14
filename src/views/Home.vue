@@ -7,7 +7,7 @@
       :draw-tool.sync="drawTool"
       @create-list="createItem('list')"
       @create-tracker="createItem('tracker')"
-      @display-image="images.push($event)" />
+      @display-image="addDbItem('imageStore', $event)" />
     <transition name="slide-from-right" mode="out-in">
       <info-bar v-if="activeItem !== null" />
     </transition>
@@ -31,6 +31,7 @@
 import TopBar from '@/components/TopBar.vue'
 import InfoBar from '@/components/InfoBar.vue'
 import MainCanvas from '@/components/MainCanvas.vue'
+import EventBus from '../EventBus'
 
 export default {
   name: 'Home',
@@ -39,13 +40,15 @@ export default {
     MainCanvas,
     InfoBar
   },
+  props: {
+    images: Array
+  },
   data ()  {
     return {
       drawingMode: false,
       penColor: 'rgba(0,0,0,1)',
       penWidth: 3,
       drawTool: 'path',
-      images: [],
       lists: [
         {
           position: { x: 0, y: 0 },
@@ -86,6 +89,9 @@ export default {
     }
   },
   methods: {
+    addDbItem (storeName, value) {
+      EventBus.$emit('dbup:add', { storeName, value })
+    },
     createItem (type) {
       this.$refs.canvas.openOverlay(type);
     },

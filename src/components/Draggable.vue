@@ -3,7 +3,8 @@
     v-if="resizable"
     v-bind="draggableBinding" 
     @dragstop="setNewPosition"
-    @resizing="setNewSize">
+    @resizing="setNewSize"
+    @resizestop="$emit('resizestop')">
     <slot></slot>
   </vue-draggable-resizable>
   <div 
@@ -127,6 +128,7 @@ export default {
     setNewPosition (x, y) {
       this.$emit('update:x', x);
       this.$emit('update:y', y);
+      this.$emit('dragstop');
     },
     setNewSize (x, y, width, height) {
       this.$emit('update:width', width);

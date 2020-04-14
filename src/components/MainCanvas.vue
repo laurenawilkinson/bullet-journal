@@ -42,9 +42,10 @@
       @draw-path="drawPath"
       @draw-rect="drawPath" />
     <canvas-image 
-      v-for="(image, i) in images" 
-      :key="image.src + i"
-      v-model="images[i]" />
+      v-for="(image, i) in localImages" 
+      :key="image.id"
+      :value="localImages[i]"
+      @update="updateDbItem('imageStore', $event)" />
     <div v-if="showOverlay" class="overlay" @click="createItem"></div>
     <div 
       v-if="showOverlay"
@@ -72,6 +73,7 @@ import CanvasSvg from '@/components/canvas-elements/CanvasSvg.vue'
 import SaveableSvg from '@/models/SaveableSvg';
 import List from '@/models/List';
 import Tracker from '@/models/Tracker';
+import EventBus from '../EventBus';
 
 export default {
   name: 'MainCanvas',
@@ -104,6 +106,14 @@ export default {
     }
   },
   computed: {
+    localImages: {
+      get () {
+        return this.images
+      },
+      set (val) {
+        this.$emit('update:images', val)
+      }
+    },
     showDrawMultiOverlay () {
       return this.drawTool == 'group' && this.drawingMode && this.paths.length > 0;
     },
@@ -122,6 +132,12 @@ export default {
     }
   },
   methods: {
+    addDbItem (storeName, value) {
+      EventBus.$emit('dbup:add', { storeName, value })
+    },
+    updateDbItem (storeName, { id, value }) {
+      EventBus.$emit('dbup:update', { storeName, id, value })
+    },
     trackMouse (event) {
       if (!this.showOverlay) return;
 
