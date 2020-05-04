@@ -5,8 +5,8 @@
       v-model="title"
       class="text-input"
       ref="title" 
-      @blur="editingTitle = false"
-      @keyup.enter="editingTitle = false" />
+      @blur="finishEditing"
+      @keyup.enter="finishEditing" />
     <span v-else>{{ title }}</span>
   </component>
 </template>
@@ -44,6 +44,10 @@ export default {
     editTitle () {
       this.editingTitle = true;
       this.$nextTick(() => this.$refs.title.focus())
+    },
+    finishEditing () {
+      this.editingTitle = false;
+      this.$emit('update');
     }
   }
 }

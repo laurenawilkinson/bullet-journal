@@ -4,9 +4,11 @@
   :y.sync="position.y"
   :resizable="false"
   :active="active"
+  :allow-clicks="true"
   v-on-clickaway="removeActiveItem"
   @drag-start="setActive"
-  @click="setActive">
+  @dragstop="updateDb"
+  @click.stop="setActive">
   <table :class="{ 'tracker': true, 'tracker--vertical': useVerticalLayout }">
     <thead>
       <tr v-if="useVerticalLayout">
@@ -16,7 +18,8 @@
           component="th"
           v-for="(item, i) in items" 
           :key="item.id"
-          :vertical-layout="useVerticalLayout" />
+          :vertical-layout="useVerticalLayout"
+          @update="updateDb" />
       </tr>
       <tr v-else>
         <th class="tracker__title"></th>
@@ -40,7 +43,7 @@
             ['tracker__box tracker__box--' + localOptions.tickType]: true,
             'tracker__box--checked': localItems[index].values[box]
           }"
-          @click="item.setChecked(box)">
+          @mousedown.stop="setItemChecked(item, box)">
           <div v-if="localItems[index].values[box]" class="tracker__tickmark"></div>
         </td>
       </tr>
@@ -51,7 +54,9 @@
         :key="item.id"
         v-model="items[i]"
         :boxes="boxes"
-        :tick-type="localOptions.tickType" />
+        :tick-type="localOptions.tickType"
+        @update="updateDb"
+        @set-active="setActive" />
     </tbody>
   </table>
 </draggable>
@@ -61,7 +66,7 @@
 import Draggable from '@/components/Draggable.vue'
 import Item from '@/components/trackers/TrackerItem.vue'
 import TrackerItemTitle from '@/components/trackers/TrackerItemTitle.vue'
-import { TrackerItem } from '@/models/Tracker'
+import { TrackerItem, StoreTracker } from '@/models/Tracker'
 import { mixin as clickaway } from 'vue-clickaway';
 import { InfoBarTracker } from '@/models/InfoBarItems'
 import EventBus from '../../EventBus'
@@ -78,11 +83,12 @@ export default {
     position: Object,
     items: Array,
     options: Object,
-    id: String
+    id: Number
   },
   data () {
     return {
-      isActive: false
+      isActive: false,
+      dragDisabled: false
     }
   },
   watch: {
@@ -133,8 +139,20 @@ export default {
     }
   },
   methods: {
+    setItemChecked (item, box) {
+      this.setActive();
+      item.setChecked(box);
+      this.updateDb();
+    },
+    getTrackerStoreItem () {
+      return new StoreTracker({ id: this.id, position: this.position, items: this.items, options: this.options })
+    },
+    updateDb () {
+      this.$emit('update', { id: this.id, value: this.getTrackerStoreItem() })
+    },
     addItem () {
       this.localItems.push(new TrackerItem(this.items.length + 1, {}, this.localOptions.boxAmount))
+      this.updateDb();
     },
     setActive () {
       if (!this.active) this.$emit('set-active');
@@ -154,7 +172,9 @@ export default {
       }, 40)
     },
     deactivate () {
+      if (!this.isActive) return;
       this.isActive = false;
+      this.updateDb();
     }
   },
   created () {

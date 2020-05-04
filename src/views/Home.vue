@@ -20,7 +20,8 @@
         penWidth,
         canvasOffset,
         drawTool,
-        images
+        images,
+        trackers
       }"
       @resize="getCanvasOffset" />
   </div>
@@ -41,7 +42,8 @@ export default {
   },
   props: {
     images: Array,
-    lists: Array
+    lists: Array,
+    trackers: Array
   },
   data ()  {
     return {

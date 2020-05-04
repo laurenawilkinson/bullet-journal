@@ -7,7 +7,8 @@
     <router-view
       v-bind="{
         images: imageStore,
-        lists: listStore
+        lists: listStore,
+        trackers: trackerStore
       }" />
   </div>
 </template>
@@ -16,6 +17,7 @@
 import EventBus from './EventBus'
 import SaveableImage from '@/models/SaveableImage'
 import List from '@/models/List'
+import Tracker from '@/models/Tracker'
 
 export default {
   name: 'App',
@@ -24,28 +26,28 @@ export default {
       indexedDB: window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB,
       db: null,
       imageStore: [],
-      listStore: []
+      listStore: [],
+      trackerStore: []
     }
   },
   methods: {
     async dbAdd (storeName, value) {
-      // return new Promise((res, rej) => {
         console.log('adding to ', storeName);
         if (!value || value == null) return console.error('Invalid Value');
   
-        let objectStore = this.db.transaction(storeName, "readwrite").objectStore(storeName);
+        let objectStore = this.db
+          .transaction(storeName, "readwrite")
+          .objectStore(storeName);
         let req = objectStore.add(value)
         
         req.onerror = (error) => console.error('Transaction Error', error)
         
         req.onsuccess = async (e) => {
           // update store with new item
-          // e.target.result is the key
+          // e.target.result is the key (id)
           await this.dbPull(storeName)
-          console.log(this[storeName])
           EventBus.$emit('set-active-item', { storeName, id: e.target.result })
         }
-      // })
     },
     async dbPull (storeName, keys = []) {
       return new Promise((res, rej) => {
@@ -56,7 +58,7 @@ export default {
               .objectStore(storeName)
               .get(key)
               .onsuccess = (e) => {
-              console.log('Result' + e.target.result);
+                // let result = e.target.result;
             };
           }
         } else {
@@ -74,7 +76,10 @@ export default {
                 this.listStore = e.target.result
                   .map(x => new List({ id: x.id, position: { x: x.x, y: x.y }, items: x.items }))
               }
-              console.log('pull finished with length', e.target.result.length)
+              if (storeName === 'trackerStore') {
+                this.trackerStore = e.target.result
+                  .map(x => new Tracker({ id: x.id, position: { x: x.x, y: x.y }, items: x.items, options: x.options }))
+              }
               
               res();
           };
@@ -85,6 +90,7 @@ export default {
     async dbUpdate (storeName, id, value) {
       if (!id) return console.error('No ID!');
 
+      console.log('updating...', value)
       let objectStore = this.db.transaction(storeName, "readwrite").objectStore(storeName);
       let req = objectStore.get(id)
       
@@ -99,13 +105,12 @@ export default {
 
         reqUpdate.onerror = (error) => console.error('Update Error', error)
         reqUpdate.onsuccess = async (event) => {
-          await this.dbPull(storeName) // JUST UPDATE THE KEYM, NOT WHOLE ARRAY!
+            await this.dbPull(storeName) // JUST UPDATE THE KEYM, NOT WHOLE ARRAY!
         };
       }
     },
     async dbDelete (storeName, id) {
-      console.log('deleting...', id);
-      console.log('deleting...', storeName);
+      console.log('deleting ' + id + ' from ' + storeName);
       let objectStore = this.db
         .transaction(storeName, "readwrite")
         .objectStore(storeName);
@@ -113,7 +118,6 @@ export default {
       objectStore.delete(id);
 
       objectStore.onsuccess = async e => {
-        console.log('success')
         await this.dbPull(storeName);
       }
 
@@ -130,13 +134,15 @@ export default {
     async createStores () {
       await Promise.all([
         this.createStore('imageStore', ['x', 'y', 'src', 'width', 'height']),
-        this.createStore('listStore', ['x', 'y', 'items'])
+        this.createStore('listStore', ['x', 'y', 'items']),
+        this.createStore('trackerStore', ['x', 'y', 'items', 'options'])
       ])
     },
     async pullAllStores () {
       await Promise.all([
         this.dbPull('imageStore'),
-        this.dbPull('listStore')
+        this.dbPull('listStore'),
+        this.dbPull('trackerStore')
       ])
     }
   },

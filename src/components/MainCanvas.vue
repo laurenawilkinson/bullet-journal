@@ -18,14 +18,15 @@
       @set-active="setActive(index, 'lists')"
       @update="updateDbItem('listStore', $event)" />
     <base-tracker 
-      v-for="(tracker, index) in trackers" 
+      v-for="(tracker, index) in localTrackers" 
       ref="trackers"
-      :key="tracker.id"
+      :key="'tracker-' + tracker.id"
       :id="tracker.id"
       :position="tracker.position"
       :items="tracker.items"
       :options.sync="tracker.options"
-      @set-active="setActive(index, 'trackers')" />
+      @set-active="setActive(index, 'trackers')"
+      @update="updateDbItem('trackerStore', $event)" />
     <canvas-svg 
       v-for="(svg, i) in svgs" 
       :key="i"
@@ -74,7 +75,7 @@ import CanvasImage from '@/components/canvas-elements/CanvasImage.vue'
 import CanvasSvg from '@/components/canvas-elements/CanvasSvg.vue'
 import SaveableSvg from '@/models/SaveableSvg';
 import { List, StoreList } from '@/models/List';
-import Tracker from '@/models/Tracker';
+import { Tracker, StoreTracker } from '@/models/Tracker';
 import EventBus from '../EventBus';
 
 export default {
@@ -93,7 +94,8 @@ export default {
     penWidth: Number,
     canvasOffset: Object,
     images: Array,
-    lists: Array
+    lists: Array,
+    trackers: Array
   },
   data () {
     return {
@@ -104,7 +106,7 @@ export default {
       overlayType: 'list',
       mouse: { x: 0, y: 0 },
       paths: [],
-      trackers: [],
+      localTrackers: [],
       localLists: []
     }
   },
@@ -156,20 +158,22 @@ export default {
     },
     createItem () {
       this.showOverlay = false;
+      let store = null;
+      let item = null;
+
       if (this.overlayType == 'list') {
-        let newList = new StoreList({ position: { x: this.mouse.x, y: this.mouse.y }})
-        this.addDbItem('listStore', newList)
-        // this.setActive(this.lists.length - 1, 'lists');
+        item = new StoreList({ position: { x: this.mouse.x, y: this.mouse.y }})
+        store = 'listStore';
       } else if (this.overlayType == 'tracker') {
-        this.trackers.push(new Tracker({ position: { x: this.mouse.x, y: this.mouse.y }}));
-        this.setActive(this.trackers.length - 1, 'trackers');
+        item = new StoreTracker({ position: { x: this.mouse.x, y: this.mouse.y }});
+        store = 'trackerStore';
       }
+
+      if (store !== null && item !== null) this.addDbItem(store, item);
     },
     removeList (id) {
       let index = this.localLists.map(i => i.id).indexOf(id);
       if (index < 0) return;
-
-      console.log('deleting list');
 
       this.localLists.splice(index, 1);
       // UPDATE DB
@@ -204,11 +208,11 @@ export default {
     drawingMode () {
       if (this.drawingMode) this.showOverlay = false;
     },
-    lists: {
-      handler (lists) {
-        this.localLists = lists;
-      },
-      deep: true
+    lists (lists) {
+      this.localLists = lists;
+    },
+    trackers (trackers) {
+      this.localTrackers = trackers;
     } 
   },
   async created () {
@@ -216,8 +220,10 @@ export default {
       this.$nextTick(() => {
         if (storeName === 'listStore') {
           let found = this.localLists.findIndex(x => x.id == id);
-          if (found > -1)
-            this.setActive(found, 'lists')
+          if (found > -1) this.setActive(found, 'lists')
+        } else if (storeName === 'trackerStore') {
+          let found = this.localTrackers.findIndex(x => x.id == id);
+          if (found > -1) this.setActive(found, 'trackers')
         }
       });
     })

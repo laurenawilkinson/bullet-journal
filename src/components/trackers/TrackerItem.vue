@@ -1,6 +1,6 @@
 <template>
   <tr>
-    <tracker-item-title v-model="item.title" />
+    <tracker-item-title v-model="item.title" @update="$emit('update')" />
     <td 
       v-for="box in boxes" 
       :key="box"
@@ -8,7 +8,7 @@
         ['tracker__box tracker__box--' + tickType]: true,
         'tracker__box--checked': item.values[box]
       }"
-      @click="item.setChecked(box)">
+      @mousedown.stop="setItemChecked(item, box)">
       <div v-if="item.values[box]" class="tracker__tickmark"></div>
     </td>
   </tr>
@@ -49,6 +49,13 @@ export default {
   watch: {
     boxes (amount) {
       this.item.updateValues(amount.length);
+    }
+  },
+  methods: {
+    setItemChecked (item, box) {
+      item.setChecked(box);
+      this.$emit('setActive')
+      this.$emit('update');
     }
   },
   mounted () {

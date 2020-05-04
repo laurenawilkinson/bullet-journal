@@ -62,7 +62,8 @@ export default {
       dragging: false,
       offsetX: 0,
       offsetY: 0,
-      containerEl: '#canvas'
+      containerEl: '#canvas',
+      positionChanged: false
     }
   },
   computed: {
@@ -118,12 +119,16 @@ export default {
       const y = event.type == 'touchmove'
         ? event.touches[0].clientY - this.offsetY
         : event.clientY - this.offsetY;
-
+      this.positionChanged = x !== this.x || y !== this.y;
       this.setNewPosition(x, y)
     },
     onDragEnd () {
+      console.log('dragend')
+      if (!this.dragging) return;
+
       this.dragging = false;
-      this.$emit('dragstop');
+      if (this.positionChanged) this.$emit('dragstop');
+      this.positionChanged = false;
       this.destroyContainerListeners();
     },
     setNewPosition (x, y) {
