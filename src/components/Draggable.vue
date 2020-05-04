@@ -2,7 +2,7 @@
   <vue-draggable-resizable 
     v-if="resizable"
     v-bind="draggableBinding" 
-    @dragstop="setNewPosition"
+    @dragstop="draggableStopped"
     @resizing="setNewSize"
     @resizestop="$emit('resizestop')">
     <slot></slot>
@@ -123,13 +123,16 @@ export default {
       this.setNewPosition(x, y)
     },
     onDragEnd () {
-      console.log('dragend')
       if (!this.dragging) return;
 
       this.dragging = false;
       if (this.positionChanged) this.$emit('dragstop');
       this.positionChanged = false;
       this.destroyContainerListeners();
+    },
+    draggableStopped (x, y) {
+      this.setNewPosition(x, y)
+      this.$emit('dragstop')
     },
     setNewPosition (x, y) {
       this.$emit('update:x', x);

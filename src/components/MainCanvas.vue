@@ -28,9 +28,10 @@
       @set-active="setActive(index, 'trackers')"
       @update="updateDbItem('trackerStore', $event)" />
     <canvas-svg 
-      v-for="(svg, i) in svgs" 
-      :key="i"
-      v-model="svgs[i]" />
+      v-for="(svg, i) in localSvgs" 
+      :key="'svg-' + svg.id"
+      v-model="localSvgs[i]"
+      @update="updateDbItem('svgStore', $event)" />
     <drawing-canvas 
       v-if="drawingMode"
       ref="drawingCanvas"
@@ -95,11 +96,11 @@ export default {
     canvasOffset: Object,
     images: Array,
     lists: Array,
-    trackers: Array
+    trackers: Array,
+    svgs: Array
   },
   data () {
     return {
-      svgs: [],
       canvasWidth: 0,
       canvasHeight: 0,
       showOverlay: false,
@@ -107,7 +108,8 @@ export default {
       mouse: { x: 0, y: 0 },
       paths: [],
       localTrackers: [],
-      localLists: []
+      localLists: [],
+      localSvgs: []
     }
   },
   computed: {
@@ -123,7 +125,7 @@ export default {
       return this.drawTool == 'group' && this.drawingMode && this.paths.length > 0;
     },
     layers () {
-      const svgs = this.svgs.map(x => {
+      const svgs = this.localSvgs.map(x => {
         return {
           ...x,
           component: 'draggable'
@@ -191,7 +193,17 @@ export default {
       this.$refs[ref][activeIndex].activate();
     },
     drawPath (svg) {
-      this.svgs.push(new SaveableSvg (svg));
+      const theSvg = new SaveableSvg({ ...svg, initialWidth: svg.width, initialHeight: svg.height });
+      let item = {
+        x: theSvg.x,
+        y: theSvg.y,
+        width: theSvg.width,
+        initialWidth: theSvg.width,
+        height: theSvg.height,
+        initialHeight: theSvg.height,
+        html: theSvg.html
+      }
+      this.addDbItem('svgStore', item)
     },
     onWindowResize () {
       this.canvasWidth = this.$refs.canvas.offsetWidth;
@@ -213,6 +225,9 @@ export default {
     },
     trackers (trackers) {
       this.localTrackers = trackers;
+    },
+    svgs (svgs) {
+      this.localSvgs = svgs;
     } 
   },
   async created () {

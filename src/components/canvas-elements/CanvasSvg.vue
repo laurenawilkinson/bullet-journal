@@ -3,7 +3,9 @@
     :x.sync="svg.x"
     :y.sync="svg.y"
     :width.sync="svg.width"
-    :height.sync="svg.height">
+    :height.sync="svg.height"
+    @dragstop="convertToSvgStoreObject"
+    @resizestop="convertToSvgStoreObject">
     <div 
       class="path-container" 
       v-html="svg.html"
@@ -45,6 +47,20 @@ export default {
       set (value) {
         this.$emit('change', value);
       }
+    }
+  },
+  methods: {
+    convertToSvgStoreObject () {
+      const obj = {
+        x: this.value.x,
+        y: this.value.y,
+        width: this.value.width,
+        height: this.value.height,
+        html: this.value.html,
+        initialWidth: this.value.initialWidth,
+        initialHeight: this.value.initialHeight
+      };
+      this.$emit('update', { id: this.value.id, value: obj });
     }
   }
 }

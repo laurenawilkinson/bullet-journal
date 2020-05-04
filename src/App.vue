@@ -8,7 +8,8 @@
       v-bind="{
         images: imageStore,
         lists: listStore,
-        trackers: trackerStore
+        trackers: trackerStore,
+        svgs: svgStore
       }" />
   </div>
 </template>
@@ -16,6 +17,7 @@
 <script>
 import EventBus from './EventBus'
 import SaveableImage from '@/models/SaveableImage'
+import SaveableSvg from '@/models/SaveableSvg'
 import List from '@/models/List'
 import Tracker from '@/models/Tracker'
 
@@ -27,7 +29,13 @@ export default {
       db: null,
       imageStore: [],
       listStore: [],
-      trackerStore: []
+      trackerStore: [],
+      svgStore: [],
+      storeReference: {
+        imageStore: {
+          convert: i => new SaveableImage(i)
+        }
+      }
     }
   },
   methods: {
@@ -68,9 +76,7 @@ export default {
             .getAll()
             .onsuccess = async (e) => {
               if (storeName === 'imageStore') {
-                this.imageStore = e.target.result.map(x => {
-                  return new SaveableImage(x)
-                });
+                this.imageStore = e.target.result.map(x => new SaveableImage(x));
               }
               if (storeName === 'listStore') {
                 this.listStore = e.target.result
@@ -79,6 +85,10 @@ export default {
               if (storeName === 'trackerStore') {
                 this.trackerStore = e.target.result
                   .map(x => new Tracker({ id: x.id, position: { x: x.x, y: x.y }, items: x.items, options: x.options }))
+              }
+              if (storeName === 'svgStore') {
+                console.log('here')
+                this.svgStore = e.target.result.map(x => new SaveableSvg(x));
               }
               
               res();
@@ -135,14 +145,16 @@ export default {
       await Promise.all([
         this.createStore('imageStore', ['x', 'y', 'src', 'width', 'height']),
         this.createStore('listStore', ['x', 'y', 'items']),
-        this.createStore('trackerStore', ['x', 'y', 'items', 'options'])
+        this.createStore('trackerStore', ['x', 'y', 'items', 'options']),
+        this.createStore('svgStore', ['x', 'y', 'html', 'width', 'height', 'initialWidth', 'initialHeight'])
       ])
     },
     async pullAllStores () {
       await Promise.all([
         this.dbPull('imageStore'),
         this.dbPull('listStore'),
-        this.dbPull('trackerStore')
+        this.dbPull('trackerStore'),
+        this.dbPull('svgStore')
       ])
     }
   },

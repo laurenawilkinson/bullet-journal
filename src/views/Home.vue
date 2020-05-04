@@ -21,7 +21,8 @@
         canvasOffset,
         drawTool,
         images,
-        trackers
+        trackers,
+        svgs
       }"
       @resize="getCanvasOffset" />
   </div>
@@ -43,7 +44,8 @@ export default {
   props: {
     images: Array,
     lists: Array,
-    trackers: Array
+    trackers: Array,
+    svgs: Array
   },
   data ()  {
     return {
