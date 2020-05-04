@@ -12,7 +12,8 @@
     :x.sync="position.x"
     :y.sync="position.y"
     v-on-clickaway="deselectList"
-    @click="setActive">
+    @click="setActive"
+    @dragstop="updateDb">
     <ul v-if="items.length > 0" class="bullet-list__container">
       <list-item 
         v-for="(item, index) in localItems" 
@@ -26,6 +27,7 @@
         :removed.sync="item.removed"
         :list-active="active"
         :list-moving="false"
+        @update="updateDb"
         @set-active="setActive"
         @opened-menu="closeMenus(index)"
         @remove-item="removeItem(item.id)" />
@@ -54,17 +56,14 @@
 </template>
 
 <script>
-let itemId = 0;
 class BulletListItem {
   constructor ({ id, type, state, priority, content, removed }) {
-    this.id = id || itemId;
+    this.id = id;
     this.type = type || 'task';
     this.state = state || 'default'; // default, completed, migrated
     this.priority = priority || false;
     this.content = content || '';
     this.removed = removed || false;
-
-    itemId++;
   }
 }
 
@@ -72,6 +71,7 @@ import ListItem from './BulletListItem.vue'
 import IconButton from '@/components/IconButton.vue'
 import { mixin as clickaway } from 'vue-clickaway';
 import Draggable from '@/components/Draggable.vue';
+import { StoreList } from '@/models/List';
 
 export default {
   name: 'BulletList',
@@ -82,6 +82,7 @@ export default {
     Draggable
   },
   props: {
+    id: Number,
     position: Object,
     items: Array,
     moveMode: Boolean
@@ -103,16 +104,28 @@ export default {
     }
   },
   methods: {
+    updateDb () {
+      this.$emit('update', { id: this.id, value: this.getListStoreItem() })
+    },
+    getListStoreItem () {
+      return new StoreList({ id: this.id, position: this.position, items: this.items });
+    },
     async addItem (type) {
       if (this.$refs.items) this.$refs.items.forEach(item => item.closeMenu());
-      this.localItems.push(new BulletListItem({ type }));
+      let lastUsedId = this.localItems[this.localItems.length - 1] 
+        ? this.localItems[this.localItems.length - 1].id 
+        : 0;
+      this.localItems.push(new BulletListItem({ id: lastUsedId + 1, type }));
       await this.$nextTick();
       this.$refs.items[this.$refs.items.length - 1].selectText();
+      this.updateDb();
     },
     removeItem (id) {
       let index = this.items.map(i => i.id).indexOf(id);
       if (index < 0) return;
+
       this.localItems.splice(index, 1);
+      if (this.localItems.length > 0) this.updateDb();
     },
     closeMenus (excludedIndex) {
       if (this.$refs.items) this.$refs.items.forEach((item, index) => {
@@ -133,6 +146,7 @@ export default {
     deselectList () {
       this.active = false;
       if (this.$refs.items) this.$refs.items.forEach(item => item.closeMenu());
+      if (this.items.length == 0) this.$emit('remove-list')
     }
   }
 }

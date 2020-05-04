@@ -1,10 +1,17 @@
-let lid = 0;
 
 export default class List {
   constructor ({ id, position, items }) {
-    this.id = id ? id : 'list--' + lid;
+    if (id !== null) this.id = id;
     this.position = position ? position : { x: 0, y: 0 };
     this.items = items ? items : [];
-    lid++;
+  }
+}
+
+export class StoreList {
+  constructor ({ id, position, items }) {
+    if (id && id !== null) this.id = id;
+    this.x = position ? position.x : 0;
+    this.y = position ? position.y : 0;
+    this.items = items || [];
   }
 }

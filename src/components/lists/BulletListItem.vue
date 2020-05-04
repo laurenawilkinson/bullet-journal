@@ -105,6 +105,7 @@ export default {
   methods: {
     update (prop, value) {
       if (this.disabled) return;
+      this.$emit('update')
       this.$emit(`update:${prop}`, value);
     },
     async selectText () {

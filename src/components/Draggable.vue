@@ -123,12 +123,12 @@ export default {
     },
     onDragEnd () {
       this.dragging = false;
+      this.$emit('dragstop');
       this.destroyContainerListeners();
     },
     setNewPosition (x, y) {
       this.$emit('update:x', x);
       this.$emit('update:y', y);
-      this.$emit('dragstop');
     },
     setNewSize (x, y, width, height) {
       this.$emit('update:width', width);

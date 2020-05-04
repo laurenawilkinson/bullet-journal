@@ -13,7 +13,6 @@
     </transition>
     <main-canvas 
       ref="canvas"
-      :lists.sync="lists"
       v-bind="{
         lists,
         drawingMode,
@@ -41,7 +40,8 @@ export default {
     InfoBar
   },
   props: {
-    images: Array
+    images: Array,
+    lists: Array
   },
   data ()  {
     return {
@@ -49,37 +49,6 @@ export default {
       penColor: 'rgba(0,0,0,1)',
       penWidth: 3,
       drawTool: 'path',
-      lists: [
-        {
-          position: { x: 0, y: 0 },
-          items: [
-            {
-              id: 100,
-              type: 'task',
-              state: 'default',
-              removed: false,
-              content: 'Test task',
-              priority: false
-            },
-            {
-              id: 101,
-              type: 'event',
-              state: 'default',
-              removed: true,
-              content: 'An important event',
-              priority: true
-            },
-            {
-              id: 102,
-              type: 'note',
-              state: 'default',
-              removed: false,
-              content: "Don't forget this note!",
-              priority: true
-            }
-          ]
-        }
-      ],
       canvasOffset: {}
     }
   },

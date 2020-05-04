@@ -7,14 +7,16 @@
     @mousemove="trackMouse" 
     @touchmove="trackMouse">
     <bullet-list 
-      v-for="(list, index) in lists"
+      v-for="(list, index) in localLists"
       ref="lists"
-      :key="list.id" 
+      :key="'list-' + list.id" 
+      :id="list.id"
       :position="list.position"
       :items.sync="list.items"
       :move-mode="!drawingMode"
       @remove-list="removeList(list.id)"
-      @set-active="setActive(index, 'lists')" />
+      @set-active="setActive(index, 'lists')"
+      @update="updateDbItem('listStore', $event)" />
     <base-tracker 
       v-for="(tracker, index) in trackers" 
       ref="trackers"
@@ -43,7 +45,7 @@
       @draw-rect="drawPath" />
     <canvas-image 
       v-for="(image, i) in localImages" 
-      :key="image.id"
+      :key="'image-' + image.id"
       :value="localImages[i]"
       @update="updateDbItem('imageStore', $event)" />
     <div v-if="showOverlay" class="overlay" @click="createItem"></div>
@@ -71,7 +73,7 @@ import DrawingCanvas from '@/components/drawing/DrawingCanvas.vue'
 import CanvasImage from '@/components/canvas-elements/CanvasImage.vue'
 import CanvasSvg from '@/components/canvas-elements/CanvasSvg.vue'
 import SaveableSvg from '@/models/SaveableSvg';
-import List from '@/models/List';
+import { List, StoreList } from '@/models/List';
 import Tracker from '@/models/Tracker';
 import EventBus from '../EventBus';
 
@@ -90,7 +92,8 @@ export default {
     penColor: String,
     penWidth: Number,
     canvasOffset: Object,
-    images: Array
+    images: Array,
+    lists: Array
   },
   data () {
     return {
@@ -99,10 +102,10 @@ export default {
       canvasHeight: 0,
       showOverlay: false,
       overlayType: 'list',
-      lists: [],
       mouse: { x: 0, y: 0 },
       paths: [],
-      trackers: []
+      trackers: [],
+      localLists: []
     }
   },
   computed: {
@@ -124,7 +127,7 @@ export default {
           component: 'draggable'
         }
       })
-      const lists = this.lists.map(x => {
+      const lists = this.localLists.map(x => {
         return { ...x, component: 'bullet-list'}
       })
 
@@ -137,6 +140,9 @@ export default {
     },
     updateDbItem (storeName, { id, value }) {
       EventBus.$emit('dbup:update', { storeName, id, value })
+    },
+    deleteDbItem (storeName, id) {
+      EventBus.$emit('dbup:delete', { storeName, id })
     },
     trackMouse (event) {
       if (!this.showOverlay) return;
@@ -151,25 +157,32 @@ export default {
     createItem () {
       this.showOverlay = false;
       if (this.overlayType == 'list') {
-        this.lists.push(new List({ position: { x: this.mouse.x, y: this.mouse.y }}));
-        this.setActive(this.lists.length - 1, 'lists');
+        let newList = new StoreList({ position: { x: this.mouse.x, y: this.mouse.y }})
+        this.addDbItem('listStore', newList)
+        // this.setActive(this.lists.length - 1, 'lists');
       } else if (this.overlayType == 'tracker') {
         this.trackers.push(new Tracker({ position: { x: this.mouse.x, y: this.mouse.y }}));
         this.setActive(this.trackers.length - 1, 'trackers');
       }
     },
     removeList (id) {
-      let index = this.lists.map(i => i.id).indexOf(id);
+      let index = this.localLists.map(i => i.id).indexOf(id);
       if (index < 0) return;
-      this.$emit('update:lists', this.lists.splice(index, 1));
+
+      console.log('deleting list');
+
+      this.localLists.splice(index, 1);
+      // UPDATE DB
+      this.deleteDbItem('listStore', id)
     },
     async setActive (activeIndex, ref) {
       await this.$nextTick();
       this.$store.dispatch('setActiveItem', null);
 
-      this.$refs[ref].forEach(item => {
-        item.deactivate();
-      })
+      for (let i = 0; i < this.$refs[ref].length; i++) {
+        if (i !== activeIndex)
+          this.$refs[ref][i].deactivate();
+      }
 
       this.$refs[ref][activeIndex].activate();
     },
@@ -190,7 +203,24 @@ export default {
   watch: {
     drawingMode () {
       if (this.drawingMode) this.showOverlay = false;
-    }
+    },
+    lists: {
+      handler (lists) {
+        this.localLists = lists;
+      },
+      deep: true
+    } 
+  },
+  async created () {
+    EventBus.$on('set-active-item', async ({ storeName, id }) => {
+      this.$nextTick(() => {
+        if (storeName === 'listStore') {
+          let found = this.localLists.findIndex(x => x.id == id);
+          if (found > -1)
+            this.setActive(found, 'lists')
+        }
+      });
+    })
   },
   mounted () {
     window.addEventListener('resize', this.onWindowResize);
