@@ -11,6 +11,7 @@
     <transition name="slide-from-right" mode="out-in">
       <info-bar v-if="activeItem !== null" />
     </transition>
+    <pages-bar :pages="pages" />
     <main-canvas 
       ref="canvas"
       v-bind="{
@@ -31,6 +32,7 @@
 <script>
 import TopBar from '@/components/TopBar.vue'
 import InfoBar from '@/components/InfoBar.vue'
+import PagesBar from '@/components/PagesBar.vue'
 import MainCanvas from '@/components/MainCanvas.vue'
 import EventBus from '../EventBus'
 
@@ -39,13 +41,15 @@ export default {
   components: {
     TopBar,
     MainCanvas,
-    InfoBar
+    InfoBar,
+    PagesBar
   },
   props: {
     images: Array,
     lists: Array,
     trackers: Array,
-    svgs: Array
+    svgs: Array,
+    pages: Array
   },
   data ()  {
     return {

@@ -6,6 +6,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     layers: 0,
+    currentPage: 1,
     activeItem: null,
     keepAlive: false
   },
@@ -29,6 +30,9 @@ const store = new Vuex.Store({
     setActiveItem (state, item) { 
       state.activeItem = item;
     },
+    setActivePage (state, number) { 
+      state.currentPage = number;
+    },
     setKeepAlive (state, value) { 
       state.keepAlive = value;
     },
@@ -45,6 +49,9 @@ const store = new Vuex.Store({
     },
     setActiveItem ({ commit }, item) {
       commit('setActiveItem', item)
+    },
+    setActivePage ({ commit }, number) {
+      commit('setActivePage', number)
     },
     updateActiveItemOptions({ commit }, options) {
       for (const opt in options) {

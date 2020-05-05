@@ -1,15 +1,12 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <!-- <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link> -->
-    </div>
     <router-view
       v-bind="{
         images: imageStore,
         lists: listStore,
         trackers: trackerStore,
-        svgs: svgStore
+        svgs: svgStore,
+        pages
       }" />
   </div>
 </template>
@@ -27,6 +24,7 @@ export default {
     return {
       indexedDB: window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB,
       db: null,
+      pages: [],
       imageStore: [],
       listStore: [],
       trackerStore: [],
@@ -134,7 +132,7 @@ export default {
 
       req.onerror = e => console.error('Delete error:', e);
     },
-    async createStore (storeName, indexes) {
+    async createStore (storeName, indexes = []) {
       let objectStore = this.db
         .createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
 
@@ -157,9 +155,43 @@ export default {
         this.dbPull('trackerStore'),
         this.dbPull('svgStore')
       ])
+    },
+    initDb () {
+      let req = this.indexedDB.open('BulletJournal', 1);
+
+      req.onerror = (e) => console.error("DB Error", e);
+
+      req.onsuccess = async (e) => {
+        this.db = e.target.result;
+        await this.pullAllStores();
+      }
+
+      req.onupgradeneeded = (e) => {
+        this.db = e.target.result;
+        this.createStores();
+      }
+    },
+    addPage () {
+      this.pages.push(this.pages.length + 1);
+      localStorage.setItem('pages', JSON.stringify(this.pages))
+    },
+    setActivePage (pageNum) {
+      this.$store.dispatch('setActivePage', pageNum)
+      localStorage.setItem('currentPage', JSON.stringify(pageNum))
+    },
+    deletePage (pageNum) {
+      let foundIndex = this.pages.findIndex(pageNum);
+      if (foundIndex == -1) return;
+
+      this.pages.splice(foundIndex, 1);
+      localStorage.setItem('pages', JSON.stringify(this.pages))
     }
   },
   async created () {
+    EventBus.$on('pages:add', this.addPage);
+    EventBus.$on('pages:activate', e => this.setActivePage(e));
+    EventBus.$on('pages:delete', e => this.deletePage(e));
+
     EventBus.$on('dbup:add', async ({ storeName, value }) => {
       await this.dbAdd(storeName, value);
     })
@@ -170,20 +202,16 @@ export default {
       await this.dbDelete(storeName, id);
     })
   },
-  mounted () {
-    let req = this.indexedDB.open('BulletJournal', 1);
+  async mounted () {
+    let pages = localStorage.getItem('pages');
+    let currentPage = localStorage.getItem('currentPage')
 
-    req.onerror = (e) => console.error("DB Error", e);
+    pages ? this.pages = JSON.parse(pages) : localStorage.setItem('pages', '[ 1 ]');
+    currentPage 
+      ? this.$store.dispatch('setActivePage', JSON.parse(currentPage))
+      : this.setActivePage(1);
 
-    req.onsuccess = (e) => {
-      this.db = e.target.result;
-      this.pullAllStores();
-    }
-
-    req.onupgradeneeded = (e) => {
-      this.db = e.target.result;
-      this.createStores();
-    }
+    await this.initDb();
   }
 }
 </script>

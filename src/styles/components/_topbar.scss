@@ -6,6 +6,7 @@ $topbar-height: 40px;
   display: flex;
   align-items: center;
   height: $topbar-height;
+  z-index: 20;
 
   .button {
     color: $primary-100;
