@@ -38,13 +38,15 @@ export default {
   },
   methods: {
     async dbAdd (storeName, value) {
-        console.log('adding to ', storeName);
         if (!value || value == null) return console.error('Invalid Value');
+        console.log('adding...');
+        let currentPage = this.$store.state.currentPage;
+        console.log(currentPage);
   
         let objectStore = this.db
           .transaction(storeName, "readwrite")
           .objectStore(storeName);
-        let req = objectStore.add(value)
+        let req = objectStore.add({ ...value, page: currentPage })
         
         req.onerror = (error) => console.error('Transaction Error', error)
         
@@ -56,6 +58,7 @@ export default {
         }
     },
     async dbPull (storeName, keys = []) {
+      console.log('pulling...', storeName)
       return new Promise((res, rej) => {
         if (keys && keys.length > 0) {
           // pull specific values by key (i.e. id)
@@ -79,11 +82,11 @@ export default {
               }
               if (storeName === 'listStore') {
                 this.listStore = e.target.result
-                  .map(x => new List({ id: x.id, position: { x: x.x, y: x.y }, items: x.items }))
+                  .map(x => new List({ page: x.page, id: x.id, position: { x: x.x, y: x.y }, items: x.items }))
               }
               if (storeName === 'trackerStore') {
                 this.trackerStore = e.target.result
-                  .map(x => new Tracker({ id: x.id, position: { x: x.x, y: x.y }, items: x.items, options: x.options }))
+                  .map(x => new Tracker({ page: x.page, id: x.id, position: { x: x.x, y: x.y }, items: x.items, options: x.options }))
               }
               if (storeName === 'svgStore') {
                 this.svgStore = e.target.result.map(x => new SaveableSvg(x));
@@ -132,6 +135,26 @@ export default {
 
       req.onerror = e => console.error('Delete error:', e);
     },
+    async dbDeleteMultiple (storeName, keys) {
+        let objectStore = this.db
+          .transaction(storeName, "readwrite")
+          .objectStore(storeName);
+  
+        let promiseArray = [];
+  
+        for (let key of keys) {
+          promiseArray.push(new Promise((res, rej) => {
+            let req = objectStore.delete(key);
+  
+            req.onsuccess = e => res();
+            req.onerror = e => rej()
+          }))
+        }
+        console.log('Delete from DB', promiseArray);
+  
+        await Promise.all(promiseArray);
+        await this.dbPull(storeName);
+    },
     async createStore (storeName, indexes = []) {
       let objectStore = this.db
         .createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
@@ -142,10 +165,10 @@ export default {
     },
     async createStores () {
       await Promise.all([
-        this.createStore('imageStore', ['x', 'y', 'src', 'width', 'height']),
-        this.createStore('listStore', ['x', 'y', 'items']),
-        this.createStore('trackerStore', ['x', 'y', 'items', 'options']),
-        this.createStore('svgStore', ['x', 'y', 'html', 'width', 'height', 'initialWidth', 'initialHeight'])
+        this.createStore('imageStore', ['page', 'x', 'y', 'src', 'width', 'height']),
+        this.createStore('listStore', ['page', 'x', 'y', 'items']),
+        this.createStore('trackerStore', ['page', 'x', 'y', 'items', 'options']),
+        this.createStore('svgStore', ['page', 'x', 'y', 'html', 'width', 'height', 'initialWidth', 'initialHeight'])
       ])
     },
     async pullAllStores () {
@@ -181,10 +204,28 @@ export default {
       this.$store.dispatch('setActivePage', pageNum)
       localStorage.setItem('currentPage', JSON.stringify(pageNum))
     },
-    deletePage (pageNum) {
+    async deletePage (pageNum) {
       let foundIndex = this.pages.indexOf(pageNum);
       if (foundIndex == -1) return;
 
+      // FIND PAGE ITEMS ON THIS PAGE
+      const findMatchingPage = (array) => array.filter(x => x.page === pageNum).map(x => x.id);
+      let keysToDelete = {
+        imageStore: findMatchingPage(this.imageStore),
+        svgStore: findMatchingPage(this.svgStore),
+        listStore: findMatchingPage(this.listStore),
+        trackerStore: findMatchingPage(this.trackerStore),
+      }
+
+      // DELETE PAGE ITEMS FROM DB STORES
+      let promiseArray = [];
+      for (let key in keysToDelete) {
+        promiseArray.push(this.dbDeleteMultiple(key, keysToDelete[key]))
+      }
+
+      await Promise.all(promiseArray);
+
+      // DELETE PAGE
       this.pages.splice(foundIndex, 1);
       localStorage.setItem('pages', JSON.stringify(this.pages))
 
@@ -196,7 +237,7 @@ export default {
   async created () {
     EventBus.$on('pages:add', this.addPage);
     EventBus.$on('pages:activate', e => this.setActivePage(e));
-    EventBus.$on('pages:delete', e => this.deletePage(e));
+    EventBus.$on('pages:delete', async e => this.deletePage(e));
 
     EventBus.$on('dbup:add', async ({ storeName, value }) => {
       await this.dbAdd(storeName, value);

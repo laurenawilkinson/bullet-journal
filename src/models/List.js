@@ -1,7 +1,8 @@
 
 export default class List {
-  constructor ({ id, position, items }) {
+  constructor ({ page, id, position, items }) {
     if (id !== null) this.id = id;
+    this.page = page;
     this.position = position ? position : { x: 0, y: 0 };
     this.items = items ? items : [ new BulletListItem({ id: 1, content: 'New Task' }) ];
   }

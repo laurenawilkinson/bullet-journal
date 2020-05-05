@@ -15,15 +15,15 @@
     <main-canvas 
       ref="canvas"
       v-bind="{
-        lists,
         drawingMode,
         penColor,
         penWidth,
         canvasOffset,
         drawTool,
-        images,
-        trackers,
-        svgs
+        lists: filterByCurrentPage(lists),
+        images: filterByCurrentPage(images),
+        trackers: filterByCurrentPage(trackers),
+        svgs: filterByCurrentPage(svgs)
       }"
       @resize="getCanvasOffset" />
   </div>
@@ -66,6 +66,11 @@ export default {
     }
   },
   methods: {
+    filterByCurrentPage (array) {
+      return array 
+        ? array.filter(x => x.page === this.$store.state.currentPage)
+        : [];
+    },
     addDbItem (storeName, value) {
       EventBus.$emit('dbup:add', { storeName, value })
     },

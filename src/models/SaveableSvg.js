@@ -1,7 +1,7 @@
 import Stackable from './Stackable';
 
 export default class SaveableSvg extends Stackable {
-  constructor ({ id, el, x, y, initialWidth, initialHeight, width, height, html = null, order = null }) {
+  constructor ({ page, id, el, x, y, initialWidth, initialHeight, width, height, html = null, order = null }) {
     super(order);
 
     if (id && id !== null) this.id = id;
@@ -13,6 +13,8 @@ export default class SaveableSvg extends Stackable {
       containerEl.innerHTML = html;
       this.el = containerEl.firstChild;
     }
+
+    this.page = page;
 
     this.el.setAttribute('viewBox', '0 0 ' + initialWidth + ' ' + initialHeight);
     this.html = this._serializeEl();

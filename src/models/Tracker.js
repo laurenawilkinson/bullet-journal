@@ -1,7 +1,8 @@
 
 export default class Tracker {
-  constructor ({ id, position, items, options }) {
+  constructor ({ page, id, position, items, options }) {
     this.id = id;
+    this.page = page;
     this.position = position ? position : { x: 0, y: 0 };
     this.options = options ? options : {
       boxAmount: 7,
