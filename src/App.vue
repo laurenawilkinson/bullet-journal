@@ -172,19 +172,25 @@ export default {
       }
     },
     addPage () {
-      this.pages.push(this.pages.length + 1);
+      let newPage = this.pages[this.pages.length - 1] + 1;
+      this.pages.push(newPage);
       localStorage.setItem('pages', JSON.stringify(this.pages))
+      this.setActivePage(newPage)
     },
     setActivePage (pageNum) {
       this.$store.dispatch('setActivePage', pageNum)
       localStorage.setItem('currentPage', JSON.stringify(pageNum))
     },
     deletePage (pageNum) {
-      let foundIndex = this.pages.findIndex(pageNum);
+      let foundIndex = this.pages.indexOf(pageNum);
       if (foundIndex == -1) return;
 
       this.pages.splice(foundIndex, 1);
       localStorage.setItem('pages', JSON.stringify(this.pages))
+
+      let activePage = localStorage.getItem('currentPage');
+      if (activePage == pageNum)
+        this.setActivePage(this.pages[this.pages.length - 1]);
     }
   },
   async created () {
@@ -207,7 +213,7 @@ export default {
     let currentPage = localStorage.getItem('currentPage')
 
     pages ? this.pages = JSON.parse(pages) : localStorage.setItem('pages', '[ 1 ]');
-    currentPage 
+    currentPage && pages && pages.includes(currentPage)
       ? this.$store.dispatch('setActivePage', JSON.parse(currentPage))
       : this.setActivePage(1);
 

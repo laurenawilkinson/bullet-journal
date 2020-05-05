@@ -8,7 +8,10 @@
           'pages-bar__page': true,
           'active': isActivePage(page)
         }"
-        @click="setActivePage(page)">{{ page }}</li>
+        @click="setActivePage(page)">
+          <span>{{ page }}</span>
+          <icon-button v-if="pages.length > 1" icon="delete" @click.stop="removePage(page)" />
+        </li>
     </ul>
     <div class="pages-bar__add-page" @click="addPage">
       <i class="material-icons">add</i>
@@ -18,9 +21,13 @@
 
 <script>
 import EventBus from '../EventBus';
+import IconButton from '@/components/IconButton.vue'
 
 export default {
   name: 'PagesBar',
+  components: {
+    IconButton
+  },
   props: {
     pages: Array
   },
@@ -33,6 +40,9 @@ export default {
     },
     addPage () {
       EventBus.$emit('pages:add');
+    },
+    removePage (number) {
+      EventBus.$emit('pages:delete', number);
     }
   }
 }
