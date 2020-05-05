@@ -41,7 +41,6 @@ export default {
         if (!value || value == null) return console.error('Invalid Value');
         console.log('adding...');
         let currentPage = this.$store.state.currentPage;
-        console.log(currentPage);
   
         let objectStore = this.db
           .transaction(storeName, "readwrite")
@@ -129,7 +128,6 @@ export default {
       let req = objectStore.delete(id);
 
       req.onsuccess = async e => {
-        console.log('success, pulling', storeName)
         await this.dbPull(storeName);
       }
 
@@ -150,7 +148,6 @@ export default {
             req.onerror = e => rej()
           }))
         }
-        console.log('Delete from DB', promiseArray);
   
         await Promise.all(promiseArray);
         await this.dbPull(storeName);
