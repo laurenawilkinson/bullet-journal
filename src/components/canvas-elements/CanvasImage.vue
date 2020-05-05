@@ -4,8 +4,10 @@
     :y.sync="image.y"
     :width.sync="image.width"
     :height.sync="image.height"
+    :buttons="imageButtons"
     @dragstop="convertToImageStoreObject"
-    @resizestop="convertToImageStoreObject">
+    @resizestop="convertToImageStoreObject"
+    @click:delete="removeImage">
     <img 
       :src="image.src" 
       :width="image.width" 
@@ -34,6 +36,16 @@ export default {
       image: this.value
     }
   },
+  computed: {
+    imageButtons () {
+      return [
+        {
+          icon: 'delete',
+          key: 'delete'
+        }
+      ]
+    }
+  },
   watch: {
     image: {
       handler (value) {
@@ -52,6 +64,9 @@ export default {
         src: this.image.src,
       };
       this.$emit('update', { id: this.image.id, value: obj });
+    },
+    removeImage () {
+      this.$emit('delete', this.image.id);
     }
   },
   mounted () {
