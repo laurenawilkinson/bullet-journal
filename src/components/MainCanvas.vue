@@ -26,7 +26,8 @@
       :items="tracker.items"
       :options.sync="tracker.options"
       @set-active="setActive(index, 'trackers')"
-      @update="updateDbItem('trackerStore', $event)" />
+      @update="updateDbItem('trackerStore', $event)"
+      @delete="deleteDbItem('trackerStore', $event)" />
     <canvas-svg 
       v-for="(svg, i) in localSvgs" 
       :key="'svg-' + svg.id"

@@ -75,6 +75,7 @@ export default {
             .objectStore(storeName)
             .getAll()
             .onsuccess = async (e) => {
+              console.log('pulled', storeName)
               if (storeName === 'imageStore') {
                 this.imageStore = e.target.result.map(x => new SaveableImage(x));
               }
@@ -124,13 +125,14 @@ export default {
         .transaction(storeName, "readwrite")
         .objectStore(storeName);
 
-      objectStore.delete(id);
+      let req = objectStore.delete(id);
 
-      objectStore.onsuccess = async e => {
+      req.onsuccess = async e => {
+        console.log('success, pulling', storeName)
         await this.dbPull(storeName);
       }
 
-      objectStore.onerror = e => console.error('Delete error:', e);
+      req.onerror = e => console.error('Delete error:', e);
     },
     async createStore (storeName, indexes) {
       let objectStore = this.db

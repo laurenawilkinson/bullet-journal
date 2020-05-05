@@ -64,6 +64,18 @@ export class InfoBarTracker extends BaseTrackerItem {
           name: 'tracker:add-item',
           payload: id 
         }
+      },
+      {
+        type: 'icon-button',
+        text: 'Delete Tracker',
+        binding: {
+          icon: 'delete',
+          className: 'button--block'
+        },
+        click: {
+          name: 'tracker:delete',
+          payload: id 
+        }
       }
     ]
     

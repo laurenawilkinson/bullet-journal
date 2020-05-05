@@ -161,8 +161,8 @@ export default {
       setTimeout(() => {
         if (!this.$store.state.keepAlive && this.isActive){
           this.$store.dispatch('setActiveItem', null);
+          this.deactivate();
         }
-        this.deactivate();
       }, 20)
     },
     activate () {
@@ -181,6 +181,13 @@ export default {
     EventBus.$on('tracker:add-item', id => {
       if (id === this.id) this.addItem();
     })
+    EventBus.$on('tracker:delete', id => {
+      if (id === this.id) this.$emit('delete', id);
+    })
+  },
+  beforeDestroy () {
+    this.$store.dispatch('keepAlive', false);
+    this.$store.dispatch('setActiveItem', null);
   }
 }
 </script>
