@@ -32,46 +32,14 @@
         @opened-menu="closeMenus(index)"
         @remove-item="removeItem(item.id)" />
     </ul>
-    <div v-if="active" class="bullet-list__add-button">
-      <icon-button 
-        class="button" 
-        icon="add" 
-        @click="addItem('task')">
-        Task
-      </icon-button>
-      <icon-button 
-        class="button" 
-        icon="add" 
-        @click="addItem('event')">
-        Event
-      </icon-button>
-      <icon-button 
-        class="button" 
-        icon="add" 
-        @click="addItem('note')">
-        Note
-      </icon-button>
-    </div>
   </draggable>
 </template>
 
 <script>
-class BulletListItem {
-  constructor ({ id, type, state, priority, content, removed }) {
-    this.id = id;
-    this.type = type || 'task';
-    this.state = state || 'default'; // default, completed, migrated
-    this.priority = priority || false;
-    this.content = content || '';
-    this.removed = removed || false;
-  }
-}
-
 import ListItem from './BulletListItem.vue'
-import IconButton from '@/components/IconButton.vue'
 import { mixin as clickaway } from 'vue-clickaway';
 import Draggable from '@/components/Draggable.vue';
-import { StoreList } from '@/models/List';
+import { StoreList, BulletListItem } from '@/models/List';
 import EventBus from '../../EventBus'
 import { InfoBarList } from '@/models/InfoBarItems'
 
@@ -80,7 +48,6 @@ export default {
   mixins: [ clickaway ],
   components: {
     ListItem,
-    IconButton,
     Draggable
   },
   props: {

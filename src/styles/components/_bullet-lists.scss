@@ -4,7 +4,7 @@
   left: 0;
   
   @include up('sm') {
-    width: fit-content;
+    min-width: 200px;
   }
 
   + .bullet-list {
