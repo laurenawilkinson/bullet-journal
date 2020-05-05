@@ -76,7 +76,15 @@ export default {
     buttons: {
       type: Array,
       default: () => []
-    }
+    },
+    maxWidth: {
+      type: Number,
+      default: null
+    },
+    maxHeight: {
+      type: Number,
+      default: null
+    },
   },
   data () {
     return {
@@ -111,6 +119,8 @@ export default {
         h: this.height ? this.height : this.localHeight,
         x: this.x,
         y: this.y,
+        maxWidth: this.maxWidth || null,
+        maxHeight: this.maxHeight || null,
         'lock-aspect-ratio': true,
         resizable: this.resizable && !this.disabled,
         draggable: !this.disabled

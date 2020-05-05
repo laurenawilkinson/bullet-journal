@@ -4,6 +4,8 @@
     :y.sync="image.y"
     :width.sync="image.width"
     :height.sync="image.height"
+    :max-width="canvasWidth"
+    :max-height="canvasHeight"
     :buttons="imageButtons"
     @dragstop="convertToImageStoreObject"
     @resizestop="convertToImageStoreObject"
@@ -29,7 +31,9 @@ export default {
     event: 'change'
   },
   props: {
-    value: SaveableImage
+    value: SaveableImage,
+    canvasWidth: Number,
+    canvasHeight: Number
   },
   data () {
     return {

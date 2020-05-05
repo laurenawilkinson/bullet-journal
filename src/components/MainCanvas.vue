@@ -52,6 +52,8 @@
       v-for="(image, i) in localImages" 
       :key="'image-' + image.id"
       :value="localImages[i]"
+      :canvas-width="canvasWidth"
+      :canvas-height="canvasHeight"
       @update="updateDbItem('imageStore', $event)"
       @delete="deleteDbItem('imageStore', $event)" />
     <div v-if="showOverlay" class="overlay" @click="createItem"></div>
