@@ -31,7 +31,8 @@
       v-for="(svg, i) in localSvgs" 
       :key="'svg-' + svg.id"
       v-model="localSvgs[i]"
-      @update="updateDbItem('svgStore', $event)" />
+      @update="updateDbItem('svgStore', $event)"
+      @delete="deleteDbItem('svgStore', $event)" />
     <drawing-canvas 
       v-if="drawingMode"
       ref="drawingCanvas"

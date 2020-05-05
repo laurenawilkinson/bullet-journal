@@ -87,7 +87,6 @@ export default {
                   .map(x => new Tracker({ id: x.id, position: { x: x.x, y: x.y }, items: x.items, options: x.options }))
               }
               if (storeName === 'svgStore') {
-                console.log('here')
                 this.svgStore = e.target.result.map(x => new SaveableSvg(x));
               }
               

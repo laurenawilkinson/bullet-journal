@@ -13,4 +13,13 @@
   z-index: 10;
   width: $info-bar-width;
   padding: 1rem;
+
+  @include breakpoint-down('sm') {
+    bottom: 0;
+    left: 0;
+    right: unset;
+    top: unset;
+    height: auto;
+    width: 100%;
+  }
 }

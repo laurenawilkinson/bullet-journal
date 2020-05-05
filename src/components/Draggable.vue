@@ -2,9 +2,19 @@
   <vue-draggable-resizable 
     v-if="resizable"
     v-bind="draggableBinding" 
+    @activated="localActive = true"
+    @deactivated="localActive = false"
+    @dragging="dragging = true"
     @dragstop="draggableStopped"
     @resizing="setNewSize"
     @resizestop="$emit('resizestop')">
+    <div v-if="buttons.length > 0 && !dragging && localActive" class="draggable__tools">
+      <icon-button 
+        v-for="button in buttons" 
+        :key="button.key" 
+        :icon="button.icon"
+        @click="$emit(`click:${button.key}`)" />
+    </div>
     <slot></slot>
   </vue-draggable-resizable>
   <div 
@@ -13,17 +23,26 @@
     ref="draggable"
     :class="{ 'draggable vdr': true, active: dragging || active }"
     :style="componentStyle">
+    <div v-if="buttons.length > 0 && active" class="draggable__tools">
+      <icon-button 
+        v-for="button in buttons" 
+        :key="button.key" 
+        :icon="button.icon"
+        @click="$emit(`click:${button.key}`)" />
+    </div>
     <slot></slot>
   </div>
 </template>
 
 <script>
 import VueDraggableResizable from 'vue-draggable-resizable'
+import IconButton from '@/components/IconButton.vue'
 
 export default {
   name: 'Draggable',
   components: {
-    VueDraggableResizable
+    VueDraggableResizable,
+    IconButton
   },
   props: {
     resizable: {
@@ -53,6 +72,10 @@ export default {
     active: {
       type: Boolean,
       default: false
+    },
+    buttons: {
+      type: Array,
+      default: () => []
     }
   },
   data () {
@@ -63,7 +86,8 @@ export default {
       offsetX: 0,
       offsetY: 0,
       containerEl: '#canvas',
-      positionChanged: false
+      positionChanged: false,
+      localActive: false
     }
   },
   computed: {
@@ -132,6 +156,7 @@ export default {
     },
     draggableStopped (x, y) {
       this.setNewPosition(x, y)
+      this.dragging = false;
       this.$emit('dragstop')
     },
     setNewPosition (x, y) {

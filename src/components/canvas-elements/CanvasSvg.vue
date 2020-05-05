@@ -4,8 +4,10 @@
     :y.sync="svg.y"
     :width.sync="svg.width"
     :height.sync="svg.height"
+    :buttons="svgButtons"
     @dragstop="convertToSvgStoreObject"
-    @resizestop="convertToSvgStoreObject">
+    @resizestop="convertToSvgStoreObject"
+    @click:delete="removeSvg">
     <div 
       class="path-container" 
       v-html="svg.html"
@@ -47,6 +49,14 @@ export default {
       set (value) {
         this.$emit('change', value);
       }
+    },
+    svgButtons () {
+      return [
+        {
+          icon: 'delete',
+          key: 'delete'
+        }
+      ]
     }
   },
   methods: {
@@ -61,6 +71,9 @@ export default {
         initialHeight: this.value.initialHeight
       };
       this.$emit('update', { id: this.value.id, value: obj });
+    },
+    removeSvg () {
+      this.$emit('delete', this.value.id);
     }
   }
 }

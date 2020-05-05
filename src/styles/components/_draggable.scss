@@ -1,5 +1,6 @@
 .draggable {
   cursor: move;
+  position: relative;
 
   &.active.vdr {
     border-color: $secondary;
@@ -14,5 +15,13 @@
     border: 2px solid $secondary;
     border-radius: 50px;
     background-color: white;
+  }
+
+  &__tools {
+    $tools-width: 40px;
+    position: absolute;
+    right: -$tools-width - 3px;
+    top: 10px;
+    width: $tools-width;
   }
 }
