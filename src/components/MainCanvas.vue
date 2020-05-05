@@ -16,7 +16,8 @@
       :move-mode="!drawingMode"
       @remove-list="removeList(list.id)"
       @set-active="setActive(index, 'lists')"
-      @update="updateDbItem('listStore', $event)" />
+      @update="updateDbItem('listStore', $event)"
+      @delete="deleteDbItem('listStore', $event)" />
     <base-tracker 
       v-for="(tracker, index) in localTrackers" 
       ref="trackers"

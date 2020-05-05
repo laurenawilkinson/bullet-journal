@@ -1,4 +1,4 @@
-export class BaseTrackerItem {
+export class BaseInfoBarItem {
   constructor (id, type, title, options = []) {
     this.id = id;
     this.type = type;
@@ -7,7 +7,7 @@ export class BaseTrackerItem {
   }
 }
 
-export class InfoBarTracker extends BaseTrackerItem {
+export class InfoBarTracker extends BaseInfoBarItem {
   constructor (id, boxAmount = 7, tickType = 'circle', layout = 'horizontal') {
     let options = [
       {
@@ -80,5 +80,71 @@ export class InfoBarTracker extends BaseTrackerItem {
     ]
     
     super(id, 'tracker', 'Tracker', options)
+  }
+}
+
+export class InfoBarList extends BaseInfoBarItem {
+  constructor (id) {
+    let options = [
+      {
+        type: 'icon-button',
+        text: 'Add Task',
+        binding: {
+          icon: 'add',
+          className: 'button--block'
+        },
+        click: {
+          name: 'list:add-item',
+          payload: {
+            id,
+            type: 'task'
+          } 
+        }
+      },
+      {
+        type: 'icon-button',
+        text: 'Add Event',
+        binding: {
+          icon: 'add',
+          className: 'button--block'
+        },
+        click: {
+          name: 'list:add-item',
+          payload: {
+            id,
+            type: 'event'
+          } 
+        }
+      },
+      {
+        type: 'icon-button',
+        text: 'Add Note',
+        binding: {
+          icon: 'add',
+          className: 'button--block'
+        },
+        click: {
+          name: 'list:add-item',
+          payload: {
+            id,
+            type: 'note'
+          } 
+        }
+      },
+      {
+        type: 'icon-button',
+        text: 'Delete List',
+        binding: {
+          icon: 'delete',
+          className: 'button--block'
+        },
+        click: {
+          name: 'list:delete',
+          payload: id 
+        }
+      }
+    ]
+    
+    super(id, 'list', 'List', options)
   }
 }

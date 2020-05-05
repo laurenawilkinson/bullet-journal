@@ -72,6 +72,8 @@ import IconButton from '@/components/IconButton.vue'
 import { mixin as clickaway } from 'vue-clickaway';
 import Draggable from '@/components/Draggable.vue';
 import { StoreList } from '@/models/List';
+import EventBus from '../../EventBus'
+import { InfoBarList } from '@/models/InfoBarItems'
 
 export default {
   name: 'BulletList',
@@ -89,8 +91,14 @@ export default {
   },
   data () {
     return {
-      active: false,
+      isActive: false,
       dragActive: false
+    }
+  },
+  watch: {
+    '$store.state.activeItem': function () {
+      if (!this.isActiveItem && this.isActive)
+        this.isActive = false;
     }
   },
   computed: {
@@ -101,6 +109,14 @@ export default {
       set (value) {
         this.$emit('update:items', value)
       }
+    },
+    active () {
+      return this.isActive || this.$store.state.keepAlive && this.isActiveItem;
+    },
+    isActiveItem () {
+      return  this.$store.state.activeItem !== null 
+          && this.$store.state.activeItem.type == 'list'
+          && this.$store.state.activeItem.id == this.id;
     }
   },
   methods: {
@@ -134,20 +150,48 @@ export default {
       });
     },
     setActive () {
-      if (!this.active) this.$emit('set-active');
+      if (!this.isActive) this.$emit('set-active');
     },
     activate () {
-      this.active = true;
+      setTimeout(() => {
+        this.isActive = true;
+        this.$store.dispatch('setActiveItem', 
+          new InfoBarList(this.id))
+      }, 40)
     },
     deactivate () {
-      this.active = false;
+      if (!this.isActive) return;
+      this.removeActiveItem();
+      this.isActive = false;
       if (this.items.length == 0) this.$emit('remove-list')
     },
     deselectList () {
-      this.active = false;
+      if (!this.isActive) return;
+      this.removeActiveItem();
+      this.isActive = false;
       if (this.$refs.items) this.$refs.items.forEach(item => item.closeMenu());
       if (this.items.length == 0) this.$emit('remove-list')
+    },
+    removeActiveItem () {
+      setTimeout(() => {
+        if (!this.$store.state.keepAlive){
+          this.$store.dispatch('setActiveItem', null);
+          this.deactivate();
+        }
+      }, 20)
     }
+  },
+  created () {
+    EventBus.$on('list:add-item', ({ id, type }) => {
+      if (id === this.id) this.addItem(type);
+    })
+    EventBus.$on('list:delete', id => {
+      if (id === this.id) this.$emit('delete', id);
+    })
+  },
+  beforeDestroy () {
+    this.$store.dispatch('keepAlive', false);
+    this.$store.dispatch('setActiveItem', null);
   }
 }
 </script>

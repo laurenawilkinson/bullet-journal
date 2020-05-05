@@ -100,6 +100,10 @@ export default {
           this.$emit('update:options', value)
         }
       }
+    },
+    '$store.state.activeItem': function () {
+      if (!this.isActiveItem && this.isActive)
+        this.isActive = false;
     }
   },
   computed: {
@@ -135,7 +139,12 @@ export default {
       }
     },
     active () {
-      return this.isActive || this.$store.state.keepAlive && this.$store.state.activeItem !== null && this.$store.state.activeItem.id == this.id;
+      return this.isActive || this.$store.state.keepAlive && this.isActiveItem;
+    },
+    isActiveItem () {
+      return  this.$store.state.activeItem !== null 
+          && this.$store.state.activeItem.type == 'tracker'
+          && this.$store.state.activeItem.id == this.id;
     }
   },
   methods: {
@@ -174,7 +183,7 @@ export default {
     deactivate () {
       if (!this.isActive) return;
       this.isActive = false;
-      this.updateDb();
+      // this.updateDb();
     }
   },
   created () {
