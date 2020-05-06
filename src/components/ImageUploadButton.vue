@@ -1,6 +1,7 @@
 <template>
-  <label for="images" class="button button--icon">
+  <label for="images" class="button">
     <icon icon="image" />
+    <span><slot></slot></span>
     <input 
       id="images"
       ref="images" 

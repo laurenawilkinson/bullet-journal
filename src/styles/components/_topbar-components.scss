@@ -1,0 +1,57 @@
+@mixin topbar-window {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  border-radius: 10px;
+}
+
+.topbar {
+  .stroke-width-slider {
+  
+    &__slider {
+      background-color: $primary-600;
+      box-shadow: 1px 1px 6px $primary-900;
+      padding: 0.5rem 1rem;
+      bottom: -45px;
+      display: flex;
+      align-items: center;
+      @include topbar-window();
+    }
+
+    &__preview-container {
+      width: 15px;
+      height: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 0.8rem;
+    }
+
+    span.stroke-width-slider__preview {
+      background-color: white;
+      display: inline-block;
+      border-radius: 15px;
+      margin: 0;
+    }
+  }
+  
+  .colour-picker {
+    display: inline-flex;
+    position: relative;
+  
+    &__icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50px;
+      display: inline-block;
+      justify-self: flex-end;
+      border: 1.5px solid white;
+    }
+    
+    .vc-chrome {
+      @include topbar-window();
+      bottom: -240px;
+    }
+  }
+}

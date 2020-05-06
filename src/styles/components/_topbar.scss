@@ -1,59 +1,141 @@
-$topbar-height: 40px;
+$topbar-tab-content-height: 90px;
+$topbar-tab-button-height: 40px;
+$topbar-height: $topbar-tab-content-height + $topbar-tab-button-height;
 
 .topbar {
   background-color: $primary;
   color: $text--light;
-  display: flex;
-  align-items: center;
-  height: $topbar-height;
   z-index: 20;
 
-  .button {
-    color: $primary-100;
-    background-color: transparent;
+  .topbar__tab-button {
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0 1rem;
+    height: $topbar-tab-button-height;
+  }
 
-    &:hover,
-    &:focus,
-    &.active {
-      color: $text--light;
+  .topbar__tab-content {
+    display: flex;
+    align-items: center;
+  }
+
+  .topbar__button {
+    display: inline-flex;
+    &,
+    .button {
+      flex-direction: column;
+      background-color: transparent;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      width: 4rem;
+      height: 4rem;
+      justify-content: center;
+    }
+    
+    span {
+      margin: 0.2rem 0 0;
     }
 
-    &:focus,
     &.active {
       background-color: $primary-800;
     }
-  }
 
-  &__buttons {
-    max-width: $canvas-width;
-    text-align: left;
-    margin: 0 auto;
-    flex: 1;
-    height: 100%;
-  }
-}
-
-.dropdown-button {
-  display: inline-block;
-  position: relative;
-  height: 100%;
-
-  &__dropdown {
-    position: absolute;
-    background-color: $primary;
-    top: $topbar-height;
-    left: 0;
-    width: 150px;
-    z-index: 3;
-    box-shadow: 0 0 7px $primary--dark;
-
-    .button {
-      width: 100%;
+    &:not(.active):hover {
+      background-color: #711897;
     }
   }
 
-  &__caret {
-    padding-left: 0;
-    padding-right: 0;
+  // mobile topbar
+  @include breakpoint-down('sm') {
+    .topbar__tabs {
+      display: flex;
+
+      .topbar__tab {
+        flex: 1;
+
+        &-button {
+          width: 100%;
+          background-color: transparent;
+          justify-content: center;
+
+          &:not(.active) {
+            background-color: $primary-500;
+
+            &:hover,
+            &:focus {
+              background-color: $primary-600;
+            }
+          }
+        }
+      }
+    }
+
+    .topbar__tab-content {
+      width: 100%;
+      height: $topbar-tab-content-height;
+    }
   }
+
+  // tablet topbar
+
+
+  //desktop topbar
 }
+
+
+
+// .topbar {
+//   display: flex;
+//   align-items: center;
+//   height: $topbar-height;
+
+//   .button {
+//     color: $primary-100;
+//     background-color: transparent;
+
+//     &:hover,
+//     &:focus,
+//     &.active {
+//       color: $text--light;
+//     }
+
+//     &:focus,
+//     &.active {
+//       background-color: $primary-800;
+//     }
+//   }
+
+//   &__buttons {
+//     max-width: $canvas-width;
+//     text-align: left;
+//     margin: 0 auto;
+//     flex: 1;
+//     height: 100%;
+//   }
+// }
+
+// .dropdown-button {
+//   display: inline-block;
+//   position: relative;
+//   height: 100%;
+
+//   &__dropdown {
+//     position: absolute;
+//     background-color: $primary;
+//     top: $topbar-height;
+//     left: 0;
+//     width: 150px;
+//     z-index: 3;
+//     box-shadow: 0 0 7px $primary--dark;
+
+//     .button {
+//       width: 100%;
+//     }
+//   }
+
+//   &__caret {
+//     padding-left: 0;
+//     padding-right: 0;
+//   }
+// }
