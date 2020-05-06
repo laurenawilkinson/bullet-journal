@@ -130,6 +130,7 @@ export default {
   methods: {
     onDragStart (event) {
       this.setContainerListeners();
+      this.$emit('dragstart')
       const offsetX = this.$refs.draggable.offsetLeft;
       const offsetY = this.$refs.draggable.offsetTop;
 

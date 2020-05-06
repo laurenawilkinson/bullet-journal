@@ -8,9 +8,9 @@
       @create-list="createItem('list')"
       @create-tracker="createItem('tracker')"
       @display-image="addDbItem('imageStore', $event)" />
-    <transition name="slide-from-right" mode="out-in">
+    <!-- <transition name="slide-from-right" mode="out-in">
       <info-bar v-if="activeItem !== null" />
-    </transition>
+    </transition> -->
     <pages-bar :pages="pages" />
     <main-canvas 
       ref="canvas"
@@ -31,7 +31,7 @@
 
 <script>
 import TopBar from '@/components/TopBar.vue'
-import InfoBar from '@/components/InfoBar.vue'
+// import InfoBar from '@/components/InfoBar.vue'
 import PagesBar from '@/components/PagesBar.vue'
 import MainCanvas from '@/components/MainCanvas.vue'
 import EventBus from '../EventBus'
@@ -41,7 +41,7 @@ export default {
   components: {
     TopBar,
     MainCanvas,
-    InfoBar,
+    // InfoBar,
     PagesBar
   },
   props: {

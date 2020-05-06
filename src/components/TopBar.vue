@@ -23,7 +23,10 @@
       </button>
     </div>
   </nav>
-  <div class="topbar__tab-content">
+  <div
+    class="topbar__tab-content" 
+    v-on-clickaway="closeMenu" 
+    @click="keepActiveComponentAlive">
     <template v-if="activeTab == 'pages'">
       Page stuff
     </template>
@@ -31,29 +34,21 @@
       v-else 
       :buttons="topbarButtons" />
   </div>
-  <!-- <stroke-width-slider v-model="localPenWidth" />
-  <colour-picker v-model="localPenColor" /> -->
 </header>
 </template>
 
 <script>
-import IconButton from '@/components/IconButton.vue';
-import ColourPicker from '@/components/drawing/ColourPicker.vue';
-import StrokeWidthSlider from '@/components/drawing/StrokeWidthSlider.vue';
-import ButtonDropdown from '@/components/TopBarButtonDropdown.vue'
-import ImageUploadButton from '@/components/ImageUploadButton.vue'
 import ButtonList from '@/components/top-bar/ButtonList.vue'
+import EventBus from '../EventBus'
+import { mapState } from 'vuex'
+import { mixin as clickaway } from 'vue-clickaway'
 
 export default {
   name: 'TopBar',
   components: {
-    // IconButton,
-    // ColourPicker,
-    // StrokeWidthSlider,
-    // ButtonDropdown,
-    // ImageUploadButton,
     ButtonList
   },
+  mixins: [ clickaway ],
   props: {
     drawingMode: Boolean,
     penColor: String,
@@ -69,7 +64,23 @@ export default {
       showSecondaryMenu: false
     }
   },
+  watch: {
+    '$store.state.activeItem': {
+      handler (value, oldValue) {
+        if (value === null) {
+          this.closeMenu();
+        } else {
+          this.openMenu(value.type);
+        }
+      },
+      deep: true
+    }
+  },
   computed: {
+    ...mapState({
+      activeItem: state => state.activeItem || null,
+      activeItemId: state => state.activeItem.id || null,
+    }),
     buttons () {
       return [
         {
@@ -87,20 +98,8 @@ export default {
         }
       ]
     },
-    secondaryMenuButtons () {
+    secondaryMenuButtonsTools () {
       return [
-        {
-          key: 'back',
-          tab: 'tools',
-          binding: {
-            icon: 'keyboard_backspace'
-          },
-          text: 'Back',
-          component: 'IconButton',
-          events: {
-            click: () => this.closeMenu()
-          }
-        },
         {
           key: 'line',
           tab: 'tools',
@@ -192,6 +191,81 @@ export default {
             change: v => this.setPenWidth(v)
           }
         }
+      ]
+    },
+    secondaryMenuButtonsComponents () {
+      return [
+        {
+          key: 'task',
+          menu: [ 'list' ],
+          binding: {
+            icon: 'add'
+          },
+          text: 'Task',
+          component: 'IconButton',
+          events: {
+            click: () => this.raiseEvent(
+                'list:add-item', 
+                { id: this.activeItemId, type: 'task' })
+          }
+        },
+        {
+          key: 'event',
+          menu: [ 'list' ],
+          binding: {
+            icon: 'add'
+          },
+          text: 'Event',
+          component: 'IconButton',
+          events: {
+            click: () => this.raiseEvent(
+                'list:add-item', 
+                { id: this.activeItemId, type: 'event' })
+          }
+        },
+        {
+          key: 'note',
+          menu: [ 'list' ],
+          binding: {
+            icon: 'add'
+          },
+          text: 'Note',
+          component: 'IconButton',
+          events: {
+            click: () => this.raiseEvent(
+                'list:add-item', 
+                { id: this.activeItemId, type: 'note' })
+          }
+        },
+        {
+          key: 'delete',
+          menu: [ 'list' ],
+          binding: {
+            icon: 'delete'
+          },
+          text: 'Delete',
+          component: 'IconButton',
+          events: {
+            click: () => this.raiseEvent('list:delete', this.activeItemId)
+          }
+        }
+      ]
+    },
+    secondaryMenuButtons () {
+      return [
+        {
+          key: 'back',
+          binding: {
+            icon: 'keyboard_backspace'
+          },
+          text: 'Back',
+          component: 'IconButton',
+          events: {
+            click: () => this.backButton()
+          }
+        },
+        ...this.secondaryMenuButtonsTools,
+        ...this.secondaryMenuButtonsComponents
       ]
     },
     mainButtons () {
@@ -304,7 +378,7 @@ export default {
         ? this.secondaryMenuButtons
           .filter(x => 
           x.key == 'back' ||
-            (x.menu.includes(this.secondaryMenuName) && x.tab === this.activeTab) )
+            (x.menu.includes(this.secondaryMenuName)) )
         : this.mainButtons.filter(x => x.tab === this.activeTab);
     },
     localDrawTool: {
@@ -334,8 +408,11 @@ export default {
   },
   methods: {
     setActiveTab (tab) {
+      if (tab == this.activeTab) return;
       this.activeTab = tab;
       this.showSecondaryMenu = false;
+      this.$store.dispatch('setActiveItem', null);
+      this.stopKeepActiveComponentAlive();
       this.activateMove();
     },
     update (prop, value) {
@@ -364,16 +441,35 @@ export default {
     setPenWidth (width) {
       this.localPenWidth = width;
     },
+    keepActiveComponentAlive (handler = null) {
+      if (this.showSecondaryMenu) this.$store.dispatch('keepAlive', true);
+    },
+    stopKeepActiveComponentAlive () {
+      this.$store.dispatch('keepAlive', false);
+    },
+    raiseEvent (name, payload) {
+      this.keepActiveComponentAlive();
+      EventBus.$emit(name, payload)
+    },
     openMenu (menuName, handler = null) {
       this.showSecondaryMenu = true;
       this.secondaryMenuName = menuName;
       if (handler !== null) handler();
     },
+    backButton () {
+      this.$store.dispatch('setActiveItem', null);
+    },
     closeMenu () {
+      if (this.activeItem !== null) return;
+      this.stopKeepActiveComponentAlive();
       this.showSecondaryMenu = false;
       this.secondaryMenuName = null;
       this.activateMove();
     }
+  },
+  created () {
+    EventBus.$on('topbar:open-menu', type => this.openMenu(type))
+    EventBus.$on('topbar:close-menu', () => this.closeMenu())
   }
 }
 </script>

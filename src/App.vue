@@ -57,7 +57,7 @@ export default {
         }
     },
     async dbPull (storeName, keys = []) {
-      console.log('pulling...', storeName)
+      // console.log('pulling...', storeName)
       return new Promise((res, rej) => {
         if (keys && keys.length > 0) {
           // pull specific values by key (i.e. id)
@@ -75,7 +75,7 @@ export default {
             .objectStore(storeName)
             .getAll()
             .onsuccess = async (e) => {
-              console.log('pulled', storeName)
+              // console.log('pulled', storeName)
               if (storeName === 'imageStore') {
                 this.imageStore = e.target.result.map(x => new SaveableImage(x));
               }
@@ -100,7 +100,7 @@ export default {
     async dbUpdate (storeName, id, value) {
       if (!id) return console.error('No ID!');
 
-      console.log('updating...', value)
+      // console.log('updating...', value)
       let objectStore = this.db.transaction(storeName, "readwrite").objectStore(storeName);
       let req = objectStore.get(id)
       
@@ -120,7 +120,7 @@ export default {
       }
     },
     async dbDelete (storeName, id) {
-      console.log('deleting ' + id + ' from ' + storeName);
+      // console.log('deleting ' + id + ' from ' + storeName);
       let objectStore = this.db
         .transaction(storeName, "readwrite")
         .objectStore(storeName);

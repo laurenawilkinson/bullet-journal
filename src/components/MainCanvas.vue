@@ -189,7 +189,7 @@ export default {
     },
     async setActive (activeIndex, ref) {
       await this.$nextTick();
-      this.$store.dispatch('setActiveItem', null);
+      // this.$store.dispatch('setActiveItem', null);
 
       for (let i = 0; i < this.$refs[ref].length; i++) {
         if (i !== activeIndex)
@@ -240,8 +240,12 @@ export default {
     EventBus.$on('set-active-item', async ({ storeName, id }) => {
       this.$nextTick(() => {
         if (storeName === 'listStore') {
+          console.log('setting active from db???')
           let found = this.localLists.findIndex(x => x.id == id);
-          if (found > -1) this.setActive(found, 'lists')
+          if (found > -1) {
+            this.setActive(found, 'lists')
+            EventBus.$emit('topbar:open-menu', 'list');
+          }
         } else if (storeName === 'trackerStore') {
           let found = this.localTrackers.findIndex(x => x.id == id);
           if (found > -1) this.setActive(found, 'trackers')

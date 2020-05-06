@@ -1,6 +1,7 @@
 <template>
   <li 
-    :class="classes">
+    :class="classes"
+    @click="$emit('click')">
     <span
       class="bullet-list-item__icon bullet-list-item__icon--signifier">
       <icon 
@@ -56,7 +57,8 @@
         icon="strikethrough_s"
         @click="markAs('removed')"  /> <!-- irrelevant -->
       <icon-button 
-        icon="delete" 
+        v-if="!onlyItem"
+        icon="delete"
         @click="removeItem" /> <!-- remove -->
     </aside>
   </li>
@@ -77,7 +79,8 @@ export default {
     listActive: Boolean,
     listMoving: Boolean,
     removed: Boolean,
-    disabled: Boolean
+    disabled: Boolean,
+    onlyItem: Boolean
   },
   components: {
     Icon,
@@ -132,8 +135,8 @@ export default {
     },
     async deselectText () {
       this.toggleEdit = false;
-      if (this.content.length == 0) this.removeItem();
-      else this.update('content', this.localContent)
+      // if (this.content.length == 0) this.removeItem();
+      this.update('content', this.localContent)
     },
     toggleMenu () {
       this.menuOpen = !this.menuOpen;
