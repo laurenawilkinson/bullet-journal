@@ -37,10 +37,8 @@ const store = new Vuex.Store({
       state.keepAlive = value;
     },
     setActivePropValue (state, { prop, value }) {
-      if (state.activeItem == null) return;
-
-      const found = state.activeItem.options.findIndex(x => x.text === prop);
-      if (found > -1) state.activeItem.options[found].value = value;
+      if (state.activeItem == null || !state.activeItem.options[prop]) return;
+      state.activeItem.options[prop] = value;
     }
   },
   actions: {
@@ -57,6 +55,9 @@ const store = new Vuex.Store({
       for (const opt in options) {
         commit('setActivePropValue', { prop: opt.text, value: opt.value })
       }
+    },
+    updateActiveItemOption ({ commit }, { prop, value }) {
+      commit('setActivePropValue', { prop, value })
     },
     keepAlive ({ commit }, value) {
       commit('setKeepAlive', value)

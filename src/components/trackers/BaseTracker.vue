@@ -70,6 +70,7 @@ import { TrackerItem, StoreTracker } from '@/models/Tracker'
 import { mixin as clickaway } from 'vue-clickaway';
 import { InfoBarTracker } from '@/models/InfoBarItems'
 import EventBus from '../../EventBus'
+import { mapState } from 'vuex'
 
 export default {
   name: 'BaseTracker',
@@ -94,12 +95,7 @@ export default {
   watch: {
     localOptions (value) {
       if (!this.active) return;
-
-      for (const opt in this.options) {
-        if (this.options[opt] !== value[opt]) {
-          this.$emit('update:options', value)
-        }
-      }
+      this.updateDb();
     },
     '$store.state.activeItem': function () {
       if (!this.isActiveItem && this.isActive)
@@ -107,16 +103,19 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      activeItemOptions: state => state.activeItem && state.activeItem.options ? state.activeItem.options : null,
+    }),
     localOptions () {
       return {
-        boxAmount: this.active && this.$store.getters.activeItemProps !== null 
-          ? this.$store.getters.activeItemProps.boxAmount 
+        boxAmount: this.active && this.activeItemOptions !== null 
+          ? this.activeItemOptions.boxAmount 
           : this.options.boxAmount,
-        tickType: this.active && this.$store.getters.activeItemProps !== null 
-          ? this.$store.getters.activeItemProps.tickType 
+        tickType: this.active && this.activeItemOptions !== null 
+          ? this.activeItemOptions.tickType 
           : this.options.tickType,
-        layout: this.active && this.$store.getters.activeItemProps !== null 
-          ? this.$store.getters.activeItemProps.layout 
+        layout: this.active && this.activeItemOptions !== null 
+          ? this.activeItemOptions.layout 
           : this.options.layout
       }
     },
@@ -154,7 +153,7 @@ export default {
       this.updateDb();
     },
     getTrackerStoreItem () {
-      return new StoreTracker({ id: this.id, position: this.position, items: this.items, options: this.options })
+      return new StoreTracker({ id: this.id, position: this.position, items: this.items, options: this.localOptions })
     },
     updateDb () {
       this.$emit('update', { id: this.id, value: this.getTrackerStoreItem() })
@@ -177,7 +176,7 @@ export default {
     activate () {
       setTimeout(() => {
         this.isActive = true;
-        this.$store.dispatch('setActiveItem', new InfoBarTracker(this.id, this.localOptions.boxAmount, this.localOptions.tickType, this.localOptions.layout))
+        this.$store.dispatch('setActiveItem', new InfoBarTracker(this.id, this.options.boxAmount, this.options.tickType, this.options.layout))
       }, 40)
     },
     deactivate () {

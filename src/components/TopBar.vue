@@ -61,7 +61,8 @@ export default {
       showDropdown: false,
       activeTab: 'tools',
       secondaryMenuName: null,
-      showSecondaryMenu: false
+      showSecondaryMenu: false,
+      localOptions: []
     }
   },
   watch: {
@@ -79,7 +80,7 @@ export default {
   computed: {
     ...mapState({
       activeItem: state => state.activeItem || null,
-      activeItemId: state => state.activeItem.id || null,
+      activeItemId: state => state.activeItem.id || null
     }),
     buttons () {
       return [
@@ -238,7 +239,7 @@ export default {
           }
         },
         {
-          key: 'delete',
+          key: 'delete-list',
           menu: [ 'list' ],
           binding: {
             icon: 'delete'
@@ -247,6 +248,52 @@ export default {
           component: 'IconButton',
           events: {
             click: () => this.raiseEvent('list:delete', this.activeItemId)
+          }
+        },
+        {
+          key: 'add-tracker-item',
+          menu: [ 'tracker' ],
+          binding: {
+            icon: 'add'
+          },
+          text: 'Add Item',
+          component: 'IconButton',
+          events: {
+            click: () => this.raiseEvent('tracker:add-item', this.activeItemId)
+          }
+        },
+        {
+          key: 'tick-type',
+          menu: [ 'tracker' ],
+          binding: {
+            value: this.activeItem.options.tickType,
+            options: [
+              {
+                text: 'Circle',
+                value: 'circle'
+              },
+              { 
+                text: 'Block',
+                value: 'block'
+              }
+            ]
+          },
+          text: 'Tick Type',
+          component: 'InfoBarOptionSelect',
+          events: {
+            change: v => this.$store.dispatch('updateActiveItemOption', { prop: 'tickType', value: v })
+          }
+        },
+        {
+          key: 'delete-tracker',
+          menu: [ 'tracker' ],
+          binding: {
+            icon: 'delete'
+          },
+          text: 'Delete',
+          component: 'IconButton',
+          events: {
+            click: () => this.raiseEvent('tracker:delete', this.activeItemId)
           }
         }
       ]

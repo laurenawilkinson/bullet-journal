@@ -1,6 +1,6 @@
 <template>
   <label>
-    {{ text }}
+    <slot></slot>
     <select v-model="localValue">
       <option 
         v-for="option in options" 

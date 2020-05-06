@@ -25,7 +25,7 @@
       :id="tracker.id"
       :position="tracker.position"
       :items="tracker.items"
-      :options.sync="tracker.options"
+      :options="tracker.options"
       @set-active="setActive(index, 'trackers')"
       @update="updateDbItem('trackerStore', $event)"
       @delete="deleteDbItem('trackerStore', $event)" />
@@ -240,7 +240,6 @@ export default {
     EventBus.$on('set-active-item', async ({ storeName, id }) => {
       this.$nextTick(() => {
         if (storeName === 'listStore') {
-          console.log('setting active from db???')
           let found = this.localLists.findIndex(x => x.id == id);
           if (found > -1) {
             this.setActive(found, 'lists')
