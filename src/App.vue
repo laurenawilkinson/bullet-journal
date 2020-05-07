@@ -58,7 +58,8 @@ export default {
           // update store with new item
           // e.target.result is the key (id)
           await this.dbPull(storeName)
-          EventBus.$emit('set-active-item', { storeName, id: e.target.result })
+          if (storeName === 'listStore' || storeName === 'trackerStore')
+           EventBus.$emit('set-active-item', { storeName, id: e.target.result })
         }
     },
     async dbPull (storeName, keys = []) {
@@ -236,7 +237,6 @@ export default {
         this.setActivePage(this.pages[this.pages.length - 1].id);
     },
     renamePage ({ id, value }) {
-      console.log('renaming ' + id + ' to ' + value);
       let pageIndex = this.pages.findIndex(x => x.id === id);
 
       if (pageIndex < 0) return;

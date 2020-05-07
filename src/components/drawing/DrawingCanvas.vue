@@ -15,7 +15,7 @@
 
 <script>
 import { Path, Circle, Rectangle, Line } from '@/models/Drawables'
-
+import EventBus from '../../EventBus';
 // CARE: I have edited canvas2svg to include a PR
 // that adds support for the ellipse method.
 import C2S from '@/assets/canvas2svg'
@@ -236,6 +236,9 @@ export default {
       this.rects = [];
       this.context.clearRect(0, 0, this.width, this.height); // clear canvas
     }
+  },
+  created () {
+    EventBus.$on('draw:finish-path', () => this.completePathDrawing());
   },
   mounted () {
     this.context = this.$refs.canvas.getContext('2d');

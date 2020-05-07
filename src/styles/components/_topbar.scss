@@ -48,7 +48,7 @@ $topbar-height: $topbar-tab-content-height + $topbar-tab-button-height;
   }
 
   // mobile topbar
-  @include breakpoint-down('sm') {
+  @include breakpoint-down('lg') {
     .topbar__tabs {
       display: flex;
 

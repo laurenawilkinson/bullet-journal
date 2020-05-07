@@ -12,7 +12,7 @@
       <button 
         :class="{ 'button topbar__tab-button': true, active: activeTab == 'components' }" 
         @click="setActiveTab('components')">
-        Components
+        Widgets
       </button>
     </div>
     <div class="topbar__tab topbar__tab--pages">
@@ -27,10 +27,13 @@
     class="topbar__tab-content" 
     v-on-clickaway="closeMenu" 
     @click="keepActiveComponentAlive">
-    <page-control v-if="activeTab == 'pages'" :pages="pages" />
     <button-list
-      v-else 
-      :buttons="topbarButtons" />
+      v-if="activeTab === 'tools'"
+      :buttons="topbarButtonsTools" />
+    <page-control v-else-if="activeTab == 'pages'" :pages="pages" />
+    <button-list
+      v-else-if="activeTab === 'components'" 
+      :buttons="topbarButtonsComponents" />
   </div>
 </header>
 </template>
@@ -73,6 +76,7 @@ export default {
           this.closeMenu();
         } else {
           this.openMenu(value.type);
+          this.justSetTab(value.tab)
         }
       },
       deep: true
@@ -100,44 +104,84 @@ export default {
         }
       ]
     },
+    topbarButtonsTools () {
+      return this.showSecondaryMenu ?
+        this.secondaryMenuButtonsTools
+          .filter(x => x.key == 'back' || x.menu.includes(this.secondaryMenuName)) :
+        [
+          {
+            key: 'move',
+            tab: 'tools',
+            binding: {
+              active: this.active == 'move',
+              icon: 'format_shapes'
+            },
+            text: 'Move',
+            component: 'IconButton',
+            events: {
+              click: () => this.activateMove()
+            }
+          },
+          {
+            key: 'path',
+            tab: 'tools',
+            binding: {
+              active: this.active == 'draw' && this.drawTool == 'path',
+              icon: 'edit'
+            },
+            text: 'Draw',
+            component: 'IconButton',
+            events: {
+              click: () => this.openMenu('draw', this.activateDraw('path'))
+            }
+          },
+          {
+            key: 'line',
+            tab: 'tools',
+            binding: {
+              active: this.active == 'draw' && this.drawTool == 'line',
+              custom: true,
+              icon: 'line_tool'
+            },
+            text: 'Line',
+            component: 'IconButton',
+            events: {
+              click: () => this.openMenu('draw-line', this.activateDraw('line'))
+            }
+          },
+          {
+            key: 'rect',
+            tab: 'tools',
+            binding: {
+              active: this.active == 'draw' && this.drawTool == 'rect',
+              custom: true,
+              icon: 'square_tool'
+            },
+            text: 'Square',
+            component: 'IconButton',
+            events: {
+              click: () => this.openMenu('draw-rect', this.activateDraw('rect'))
+            }
+          },
+          {
+            key: 'ellipse',
+            tab: 'tools',
+            binding: {
+              active: this.active == 'draw' && this.drawTool == 'ellipse',
+              custom: true,
+              icon: 'circle_tool'
+            },
+            text: 'Circle',
+            component: 'IconButton',
+            events: {
+              click: () => this.openMenu('draw-ellipse', this.activateDraw('ellipse'))
+            }
+          }
+        ]
+    },
     secondaryMenuButtonsTools () {
       return [
-        {
-          key: 'line',
-          tab: 'tools',
-          menu: ['draw-line'],
-          binding: {
-            active: this.active == 'draw' && this.drawTool == 'line',
-            custom: true,
-            icon: 'line_tool'
-          },
-          text: 'Line',
-          component: 'IconButton'
-        },
-        {
-          key: 'rect',
-          tab: 'tools',
-          menu: ['draw-rect'],
-          binding: {
-            active: this.active == 'draw' && this.drawTool == 'rect',
-            custom: true,
-            icon: 'square_tool'
-          },
-          text: 'Square',
-          component: 'IconButton'
-        },
-        {
-          key: 'ellipse',
-          tab: 'tools',
-          menu: [ 'draw-ellipse' ],
-          binding: {
-            active: this.active == 'draw' && this.drawTool == 'ellipse',
-            custom: true,
-            icon: 'circle_tool'
-          },
-          text: 'Circle',
-          component: 'IconButton'
-        },
+        this.secondaryMenuBackButton,
         {
           key: 'path',
           tab: 'tools',
@@ -195,8 +239,49 @@ export default {
         }
       ]
     },
+    topbarButtonsComponents () {
+      return this.showSecondaryMenu ?
+        this.secondaryMenuButtonsComponents
+          .filter(x => x.key == 'back' || x.menu.includes(this.secondaryMenuName)) :
+        [
+          {
+            key: 'list',
+            tab: 'components',
+            binding: {
+              icon: 'format_list_bulleted'
+            },
+            text: 'List',
+            component: 'IconButton',
+            events: {
+              click: () => this.activateList()
+            }
+          },
+          {
+            key: 'tracker',
+            tab: 'components',
+            binding: {
+              icon: 'alarm'
+            },
+            text: 'Tracker',
+            component: 'IconButton',
+            events: {
+              click: () => this.activateTracker()
+            }
+          },
+          {
+            key: 'image',
+            tab: 'components',
+            text: 'Image',
+            component: 'ImageUploadButton',
+            events: {
+              'display-image': e => this.$emit('display-image', e)
+            }
+          }
+        ]
+    },
     secondaryMenuButtonsComponents () {
       return [
+        this.secondaryMenuBackButton,
         {
           key: 'task',
           menu: [ 'list' ],
@@ -299,9 +384,8 @@ export default {
         }
       ]
     },
-    secondaryMenuButtons () {
-      return [
-        {
+    secondaryMenuBackButton () {
+      return {
           key: 'back',
           binding: {
             icon: 'keyboard_backspace'
@@ -311,123 +395,7 @@ export default {
           events: {
             click: () => this.backButton()
           }
-        },
-        ...this.secondaryMenuButtonsTools.filter(x => x.menu.includes(this.secondaryMenuName)),
-        ...this.secondaryMenuButtonsComponents.filter(x => x.menu.includes(this.secondaryMenuName))
-      ]
-    },
-    mainButtons () {
-      return [
-        {
-          key: 'move',
-          tab: 'tools',
-          binding: {
-            active: this.active == 'move',
-            icon: 'format_shapes'
-          },
-          text: 'Move',
-          component: 'IconButton',
-          events: {
-            click: () => this.activateMove()
-          }
-        },
-        {
-          key: 'path',
-          tab: 'tools',
-          binding: {
-            active: this.active == 'draw' && this.drawTool == 'path',
-            icon: 'edit'
-          },
-          text: 'Draw',
-          component: 'IconButton',
-          events: {
-            click: () => this.openMenu('draw', this.activateDraw('path'))
-          }
-        },
-        {
-          key: 'line',
-          tab: 'tools',
-          binding: {
-            active: this.active == 'draw' && this.drawTool == 'line',
-            custom: true,
-            icon: 'line_tool'
-          },
-          text: 'Line',
-          component: 'IconButton',
-          events: {
-            click: () => this.openMenu('draw-line', this.activateDraw('line'))
-          }
-        },
-        {
-          key: 'rect',
-          tab: 'tools',
-          binding: {
-            active: this.active == 'draw' && this.drawTool == 'rect',
-            custom: true,
-            icon: 'square_tool'
-          },
-          text: 'Square',
-          component: 'IconButton',
-          events: {
-            click: () => this.openMenu('draw-rect', this.activateDraw('rect'))
-          }
-        },
-        {
-          key: 'ellipse',
-          tab: 'tools',
-          binding: {
-            active: this.active == 'draw' && this.drawTool == 'ellipse',
-            custom: true,
-            icon: 'circle_tool'
-          },
-          text: 'Circle',
-          component: 'IconButton',
-          events: {
-            click: () => this.openMenu('draw-ellipse', this.activateDraw('ellipse'))
-          }
-        },
-        {
-          key: 'list',
-          tab: 'components',
-          binding: {
-            icon: 'format_list_bulleted'
-          },
-          text: 'List',
-          component: 'IconButton',
-          events: {
-            click: () => this.activateList()
-          }
-        },
-        {
-          key: 'tracker',
-          tab: 'components',
-          binding: {
-            icon: 'alarm'
-          },
-          text: 'Tracker',
-          component: 'IconButton',
-          events: {
-            click: () => this.activateTracker()
-          }
-        },
-        {
-          key: 'image',
-          tab: 'components',
-          text: 'Image',
-          component: 'ImageUploadButton',
-          events: {
-            'display-image': e => this.$emit('display-image', e)
-          }
         }
-      ]
-    },
-    topbarButtons () {
-      return this.showSecondaryMenu 
-        ? this.secondaryMenuButtons
-          .filter(x => 
-          x.key == 'back' ||
-            (x.menu.includes(this.secondaryMenuName)) )
-        : this.mainButtons.filter(x => x.tab === this.activeTab);
     },
     localDrawTool: {
       get () {
@@ -479,6 +447,7 @@ export default {
       this.active = 'draw';
       this.update('drawing-mode', true);
       this.localDrawTool = drawTool;
+      EventBus.$emit('draw:finish-path');
     },
     activateList () {
       this.activateMove();
@@ -509,11 +478,23 @@ export default {
       this.secondaryMenuName = menuName;
       if (handler !== null) handler();
     },
+    justSetTab (tabName) {
+      if (tabName == this.activeTab) return;
+      this.activeTab = tabName;
+    },
     backButton () {
       this.$store.dispatch('setActiveItem', null);
+      this.stopKeepActiveComponentAlive();
+      this.showSecondaryMenu = false;
+      this.secondaryMenuName = null;
+      this.activateMove();
     },
     closeMenu () {
-      if (this.activeItem !== null) return;
+      if (this.activeItem !== null 
+        || this.secondaryMenuName == 'draw' 
+        || this.secondaryMenuName == 'draw-rect'
+        || this.secondaryMenuName == 'draw-ellipse'
+        || this.secondaryMenuName == 'draw-line' ) return;
       this.stopKeepActiveComponentAlive();
       this.showSecondaryMenu = false;
       this.secondaryMenuName = null;

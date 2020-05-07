@@ -3,6 +3,7 @@ export class BaseInfoBarItem {
     this.id = id;
     this.type = type;
     this.title = title;
+    this.tab = 'components';
     this.options = options;
   }
 }
