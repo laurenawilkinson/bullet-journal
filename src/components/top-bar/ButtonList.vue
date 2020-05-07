@@ -16,6 +16,7 @@ import ImageUploadButton from '@/components/ImageUploadButton.vue'
 import ColourPicker from '@/components/drawing/ColourPicker.vue';
 import StrokeWidthSlider from '@/components/drawing/StrokeWidthSlider.vue';
 import InfoBarOptionSelect from '@/components/info-bar/InfoBarOptionSelect.vue';
+import InfoBarOptionText from '@/components/info-bar/InfoBarOptionText.vue';
 export default {
   name: 'ButtonList',
   components: {
@@ -23,7 +24,8 @@ export default {
     ImageUploadButton,
     ColourPicker,
     StrokeWidthSlider,
-    InfoBarOptionSelect
+    InfoBarOptionSelect,
+    InfoBarOptionText
   },
   props: {
     buttons: Array

@@ -15,7 +15,7 @@
         Components
       </button>
     </div>
-    <div class="topbar__tab">
+    <div class="topbar__tab topbar__tab--pages">
       <button 
         :class="{ 'button topbar__tab-button': true, active: activeTab == 'pages' }" 
         @click="setActiveTab('pages')">
@@ -27,9 +27,7 @@
     class="topbar__tab-content" 
     v-on-clickaway="closeMenu" 
     @click="keepActiveComponentAlive">
-    <template v-if="activeTab == 'pages'">
-      Page stuff
-    </template>
+    <page-control v-if="activeTab == 'pages'" :pages="pages" />
     <button-list
       v-else 
       :buttons="topbarButtons" />
@@ -39,6 +37,7 @@
 
 <script>
 import ButtonList from '@/components/top-bar/ButtonList.vue'
+import PageControl from '@/components/top-bar/PageControl.vue'
 import EventBus from '../EventBus'
 import { mapState } from 'vuex'
 import { mixin as clickaway } from 'vue-clickaway'
@@ -46,14 +45,16 @@ import { mixin as clickaway } from 'vue-clickaway'
 export default {
   name: 'TopBar',
   components: {
-    ButtonList
+    ButtonList,
+    PageControl
   },
   mixins: [ clickaway ],
   props: {
     drawingMode: Boolean,
     penColor: String,
     penWidth: Number,
-    drawTool: String
+    drawTool: String,
+    pages: Array
   },
   data () {
     return {

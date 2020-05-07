@@ -1,31 +1,34 @@
 <template>
   <div class="home">
-    <top-bar 
-      :drawing-mode.sync="drawingMode"
-      :pen-color.sync="penColor"
-      :pen-width.sync="penWidth"
-      :draw-tool.sync="drawTool"
-      @create-list="createItem('list')"
-      @create-tracker="createItem('tracker')"
-      @display-image="addDbItem('imageStore', $event)" />
     <!-- <transition name="slide-from-right" mode="out-in">
       <info-bar v-if="activeItem !== null" />
     </transition> -->
     <pages-bar :pages="pages" />
-    <main-canvas 
-      ref="canvas"
-      v-bind="{
-        drawingMode,
-        penColor,
-        penWidth,
-        canvasOffset,
-        drawTool,
-        lists: filterByCurrentPage(lists),
-        images: filterByCurrentPage(images),
-        trackers: filterByCurrentPage(trackers),
-        svgs: filterByCurrentPage(svgs)
-      }"
-      @resize="getCanvasOffset" />
+    <div class="page-container">
+      <top-bar 
+        :drawing-mode.sync="drawingMode"
+        :pen-color.sync="penColor"
+        :pen-width.sync="penWidth"
+        :draw-tool.sync="drawTool"
+        :pages="pages"
+        @create-list="createItem('list')"
+        @create-tracker="createItem('tracker')"
+        @display-image="addDbItem('imageStore', $event)" />
+      <main-canvas 
+        ref="canvas"
+        v-bind="{
+          drawingMode,
+          penColor,
+          penWidth,
+          canvasOffset,
+          drawTool,
+          lists: filterByCurrentPage(lists),
+          images: filterByCurrentPage(images),
+          trackers: filterByCurrentPage(trackers),
+          svgs: filterByCurrentPage(svgs)
+        }"
+        @resize="getCanvasOffset" />
+    </div>
   </div>
 </template>
 

@@ -34,5 +34,15 @@ body,
 
 .home {
   display: flex;
+}
+
+.page-container {
+  display: flex;
   flex-direction: column;
+  width: 100%;
+  flex: 1;
+
+  .canvas-container {
+    flex: 1;
+  }
 }
