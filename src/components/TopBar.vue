@@ -266,7 +266,7 @@ export default {
           key: 'tick-type',
           menu: [ 'tracker' ],
           binding: {
-            value: this.activeItem.options.tickType,
+            value: this.getOptionValue('tickType'),
             options: [
               {
                 text: 'Circle',
@@ -311,8 +311,8 @@ export default {
             click: () => this.backButton()
           }
         },
-        ...this.secondaryMenuButtonsTools,
-        ...this.secondaryMenuButtonsComponents
+        ...this.secondaryMenuButtonsTools.filter(x => x.menu.includes(this.secondaryMenuName)),
+        ...this.secondaryMenuButtonsComponents.filter(x => x.menu.includes(this.secondaryMenuName))
       ]
     },
     mainButtons () {
@@ -454,6 +454,11 @@ export default {
     }
   },
   methods: {
+    getOptionValue (prop) {
+      return this.activeItem !== null && this.activeItem.options
+        ? this.activeItem.options[prop]
+        : null;
+    },
     setActiveTab (tab) {
       if (tab == this.activeTab) return;
       this.activeTab = tab;

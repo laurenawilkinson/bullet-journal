@@ -7,6 +7,33 @@
 }
 
 .topbar {
+  .topbar__window {
+    @include topbar-window();
+    bottom: -55px;
+    width: 120px;
+    background-color: $primary-600;
+    box-shadow: 1px 1px 6px $primary-900;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text--dark;
+    font-size: 1rem;
+
+    select {
+      padding: 0.4rem 1rem;
+      border-radius: 10px;
+    }
+  }
+  .tick-type-preview {
+    width: 24px;
+    height: 24px;
+    background-color: $secondary;
+
+    &.circle {
+      border-radius: 50px;
+    }
+  }
   .stroke-width-slider {
   
     &__slider {

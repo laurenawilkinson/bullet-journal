@@ -54,7 +54,7 @@ export default {
   methods: {
     setItemChecked (item, box) {
       item.setChecked(box);
-      this.$emit('setActive')
+      this.$emit('set-active')
       this.$emit('update');
     }
   },
