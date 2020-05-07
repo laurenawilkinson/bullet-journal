@@ -7,6 +7,7 @@ const store = new Vuex.Store({
   state: {
     layers: 0,
     currentPage: 1,
+    pages: [],
     activeItem: null,
     keepAlive: false
   },
@@ -21,6 +22,10 @@ const store = new Vuex.Store({
       });
 
       return props;
+    },
+    currentPageObj (state) {
+      let found = state.pages.find(x => x.id === state.currentPage);
+      return found ? found : null;
     }
   },
   mutations: {
@@ -39,6 +44,9 @@ const store = new Vuex.Store({
     setActivePropValue (state, { prop, value }) {
       if (state.activeItem == null || !state.activeItem.options[prop]) return;
       state.activeItem.options[prop] = value;
+    },
+    updatePages (state, value) {
+      state.pages = value;
     }
   },
   actions: {
@@ -61,6 +69,9 @@ const store = new Vuex.Store({
     },
     keepAlive ({ commit }, value) {
       commit('setKeepAlive', value)
+    },
+    updatePages ({ commit}, value) {
+      commit('updatePages', value)
     }
   }
 })

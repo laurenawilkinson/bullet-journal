@@ -3,14 +3,14 @@
     <ul class="pages-bar__pages">
       <li 
         v-for="page in pages" 
-        :key="page" 
+        :key="page.id" 
         :class="{
           'pages-bar__page': true,
-          'active': isActivePage(page)
+          'active': isActivePage(page.id)
         }"
-        @click="setActivePage(page)">
-          <span>{{ page }}</span>
-          <icon-button v-if="pages.length > 1" icon="delete" @click.stop="removePage(page)" />
+        @click="setActivePage(page.id)">
+          <span>{{ page.name }}</span>
+          <icon-button v-if="pages.length > 1" icon="delete" @click.stop="removePage(page.id)" />
         </li>
     </ul>
     <div class="pages-bar__add-page" @click="addPage">

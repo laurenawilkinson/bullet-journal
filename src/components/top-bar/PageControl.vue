@@ -3,7 +3,7 @@
     <label class="topbar__pages-select">
       <span>Current Page</span>
       <select v-model="currentPage">
-        <option v-for="page in pages" :key="page">{{ page }}</option>
+        <option v-for="page in pages" :key="page.id" :value="page.id">{{ page.name }}</option>
       </select>
     </label>
     <button-list :buttons="buttons" />
@@ -40,7 +40,7 @@ export default {
           key: 'rename-page',
           binding: {
             icon: 'edit',
-            value: this.$store.state.currentPage,
+            value: this.$store.getters.currentPageObj.name,
             input: {
               type: 'text'
             }
@@ -80,8 +80,7 @@ export default {
   },
   methods: {
     renamePage (name) {
-      console.log('renaming..', name)
-      EventBus.$emit('pages:rename', name);
+      EventBus.$emit('pages:rename', { id: this.$store.state.currentPage, value: name });
     },
     setActivePage (number) {
       EventBus.$emit('pages:activate', number);

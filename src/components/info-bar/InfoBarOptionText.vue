@@ -8,6 +8,7 @@
         ref="input"
         v-model.lazy="localValue"
         v-bind="input"
+        @keyup.enter="onEnter"
         />
     </div>
   </label>
@@ -55,6 +56,10 @@ export default {
     }
   },
   methods: {
+    onEnter () {
+      this.closeInput();
+      this.$emit('input', this.localValue)
+    },
     closeInput () {
       this.showInput = false;
     },
