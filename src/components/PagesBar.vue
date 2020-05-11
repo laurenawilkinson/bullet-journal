@@ -82,6 +82,7 @@ export default {
     },
     setActivePage (number) {
       EventBus.$emit('pages:activate', number);
+      this.close();
     },
     addPage () {
       EventBus.$emit('pages:add');

@@ -4,8 +4,8 @@
     id="canvas" 
     :class="{ canvas: true, 'canvas--drawing': drawingMode }" 
     ref="canvas" 
-    @mousemove="trackMouse" 
-    @touchmove="trackMouse">
+    @mousemove.stop="trackMouse" 
+    @touchmove.stop="trackMouse">
     <bullet-list 
       v-for="(list, index) in localLists"
       ref="lists"
@@ -60,7 +60,7 @@
     <div 
       v-if="showOverlay"
       class="tooltip"
-      :style="{ position: 'absolute', top: mouse.y + 'px', left: mouse.x + 'px', pointer: 'crosshair' }"
+      :style="{ position: 'absolute', left: `${mouse.x}px`, top: `${mouse.y}px` }"
       @click="createItem">
       Click to place {{ overlayType }}
     </div>
@@ -150,9 +150,8 @@ export default {
     },
     trackMouse (event) {
       if (!this.showOverlay) return;
-
-      this.mouse.x = event.clientX - this.canvasOffset.x / 2;
-      this.mouse.y = event.clientY - this.canvasOffset.y / 2;
+      this.mouse.x = event.clientX - this.canvasOffset.x;
+      this.mouse.y = event.clientY - this.canvasOffset.y;
     },
     openOverlay (overlay) {
       this.overlayType = overlay;

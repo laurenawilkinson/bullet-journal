@@ -50,10 +50,10 @@ export default {
       if (!this.drawingMode) return;
 
       let pathX = event.type == 'touchstart' 
-        ? event.touches[0].clientX - (this.canvasOffset.x / 2)
+        ? event.touches[0].clientX - this.canvasOffset.x
         : event.offsetX;
       let pathY = event.type == 'touchstart' 
-        ? event.touches[0].clientY - (this.canvasOffset.y / 2)
+        ? event.touches[0].clientY - this.canvasOffset.y
         : event.offsetY;
 
       this.isDrawing = true;
@@ -76,10 +76,10 @@ export default {
       if (!this.isDrawing || !this.drawingMode) return;
 
       let pathX = event.type == 'touchmove' 
-        ? event.touches[0].clientX - (this.canvasOffset.x / 2)
+        ? event.touches[0].clientX - this.canvasOffset.x
         : event.offsetX;
       let pathY = event.type == 'touchmove' 
-        ? event.touches[0].clientY - (this.canvasOffset.y / 2)
+        ? event.touches[0].clientY - this.canvasOffset.y
         : event.offsetY;
 
       switch (this.drawTool) {

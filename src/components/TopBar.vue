@@ -26,20 +26,30 @@
     class="topbar__tab-content" 
     v-on-clickaway="closeMenu" 
     @click="keepActiveComponentAlive">
-    <button-list
-      v-if="activeTab === 'tools'"
-      :buttons="topbarButtonsTools" />
-    <page-control v-else-if="activeTab == 'pages'" :pages="pages" />
-    <button-list
-      v-else-if="activeTab === 'components'" 
-      :buttons="topbarButtonsComponents" />
+    <div 
+      v-if="activeTab === 'tools' || showAll"
+      class="topbar__content topbar__content--tools" >
+      <div class="topbar__content-title">
+        Tools
+      </div>
+      <button-list
+        :buttons="topbarButtonsTools" />
+    </div>
+    <div 
+      v-if="activeTab === 'components' || showAll"
+      class="topbar__content topbar__content--components">
+      <div class="topbar__content-title">
+        Widgets
+      </div>
+      <button-list
+        :buttons="topbarButtonsComponents" />
+    </div>
   </div>
 </header>
 </template>
 
 <script>
 import ButtonList from '@/components/top-bar/ButtonList.vue'
-import PageControl from '@/components/top-bar/PageControl.vue'
 import IconButton from '@/components/IconButton.vue'
 import EventBus from '../EventBus'
 import { mapState } from 'vuex'
@@ -49,7 +59,6 @@ export default {
   name: 'TopBar',
   components: {
     ButtonList,
-    PageControl,
     IconButton
   },
   mixins: [ clickaway ],
@@ -58,7 +67,8 @@ export default {
     penColor: String,
     penWidth: Number,
     drawTool: String,
-    pages: Array
+    pages: Array,
+    showAll: Boolean
   },
   data () {
     return {
@@ -88,25 +98,8 @@ export default {
       activeItem: state => state.activeItem || null,
       activeItemId: state => state.activeItem.id || null
     }),
-    buttons () {
-      return [
-        {
-          key: 'draw',
-          icon: 'edit',
-          text: 'Draw Path',
-          active: this.active == 'draw' && this.drawTool == 'path' 
-        },
-        {
-          key: 'draw-multi',
-          icon: 'draw_group',
-          custom: true,
-          text: 'Draw Group',
-          active: this.active == 'draw' && this.drawTool == 'group'
-        }
-      ]
-    },
     topbarButtonsTools () {
-      return this.showSecondaryMenu ?
+      return this.showSecondaryMenu && this.secondaryMenuName == 'tools' ?
         this.secondaryMenuButtonsTools
           .filter(x => x.key == 'back' || x.menu.includes(this.secondaryMenuName)) :
         [
@@ -241,7 +234,7 @@ export default {
       ]
     },
     topbarButtonsComponents () {
-      return this.showSecondaryMenu ?
+      return this.showSecondaryMenu && this.secondaryMenuName == 'components' ?
         this.secondaryMenuButtonsComponents
           .filter(x => x.key == 'back' || x.menu.includes(this.secondaryMenuName)) :
         [

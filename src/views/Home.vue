@@ -13,6 +13,7 @@
         :pen-width.sync="penWidth"
         :draw-tool.sync="drawTool"
         :pages="pages"
+        :show-all="showFullTopbar"
         @open-pages="showSidebar = true"
         @create-list="createItem('list')"
         @create-tracker="createItem('tracker')"
@@ -64,7 +65,8 @@ export default {
       penWidth: 3,
       drawTool: 'path',
       canvasOffset: {},
-      showSidebar: false
+      showSidebar: false,
+      showFullTopbar: false
     }
   },
   computed: {
@@ -85,19 +87,23 @@ export default {
       this.$refs.canvas.openOverlay(type);
     },
     getCanvasOffset () {
+      const body = document.querySelector('body');
+      const canvas = document.querySelector('#canvas');
       this.canvasOffset = {
-        x: document.querySelector('body').clientWidth - document.querySelector('#canvas').clientWidth,
-        y: document.querySelector('body').clientHeight - document.querySelector('#canvas').clientHeight
+        x: body.clientWidth - canvas.clientWidth,
+        y: body.clientHeight - canvas.clientHeight
       }
     },
     onResize () {
-      this.getCanvasOffset();
-
       this.showSidebar = window.innerWidth >= 1200;
+      this.showFullTopbar = window.innerWidth >= 1200;
+      this.$nextTick(() => this.getCanvasOffset());
     }
   },
   mounted () {
-    this.getCanvasOffset();
+    this.showSidebar = window.innerWidth >= 1200;
+    this.$nextTick(() => this.getCanvasOffset());
+    this.showFullTopbar = window.innerWidth >= 1200;
   }
 }
 </script>
