@@ -1,6 +1,12 @@
 <template>
 <header class="topbar">
   <nav class="topbar__tabs">
+    <div class="topbar__tab topbar__tab--pages">
+      <icon-button 
+        :class="{ 'button topbar__tab-button': true, active: activeTab == 'pages' }"
+        icon="book" 
+        @click="$emit('open-pages')" />
+    </div>
     <div class="topbar__tab">
       <button 
         :class="{ 'button topbar__tab-button': true, active: activeTab == 'tools' }" 
@@ -13,13 +19,6 @@
         :class="{ 'button topbar__tab-button': true, active: activeTab == 'components' }" 
         @click="setActiveTab('components')">
         Widgets
-      </button>
-    </div>
-    <div class="topbar__tab topbar__tab--pages">
-      <button 
-        :class="{ 'button topbar__tab-button': true, active: activeTab == 'pages' }" 
-        @click="setActiveTab('pages')">
-        Pages
       </button>
     </div>
   </nav>
@@ -41,6 +40,7 @@
 <script>
 import ButtonList from '@/components/top-bar/ButtonList.vue'
 import PageControl from '@/components/top-bar/PageControl.vue'
+import IconButton from '@/components/IconButton.vue'
 import EventBus from '../EventBus'
 import { mapState } from 'vuex'
 import { mixin as clickaway } from 'vue-clickaway'
@@ -49,7 +49,8 @@ export default {
   name: 'TopBar',
   components: {
     ButtonList,
-    PageControl
+    PageControl,
+    IconButton
   },
   mixins: [ clickaway ],
   props: {

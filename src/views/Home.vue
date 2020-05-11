@@ -1,9 +1,11 @@
 <template>
-  <div class="home">
+  <div :class="{ home: true, 'show-pages': showSidebar }">
     <!-- <transition name="slide-from-right" mode="out-in">
       <info-bar v-if="activeItem !== null" />
     </transition> -->
-    <pages-bar :pages="pages" />
+    <transition name="slide-from-left" mode="out-in">
+      <pages-bar v-if="showSidebar" :pages="pages" @close="showSidebar = false" />
+    </transition>
     <div class="page-container">
       <top-bar 
         :drawing-mode.sync="drawingMode"
@@ -11,6 +13,7 @@
         :pen-width.sync="penWidth"
         :draw-tool.sync="drawTool"
         :pages="pages"
+        @open-pages="showSidebar = true"
         @create-list="createItem('list')"
         @create-tracker="createItem('tracker')"
         @display-image="addDbItem('imageStore', $event)" />
@@ -27,7 +30,7 @@
           trackers: filterByCurrentPage(trackers),
           svgs: filterByCurrentPage(svgs)
         }"
-        @resize="getCanvasOffset" />
+        @resize="onResize" />
     </div>
   </div>
 </template>
@@ -60,7 +63,8 @@ export default {
       penColor: 'rgba(0,0,0,1)',
       penWidth: 3,
       drawTool: 'path',
-      canvasOffset: {}
+      canvasOffset: {},
+      showSidebar: false
     }
   },
   computed: {
@@ -85,6 +89,11 @@ export default {
         x: document.querySelector('body').clientWidth - document.querySelector('#canvas').clientWidth,
         y: document.querySelector('body').clientHeight - document.querySelector('#canvas').clientHeight
       }
+    },
+    onResize () {
+      this.getCanvasOffset();
+
+      this.showSidebar = window.innerWidth >= 1200;
     }
   },
   mounted () {

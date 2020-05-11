@@ -12,7 +12,7 @@
     :x.sync="position.x"
     :y.sync="position.y"
     v-on-clickaway="deselectList"
-    @click="setActive('draggable')"
+    @click="setActive"
     @dragstart="setActive"
     @dragstop="dragStop">
     <ul v-if="items.length > 0" class="bullet-list__container">
@@ -31,7 +31,7 @@
         :list-moving="false"
         @click="setActive"
         @update="updateDb"
-        @set-active="setActive('list-item')"
+        @set-active="setActive"
         @opened-menu="closeMenus(index)"
         @remove-item="removeItem(item.id)" />
     </ul>
