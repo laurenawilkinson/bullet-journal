@@ -44,6 +44,12 @@
   }
 }
 
+.pages-icon {
+  .material-icons {
+    transform: rotate(-90deg) scale(1, -1);
+  }
+}
+
 .pages-bar {
 
   $page-br: 10px;

@@ -114,7 +114,7 @@ export default {
       await this.$nextTick();
       await this.$nextTick();
       await this.$nextTick();
-      // this.$refs.items[this.$refs.items.length - 1].selectText();
+      this.$refs.items[this.$refs.items.length - 1].selectText();
       this.updateDb();  
 
     },

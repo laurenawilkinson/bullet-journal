@@ -54,7 +54,6 @@
     &--signifier {
       justify-content: flex-end;
       text-decoration: none !important;
-      width: unset;
       padding: 5px;
       
       i {
@@ -77,10 +76,7 @@
     cursor: text;
     border-bottom: 1px solid transparent;
     resize: none;
-
-    @include breakpoint-down('sm') {
-      width: 270px;
-    }
+    width: 270px;
   }
 
   &__menu {

@@ -26,7 +26,11 @@ const store = new Vuex.Store({
     currentPageObj (state) {
       let found = state.pages.find(x => x.id === state.currentPage);
       return found ? found : null;
-    }
+    },
+    // activeSecondaryMenu (state) {
+    //   return state.activeItem !== null 
+    //     ? state.tab
+    // }
   },
   mutations: {
     addLayer (state) {

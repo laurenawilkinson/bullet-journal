@@ -80,7 +80,11 @@ $topbar-height: $topbar-tab-content-height + $topbar-tab-button-height;
   }
 
   // mobile topbar
-  @include breakpoint-down('lg') {
+  @include breakpoint-down('sm') {
+    .topbar__tablet-pages {
+      display: none;
+    }
+
     .topbar__tabs {
       display: flex;
 
@@ -121,77 +125,32 @@ $topbar-height: $topbar-tab-content-height + $topbar-tab-button-height;
   }
 
   // tablet topbar
+  @include breakpoint-up('sm') {
+    .topbar__main-container {
+      display: flex;
+    }
+    .topbar__tablet-pages {
+      width: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: $primary-500;
+      cursor: pointer;
+
+      .topbar__button {
+        &:hover {
+          background-color: transparent;
+        }
+      }
+    }
+  }
 
 
   //desktop topbar
   @include breakpoint-up('lg') {
-    display: grid;
-
-    .topbar__tabs {
-
-      .topbar__tab {
-        pointer-events: none;
-      }
-      .topbar__tab--pages {
-        display: none;
-      }
+    .topbar__tab--pages,
+    .topbar__tablet-pages {
+      display: none;
     }
   }
 }
-
-
-
-// .topbar {
-//   display: flex;
-//   align-items: center;
-//   height: $topbar-height;
-
-//   .button {
-//     color: $primary-100;
-//     background-color: transparent;
-
-//     &:hover,
-//     &:focus,
-//     &.active {
-//       color: $text--light;
-//     }
-
-//     &:focus,
-//     &.active {
-//       background-color: $primary-800;
-//     }
-//   }
-
-//   &__buttons {
-//     max-width: $canvas-width;
-//     text-align: left;
-//     margin: 0 auto;
-//     flex: 1;
-//     height: 100%;
-//   }
-// }
-
-// .dropdown-button {
-//   display: inline-block;
-//   position: relative;
-//   height: 100%;
-
-//   &__dropdown {
-//     position: absolute;
-//     background-color: $primary;
-//     top: $topbar-height;
-//     left: 0;
-//     width: 150px;
-//     z-index: 3;
-//     box-shadow: 0 0 7px $primary--dark;
-
-//     .button {
-//       width: 100%;
-//     }
-//   }
-
-//   &__caret {
-//     padding-left: 0;
-//     padding-right: 0;
-//   }
-// }

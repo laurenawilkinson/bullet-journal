@@ -29,6 +29,7 @@
       padding: 0;
       position: relative;
       word-break: break-all;
+      user-select: none;
       
       input {
         box-shadow: 1px 1px 6px rgba($secondary, 0.5);

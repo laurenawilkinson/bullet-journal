@@ -1,8 +1,8 @@
 <template>
   <div class="pages-bar" v-on-clickaway="close">
     <div class="pages-bar__title-container">
-      <div class="pages-bar__title">
-        <material-icon icon="book" />
+      <div class="pages-bar__title pages-icon">
+        <material-icon icon="note" />
         <h2>Pages</h2>
       </div>
       <icon-button class="pages-bar__btn-close" icon="close" @click="$emit('close')" />
