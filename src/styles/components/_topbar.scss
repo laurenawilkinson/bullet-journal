@@ -23,7 +23,21 @@ $topbar-height: $topbar-tab-content-height + $topbar-tab-button-height;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px 0 20px 20px;
+      padding: 20px 0 20px 30px;
+
+      &:not(:first-child) {
+        position: relative;
+        &:before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 15px;
+          transform: translateY(-50%);
+          width: 1px;
+          height: 70%;
+          background-color: $primary-300;
+        }
+      }
 
       &-title {
         text-transform: uppercase;

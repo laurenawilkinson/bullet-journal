@@ -3,10 +3,10 @@
   font-size: 1rem;
   box-shadow: none;
   border: 0;
-  border-bottom: 2px solid transparent;
+  border-bottom: 1px solid transparent;
 
   &:focus {
-    border-bottom-color: $secondary--dark;
+    border-bottom-color: $primary;
     outline: 0;
   }
 }

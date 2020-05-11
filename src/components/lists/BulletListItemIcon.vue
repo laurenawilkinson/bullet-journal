@@ -1,6 +1,9 @@
 <template>
 <span class="bullet-list-item__icon" @click="changeState">
-  {{ icon }}
+  <i 
+    v-if="type === 'task'" 
+    class="material-icons">{{ icon }}</i>
+  <template v-else>{{ icon }}</template>
 </span>
 </template>
 
@@ -43,13 +46,13 @@ export default {
     taskState (state) {
       switch (state) {
         case 'default':
-          this.icon = '•';
+          this.icon = 'check_box_outline_blank';
           break;
         case 'completed':
-          this.icon = '✔';
+          this.icon = 'check_box';
           break;
         case 'migrated':
-          this.icon = '>';
+          this.icon = 'keyboard_arrow_right';
       }
     },
     eventState () {
