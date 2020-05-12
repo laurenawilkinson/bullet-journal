@@ -46,7 +46,8 @@
         @click="toggleMenu"  /> <!-- toggle menu -->
       <aside 
         v-if="menuOpen"
-        class="bullet-list-item__toolbar">
+        class="bullet-list-item__toolbar"
+        v-on-clickaway="closeMenu">
         <icon-button 
           v-if="type == 'task'"
           icon="near_me"
@@ -66,6 +67,7 @@
 <script>
 import ListItemIcon from './BulletListItemIcon.vue';
 import IconButton from '@/components/IconButton.vue';
+import { mixin as clickaway } from 'vue-clickaway'
 
 export default {
   name: 'BulletListItem',
@@ -84,6 +86,7 @@ export default {
     ListItemIcon,
     IconButton
   },
+  mixins: [ clickaway ],
   data () {
     return {
       menuOpen: false,
@@ -120,12 +123,14 @@ export default {
       this.$emit('remove-item');
     },
     markAs (value) {
+      this.closeMenu();
       if (this.disabled) return;
 
       if (value == 'removed') return this.update('removed', !this.removed);
 
       if (this.state !== value) this.update('state', value);
       else this.update('state', 'default');
+
     },
     closeMenu () {
       this.menuOpen = false;
