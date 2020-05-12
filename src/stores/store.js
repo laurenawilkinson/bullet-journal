@@ -7,6 +7,7 @@ const store = new Vuex.Store({
   state: {
     layers: 0,
     currentPage: 1,
+    pages: [],
     activeItem: null,
     keepAlive: false
   },
@@ -21,7 +22,15 @@ const store = new Vuex.Store({
       });
 
       return props;
-    }
+    },
+    currentPageObj (state) {
+      let found = state.pages.find(x => x.id === state.currentPage);
+      return found ? found : null;
+    },
+    // activeSecondaryMenu (state) {
+    //   return state.activeItem !== null 
+    //     ? state.tab
+    // }
   },
   mutations: {
     addLayer (state) {
@@ -37,10 +46,11 @@ const store = new Vuex.Store({
       state.keepAlive = value;
     },
     setActivePropValue (state, { prop, value }) {
-      if (state.activeItem == null) return;
-
-      const found = state.activeItem.options.findIndex(x => x.text === prop);
-      if (found > -1) state.activeItem.options[found].value = value;
+      if (state.activeItem == null || !state.activeItem.options[prop]) return;
+      state.activeItem.options[prop] = value;
+    },
+    updatePages (state, value) {
+      state.pages = value;
     }
   },
   actions: {
@@ -58,8 +68,14 @@ const store = new Vuex.Store({
         commit('setActivePropValue', { prop: opt.text, value: opt.value })
       }
     },
+    updateActiveItemOption ({ commit }, { prop, value }) {
+      commit('setActivePropValue', { prop, value })
+    },
     keepAlive ({ commit }, value) {
       commit('setKeepAlive', value)
+    },
+    updatePages ({ commit}, value) {
+      commit('updatePages', value)
     }
   }
 })

@@ -1,12 +1,14 @@
 <template>
   <li 
-    :class="classes">
+    :class="classes"
+    @click="$emit('click')">
     <span
       class="bullet-list-item__icon bullet-list-item__icon--signifier">
-      <icon 
+      <i class="material-icons-round"
         v-show="priority || (listActive && !listMoving)" 
-        :icon="priority ? 'star' : 'star_outline'"
-        @click="update('priority', !priority)" />
+        @click="update('priority', !priority)">
+        {{ priority ? 'star' : 'star_border' }}  
+      </i>
     </span>
     <span :class="{ 
         'bullet-list-item__content-container': true, 
@@ -35,35 +37,33 @@
         {{ content }}
       </span>
     </span>
-    <icon-button  
-      v-if="listActive"
-      class="bullet-list-item__menu-button"
-      icon="more_vert"
-      size="sm"
-      @click="toggleMenu"  /> <!-- toggle menu -->
-    <aside 
-      v-if="menuOpen"
-      class="bullet-list-item__toolbar">
-      <icon-button 
-        v-if="type == 'task'" 
-        icon="done_outline"
-        @click="markAs('completed')"  /> <!-- complete -->
-      <icon-button 
-        v-if="type == 'task'"
-        icon="send"
-        @click="markAs('migrated')" /> <!-- migrate -->
-      <icon-button 
-        icon="strikethrough_s"
-        @click="markAs('removed')"  /> <!-- irrelevant -->
-      <icon-button 
-        icon="delete" 
-        @click="removeItem" /> <!-- remove -->
-    </aside>
+    <div class="bullet-list-item__menu"> 
+      <icon-button  
+        v-if="listActive"
+        class="bullet-list-item__menu-button"
+        icon="more_vert"
+        size="sm"
+        @click="toggleMenu"  /> <!-- toggle menu -->
+      <aside 
+        v-if="menuOpen"
+        class="bullet-list-item__toolbar">
+        <icon-button 
+          v-if="type == 'task'"
+          icon="near_me"
+          @click="markAs('migrated')">Migrate</icon-button> <!-- migrate -->
+        <icon-button 
+          icon="strikethrough_s"
+          @click="markAs('removed')">Strikeout</icon-button> <!-- irrelevant -->
+        <icon-button 
+          v-if="!onlyItem"
+          icon="delete"
+          @click="removeItem">Delete</icon-button> <!-- remove -->
+      </aside>
+    </div>
   </li>
 </template>
 
 <script>
-import Icon from '@/components/MaterialIcon.vue';
 import ListItemIcon from './BulletListItemIcon.vue';
 import IconButton from '@/components/IconButton.vue';
 
@@ -77,10 +77,10 @@ export default {
     listActive: Boolean,
     listMoving: Boolean,
     removed: Boolean,
-    disabled: Boolean
+    disabled: Boolean,
+    onlyItem: Boolean
   },
   components: {
-    Icon,
     ListItemIcon,
     IconButton
   },
@@ -132,8 +132,8 @@ export default {
     },
     async deselectText () {
       this.toggleEdit = false;
-      if (this.content.length == 0) this.removeItem();
-      else this.update('content', this.localContent)
+      // if (this.content.length == 0) this.removeItem();
+      this.update('content', this.localContent)
     },
     toggleMenu () {
       this.menuOpen = !this.menuOpen;

@@ -4,8 +4,8 @@
     id="canvas" 
     :class="{ canvas: true, 'canvas--drawing': drawingMode }" 
     ref="canvas" 
-    @mousemove="trackMouse" 
-    @touchmove="trackMouse">
+    @mousemove.stop="trackMouse" 
+    @touchmove.stop="trackMouse">
     <bullet-list 
       v-for="(list, index) in localLists"
       ref="lists"
@@ -25,7 +25,7 @@
       :id="tracker.id"
       :position="tracker.position"
       :items="tracker.items"
-      :options.sync="tracker.options"
+      :options="tracker.options"
       @set-active="setActive(index, 'trackers')"
       @update="updateDbItem('trackerStore', $event)"
       @delete="deleteDbItem('trackerStore', $event)" />
@@ -60,17 +60,11 @@
     <div 
       v-if="showOverlay"
       class="tooltip"
-      :style="{ position: 'absolute', top: mouse.y + 'px', left: mouse.x + 'px', pointer: 'crosshair' }"
+      :style="{ position: 'absolute', left: `${mouse.x}px`, top: `${mouse.y}px` }"
       @click="createItem">
       Click to place {{ overlayType }}
     </div>
   </div>
-    <aside 
-      v-if="showDrawMultiOverlay"
-      class="multi-draw-overlay"
-      @click="completeDrawing">
-      Finish group drawing
-    </aside>
 </main>
 </template>
 
@@ -156,9 +150,8 @@ export default {
     },
     trackMouse (event) {
       if (!this.showOverlay) return;
-
-      this.mouse.x = event.clientX - this.canvasOffset.x / 2;
-      this.mouse.y = event.clientY - this.canvasOffset.y / 2;
+      this.mouse.x = event.clientX - this.canvasOffset.x;
+      this.mouse.y = event.clientY - this.canvasOffset.y;
     },
     openOverlay (overlay) {
       this.overlayType = overlay;
@@ -189,7 +182,7 @@ export default {
     },
     async setActive (activeIndex, ref) {
       await this.$nextTick();
-      this.$store.dispatch('setActiveItem', null);
+      // this.$store.dispatch('setActiveItem', null);
 
       for (let i = 0; i < this.$refs[ref].length; i++) {
         if (i !== activeIndex)
@@ -241,10 +234,16 @@ export default {
       this.$nextTick(() => {
         if (storeName === 'listStore') {
           let found = this.localLists.findIndex(x => x.id == id);
-          if (found > -1) this.setActive(found, 'lists')
+          if (found > -1) {
+            this.setActive(found, 'lists')
+            EventBus.$emit('topbar:open-menu', { menuName: 'list', tabName: 'components' });
+          }
         } else if (storeName === 'trackerStore') {
           let found = this.localTrackers.findIndex(x => x.id == id);
-          if (found > -1) this.setActive(found, 'trackers')
+          if (found > -1) {
+            this.setActive(found, 'trackers')
+            EventBus.$emit('topbar:open-menu', { menuName: 'tracker', tabName: 'components' });
+          }
         }
       });
     })

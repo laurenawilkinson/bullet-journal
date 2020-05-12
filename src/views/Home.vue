@@ -1,37 +1,44 @@
 <template>
-  <div class="home">
-    <top-bar 
-      :drawing-mode.sync="drawingMode"
-      :pen-color.sync="penColor"
-      :pen-width.sync="penWidth"
-      :draw-tool.sync="drawTool"
-      @create-list="createItem('list')"
-      @create-tracker="createItem('tracker')"
-      @display-image="addDbItem('imageStore', $event)" />
-    <transition name="slide-from-right" mode="out-in">
+  <div :class="{ home: true, 'show-pages': showSidebar }">
+    <!-- <transition name="slide-from-right" mode="out-in">
       <info-bar v-if="activeItem !== null" />
+    </transition> -->
+    <transition name="slide-from-left" mode="out-in">
+      <pages-bar v-if="showSidebar" :pages="pages" @close="showSidebar = false" />
     </transition>
-    <pages-bar :pages="pages" />
-    <main-canvas 
-      ref="canvas"
-      v-bind="{
-        drawingMode,
-        penColor,
-        penWidth,
-        canvasOffset,
-        drawTool,
-        lists: filterByCurrentPage(lists),
-        images: filterByCurrentPage(images),
-        trackers: filterByCurrentPage(trackers),
-        svgs: filterByCurrentPage(svgs)
-      }"
-      @resize="getCanvasOffset" />
+    <div class="page-container">
+      <top-bar 
+        :drawing-mode.sync="drawingMode"
+        :pen-color.sync="penColor"
+        :pen-width.sync="penWidth"
+        :draw-tool.sync="drawTool"
+        :pages="pages"
+        :show-all="showFullTopbar"
+        @open-pages="showSidebar = true"
+        @create-list="createItem('list')"
+        @create-tracker="createItem('tracker')"
+        @display-image="addDbItem('imageStore', $event)" />
+      <main-canvas 
+        ref="canvas"
+        v-bind="{
+          drawingMode,
+          penColor,
+          penWidth,
+          canvasOffset,
+          drawTool,
+          lists: filterByCurrentPage(lists),
+          images: filterByCurrentPage(images),
+          trackers: filterByCurrentPage(trackers),
+          svgs: filterByCurrentPage(svgs)
+        }"
+        @resize="onResize" />
+    </div>
   </div>
 </template>
 
 <script>
 import TopBar from '@/components/TopBar.vue'
-import InfoBar from '@/components/InfoBar.vue'
+// import InfoBar from '@/components/InfoBar.vue'
 import PagesBar from '@/components/PagesBar.vue'
 import MainCanvas from '@/components/MainCanvas.vue'
 import EventBus from '../EventBus'
@@ -41,7 +48,7 @@ export default {
   components: {
     TopBar,
     MainCanvas,
-    InfoBar,
+    // InfoBar,
     PagesBar
   },
   props: {
@@ -57,7 +64,9 @@ export default {
       penColor: 'rgba(0,0,0,1)',
       penWidth: 3,
       drawTool: 'path',
-      canvasOffset: {}
+      canvasOffset: {},
+      showSidebar: false,
+      showFullTopbar: false
     }
   },
   computed: {
@@ -78,14 +87,23 @@ export default {
       this.$refs.canvas.openOverlay(type);
     },
     getCanvasOffset () {
+      const body = document.querySelector('body');
+      const canvas = document.querySelector('#canvas');
       this.canvasOffset = {
-        x: document.querySelector('body').clientWidth - document.querySelector('#canvas').clientWidth,
-        y: document.querySelector('body').clientHeight - document.querySelector('#canvas').clientHeight
+        x: body.clientWidth - canvas.clientWidth,
+        y: body.clientHeight - canvas.clientHeight
       }
+    },
+    onResize () {
+      this.showSidebar = window.innerWidth >= 1200;
+      this.showFullTopbar = window.innerWidth >= 767;
+      this.$nextTick(() => this.getCanvasOffset());
     }
   },
   mounted () {
-    this.getCanvasOffset();
+    this.showSidebar = window.innerWidth >= 1200;
+    this.$nextTick(() => this.getCanvasOffset());
+    this.showFullTopbar = window.innerWidth >= 767;
   }
 }
 </script>

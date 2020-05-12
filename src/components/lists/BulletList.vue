@@ -13,11 +13,13 @@
     :y.sync="position.y"
     v-on-clickaway="deselectList"
     @click="setActive"
-    @dragstop="updateDb">
+    @dragstart="setActive"
+    @dragstop="dragStop">
     <ul v-if="items.length > 0" class="bullet-list__container">
       <list-item 
         v-for="(item, index) in localItems" 
         :key="item.id"
+        :only-item="localItems.length < 2"
         ref="items"
         :disabled="!moveMode || dragActive"
         :type="item.type"
@@ -27,6 +29,7 @@
         :removed.sync="item.removed"
         :list-active="active"
         :list-moving="false"
+        @click="setActive"
         @update="updateDb"
         @set-active="setActive"
         @opened-menu="closeMenus(index)"
@@ -59,13 +62,16 @@ export default {
   data () {
     return {
       isActive: false,
-      dragActive: false
+      dragActive: false,
+      localKeepAlive: false
     }
   },
   watch: {
     '$store.state.activeItem': function () {
-      if (!this.isActiveItem && this.isActive)
+      if (!this.isActiveItem && this.isActive){
         this.isActive = false;
+        console.log('deactivating in watch')
+      }
     }
   },
   computed: {
@@ -95,13 +101,22 @@ export default {
     },
     async addItem (type) {
       if (this.$refs.items) this.$refs.items.forEach(item => item.closeMenu());
-      let lastUsedId = this.localItems[this.localItems.length - 1] 
-        ? this.localItems[this.localItems.length - 1].id 
+      let lastItemIndex = this.localItems.length - 1;
+      let lastUsedId = this.localItems[lastItemIndex] 
+        ? this.localItems[lastItemIndex].id 
         : 0;
-      this.localItems.push(new BulletListItem({ id: lastUsedId + 1, type }));
+      if (this.localItems[lastItemIndex].content.length === 0) {
+        this.localItems[lastItemIndex] = new BulletListItem({ id: lastUsedId, type })
+      } else {
+        this.localItems.push(new BulletListItem({ id: lastUsedId + 1, type }));
+      }
+
+      await this.$nextTick();
+      await this.$nextTick();
       await this.$nextTick();
       this.$refs.items[this.$refs.items.length - 1].selectText();
-      this.updateDb();
+      this.updateDb();  
+
     },
     removeItem (id) {
       let index = this.items.map(i => i.id).indexOf(id);
@@ -128,12 +143,14 @@ export default {
     },
     deactivate () {
       if (!this.isActive) return;
+      console.log('deactivating?!')
       this.removeActiveItem();
       this.isActive = false;
       if (this.items.length == 0) this.$emit('remove-list')
     },
     deselectList () {
-      if (!this.isActive) return;
+      console.log(`deselecting... active: ${this.isActive}, keepAlive ${this.localKeepAlive}`)
+      if (!this.isActive || this.localKeepAlive || this.$store.state.keepAlive) return;
       this.removeActiveItem();
       this.isActive = false;
       if (this.$refs.items) this.$refs.items.forEach(item => item.closeMenu());
@@ -141,16 +158,26 @@ export default {
     },
     removeActiveItem () {
       setTimeout(() => {
-        if (!this.$store.state.keepAlive){
+        if (!this.$store.state.keepAlive && !this.localKeepAlive){
           this.$store.dispatch('setActiveItem', null);
           this.deactivate();
         }
       }, 20)
+    },
+    async dragStop () {
+      this.localKeepAlive = true;
+      this.updateDb();
+
+      setTimeout(() => {
+        this.localKeepAlive = false;
+      }, 30)
     }
   },
   created () {
     EventBus.$on('list:add-item', ({ id, type }) => {
-      if (id === this.id) this.addItem(type);
+      if (id === this.id) {
+        this.addItem(type);
+      }
     })
     EventBus.$on('list:delete', id => {
       if (id === this.id) this.$emit('delete', id);

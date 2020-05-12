@@ -36,6 +36,11 @@ export default {
       }
     }
   },
+  watch: {
+    pages (value) {
+      this.$store.dispatch('updatePages', value)
+    }
+  },
   methods: {
     async dbAdd (storeName, value) {
         if (!value || value == null) return console.error('Invalid Value');
@@ -53,11 +58,12 @@ export default {
           // update store with new item
           // e.target.result is the key (id)
           await this.dbPull(storeName)
-          EventBus.$emit('set-active-item', { storeName, id: e.target.result })
+          if (storeName === 'listStore' || storeName === 'trackerStore')
+           EventBus.$emit('set-active-item', { storeName, id: e.target.result })
         }
     },
     async dbPull (storeName, keys = []) {
-      console.log('pulling...', storeName)
+      // console.log('pulling...', storeName)
       return new Promise((res, rej) => {
         if (keys && keys.length > 0) {
           // pull specific values by key (i.e. id)
@@ -75,7 +81,7 @@ export default {
             .objectStore(storeName)
             .getAll()
             .onsuccess = async (e) => {
-              console.log('pulled', storeName)
+              // console.log('pulled', storeName)
               if (storeName === 'imageStore') {
                 this.imageStore = e.target.result.map(x => new SaveableImage(x));
               }
@@ -100,7 +106,7 @@ export default {
     async dbUpdate (storeName, id, value) {
       if (!id) return console.error('No ID!');
 
-      console.log('updating...', value)
+      // console.log('updating...', value)
       let objectStore = this.db.transaction(storeName, "readwrite").objectStore(storeName);
       let req = objectStore.get(id)
       
@@ -120,7 +126,7 @@ export default {
       }
     },
     async dbDelete (storeName, id) {
-      console.log('deleting ' + id + ' from ' + storeName);
+      // console.log('deleting ' + id + ' from ' + storeName);
       let objectStore = this.db
         .transaction(storeName, "readwrite")
         .objectStore(storeName);
@@ -192,8 +198,8 @@ export default {
       }
     },
     addPage () {
-      let newPage = this.pages[this.pages.length - 1] + 1;
-      this.pages.push(newPage);
+      let newPage = this.pages[this.pages.length - 1].id + 1;
+      this.pages.push({ id: newPage, name: 'Page ' + newPage });
       localStorage.setItem('pages', JSON.stringify(this.pages))
       this.setActivePage(newPage)
     },
@@ -202,7 +208,7 @@ export default {
       localStorage.setItem('currentPage', JSON.stringify(pageNum))
     },
     async deletePage (pageNum) {
-      let foundIndex = this.pages.indexOf(pageNum);
+      let foundIndex = this.pages.findIndex(x => x.id == pageNum);
       if (foundIndex == -1) return;
 
       // FIND PAGE ITEMS ON THIS PAGE
@@ -228,12 +234,22 @@ export default {
 
       let activePage = localStorage.getItem('currentPage');
       if (activePage == pageNum)
-        this.setActivePage(this.pages[this.pages.length - 1]);
+        this.setActivePage(this.pages[this.pages.length - 1].id);
+    },
+    renamePage ({ id, value }) {
+      let pageIndex = this.pages.findIndex(x => x.id === id);
+
+      if (pageIndex < 0) return;
+
+      this.pages[pageIndex].name = value;
+
+      localStorage.setItem('pages', JSON.stringify(this.pages))
     }
   },
   async created () {
     EventBus.$on('pages:add', this.addPage);
     EventBus.$on('pages:activate', e => this.setActivePage(e));
+    EventBus.$on('pages:rename', e => this.renamePage(e));
     EventBus.$on('pages:delete', async e => this.deletePage(e));
 
     EventBus.$on('dbup:add', async ({ storeName, value }) => {
@@ -250,7 +266,14 @@ export default {
     let pages = localStorage.getItem('pages');
     let currentPage = localStorage.getItem('currentPage')
 
-    pages ? this.pages = JSON.parse(pages) : localStorage.setItem('pages', '[ 1 ]');
+    if (pages) {
+      this.pages = JSON.parse(pages)
+    } else {
+      let newPageArr = [ { id: 1, name: 'Page 1' } ];
+      localStorage.setItem('pages', JSON.stringify(newPageArr));
+      this.pages = newPageArr;
+    }
+
     currentPage && pages && pages.includes(currentPage)
       ? this.$store.dispatch('setActivePage', JSON.parse(currentPage))
       : this.setActivePage(1);

@@ -1,18 +1,24 @@
 <template>
-  <div class="colour-picker button--icon">
-    <button 
-      type="button" 
-      class="button colour-picker__icon"
-      :style="{ 'background-color': value }"
-      @click="togglePicker = !togglePicker"></button>
-    <picker v-if="togglePicker" v-model="localValue" @input="onColourChange" />
-  </div>
+<div class="colour-picker" v-on-clickaway="closePicker">
+  <button 
+    type="button" 
+    class="colour-picker button" @click="togglePicker = !togglePicker">
+    <div 
+      class="colour-picker__icon"
+      :style="{ 'background-color': value }">
+    </div>
+    <span><slot></slot></span>  
+  </button>
+  <picker v-if="togglePicker" v-model="localValue" @input="onColourChange" />
+</div>
 </template>
 <script>
 import { Chrome } from 'vue-color';
+import { mixin as clickaway } from 'vue-clickaway';
 
 export default {
   name: 'ColourPicker',
+  mixins: [ clickaway ],
   components: {
     picker: Chrome
   },
@@ -41,29 +47,10 @@ export default {
   methods: {
     onColourChange (color) {
       this.localValue = color.hex8;
+    },
+    closePicker () {
+      this.togglePicker = false;
     }
   }
 }
 </script>
-
-<style lang="scss">
-.colour-picker {
-  display: inline-flex;
-  position: relative;
-
-  &__icon {
-    width: 24px;
-    height: 24px;
-    border-radius: 50px;
-    display: inline-block;
-    justify-self: flex-end;
-  }
-  
-  .vc-chrome {
-    position: absolute;
-    right: 5px;
-    top: 35px;
-    z-index: 2;
-  }
-}
-</style>

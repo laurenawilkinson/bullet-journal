@@ -15,7 +15,7 @@
 
 <script>
 import { Path, Circle, Rectangle, Line } from '@/models/Drawables'
-
+import EventBus from '../../EventBus';
 // CARE: I have edited canvas2svg to include a PR
 // that adds support for the ellipse method.
 import C2S from '@/assets/canvas2svg'
@@ -50,10 +50,10 @@ export default {
       if (!this.drawingMode) return;
 
       let pathX = event.type == 'touchstart' 
-        ? event.touches[0].clientX - (this.canvasOffset.x / 2)
+        ? event.touches[0].clientX - this.canvasOffset.x
         : event.offsetX;
       let pathY = event.type == 'touchstart' 
-        ? event.touches[0].clientY - (this.canvasOffset.y / 2)
+        ? event.touches[0].clientY - this.canvasOffset.y
         : event.offsetY;
 
       this.isDrawing = true;
@@ -76,10 +76,10 @@ export default {
       if (!this.isDrawing || !this.drawingMode) return;
 
       let pathX = event.type == 'touchmove' 
-        ? event.touches[0].clientX - (this.canvasOffset.x / 2)
+        ? event.touches[0].clientX - this.canvasOffset.x
         : event.offsetX;
       let pathY = event.type == 'touchmove' 
-        ? event.touches[0].clientY - (this.canvasOffset.y / 2)
+        ? event.touches[0].clientY - this.canvasOffset.y
         : event.offsetY;
 
       switch (this.drawTool) {
@@ -236,6 +236,9 @@ export default {
       this.rects = [];
       this.context.clearRect(0, 0, this.width, this.height); // clear canvas
     }
+  },
+  created () {
+    EventBus.$on('draw:finish-path', () => this.completePathDrawing());
   },
   mounted () {
     this.context = this.$refs.canvas.getContext('2d');

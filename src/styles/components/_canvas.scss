@@ -1,23 +1,27 @@
 .canvas-container {
   width: 100%;
   flex-grow: 1;
-  background-color: #dadada;
-  padding: 0.3rem;
+  background-color: #979797;
   display: flex;
+  align-items: center;
+  justify-content: center;
 
-  @include up('sm') {
-    padding: 1rem;
+  @include breakpoint-up('lg') {
+    // padding: 1rem;
   }
 }
 
 // size of a5 is 1748 pixels x 2480 pixels
 
+$canvas-a5-width: 2480px;
+$canvas-a5-height: 1748px;
+
 .canvas {
   background-color: white;
   width: 100%;
-  max-width: $canvas-width;
-  margin: 0 auto;
-  padding: 1rem;
+  height: 100%;
+  // margin: 0 auto;
+  // padding: 1rem;
   position: relative;
   overflow: hidden;
   flex: 1;
@@ -45,6 +49,7 @@
   padding: 0.8rem 1rem;
   background-color: rgba(255,255,255,0.8);
   border: 3px dashed $secondary;
+  cursor: crosshair;
 }
 
 .multi-draw-overlay {

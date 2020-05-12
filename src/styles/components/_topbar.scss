@@ -1,59 +1,156 @@
-$topbar-height: 40px;
+$topbar-tab-content-height: 90px;
+$topbar-tab-button-height: 40px;
+$topbar-height: $topbar-tab-content-height + $topbar-tab-button-height;
 
 .topbar {
   background-color: $primary;
   color: $text--light;
-  display: flex;
-  align-items: center;
-  height: $topbar-height;
   z-index: 20;
 
-  .button {
-    color: $primary-100;
-    background-color: transparent;
+  .topbar__tab-button {
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0 1rem;
+    height: $topbar-tab-button-height;
+  }
 
-    &:hover,
-    &:focus,
-    &.active {
-      color: $text--light;
+  .topbar__tab-content {
+    display: flex;
+    align-items: center;
+
+    .topbar__content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 0 20px 30px;
+
+      &:not(:first-child) {
+        position: relative;
+        &:before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 15px;
+          transform: translateY(-50%);
+          width: 1px;
+          height: 70%;
+          background-color: $primary-300;
+        }
+      }
+
+      &-title {
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 0.95rem;
+        padding-bottom: 10px;
+      }
+    }
+  }
+
+  .topbar__button {
+    display: inline-flex;
+    position: relative;
+    &,
+    .button {
+      flex-direction: column;
+      background-color: transparent;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      width: 4rem;
+      height: 4rem;
+      justify-content: center;
+    }
+    
+    span {
+      margin: 0.2rem 0 0;
     }
 
-    &:focus,
     &.active {
       background-color: $primary-800;
     }
-  }
 
-  &__buttons {
-    max-width: $canvas-width;
-    text-align: left;
-    margin: 0 auto;
-    flex: 1;
-    height: 100%;
-  }
-}
-
-.dropdown-button {
-  display: inline-block;
-  position: relative;
-  height: 100%;
-
-  &__dropdown {
-    position: absolute;
-    background-color: $primary;
-    top: $topbar-height;
-    left: 0;
-    width: 150px;
-    z-index: 3;
-    box-shadow: 0 0 7px $primary--dark;
-
-    .button {
-      width: 100%;
+    &:not(.active):hover {
+      background-color: #711897;
     }
   }
 
-  &__caret {
-    padding-left: 0;
-    padding-right: 0;
+  .topbar__tabs {
+    display: none;
+  }
+
+  // mobile topbar
+  @include breakpoint-down('sm') {
+    .topbar__tablet-pages {
+      display: none;
+    }
+
+    .topbar__tabs {
+      display: flex;
+
+      .topbar__tab {
+        &:not(.topbar__tab--pages) {
+          flex: 1;
+        }
+
+        &-button {
+          width: 100%;
+          background-color: transparent;
+          justify-content: center;
+
+          &:not(.active) {
+            background-color: $primary-500;
+
+            &:hover,
+            &:focus {
+              background-color: $primary-600;
+            }
+          }
+        }
+      }
+    }
+
+    .topbar__tab-content {
+      width: 100%;
+      height: $topbar-tab-content-height;
+
+      .topbar__content {
+        padding: 0;
+      }
+
+      .topbar__content-title {
+        display: none;
+      }
+    }
+  }
+
+  // tablet topbar
+  @include breakpoint-up('sm') {
+    .topbar__main-container {
+      display: flex;
+    }
+    .topbar__tablet-pages {
+      width: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: $primary-500;
+      cursor: pointer;
+
+      .topbar__button {
+        &:hover {
+          background-color: transparent;
+        }
+      }
+    }
+  }
+
+
+  //desktop topbar
+  @include breakpoint-up('lg') {
+    .topbar__tab--pages,
+    .topbar__tablet-pages {
+      display: none;
+    }
   }
 }
