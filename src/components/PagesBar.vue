@@ -21,7 +21,9 @@
             ref="inputs"
             type="text"
             :value="editingPageTitle"
-            @change="closeRename($event)" />
+            @input="editingPageTitle = $event.target.value"
+            @blur="closeRename(editingPageTitle)"
+            @change="closeRename($event.target.value)" />
           <span v-else>{{ page.name }}</span>
           <icon-button 
             icon="edit" 
@@ -67,10 +69,10 @@ export default {
       await this.$nextTick();
       this.$refs.inputs[0].focus();
     },
-    closeRename (e) {
-      if (e.target.value.length == 0) return;
+    closeRename (value) {
+      if (value.length == 0) return;
 
-      this.renamePage(this.currentRenamingId, e.target.value);
+      this.renamePage(this.currentRenamingId, value);
       this.currentRenamingId = null;
       this.editingPageTitle = '';
     },

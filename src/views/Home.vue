@@ -95,15 +95,15 @@ export default {
       }
     },
     onResize () {
-      this.showSidebar = window.innerWidth >= 1200;
-      this.showFullTopbar = window.innerWidth >= 767;
+      this.showSidebar = window.innerWidth > 1200;
+      this.showFullTopbar = window.innerWidth > 767;
       this.$nextTick(() => this.getCanvasOffset());
     }
   },
   mounted () {
-    this.showSidebar = window.innerWidth >= 1200;
+    this.showSidebar = window.innerWidth > 1200;
     this.$nextTick(() => this.getCanvasOffset());
-    this.showFullTopbar = window.innerWidth >= 767;
+    this.showFullTopbar = window.innerWidth > 767;
   }
 }
 </script>
