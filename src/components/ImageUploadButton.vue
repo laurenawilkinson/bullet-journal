@@ -43,8 +43,8 @@ export default {
           img.src = src;
 
           img.addEventListener('load', (e) => {
-            const width = e.path[0].width;
-            const height = e.path[0].height;
+            const width = e.path ? e.path[0].width : e.target.width;
+            const height = e.path ? e.path[0].height : e.target.height;
 
             const fileToSave = new SaveableImage(
               { x: 0, y: 0, src, width, height });
