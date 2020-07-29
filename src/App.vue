@@ -44,7 +44,6 @@ export default {
   methods: {
     async dbAdd (storeName, value) {
         if (!value || value == null) return console.error('Invalid Value');
-        console.log('adding...');
         let currentPage = this.$store.state.currentPage;
   
         let objectStore = this.db

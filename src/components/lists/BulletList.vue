@@ -70,7 +70,6 @@ export default {
     '$store.state.activeItem': function () {
       if (!this.isActiveItem && this.isActive){
         this.isActive = false;
-        console.log('deactivating in watch')
       }
     }
   },
@@ -143,13 +142,11 @@ export default {
     },
     deactivate () {
       if (!this.isActive) return;
-      console.log('deactivating?!')
       this.removeActiveItem();
       this.isActive = false;
       if (this.items.length == 0) this.$emit('remove-list')
     },
     deselectList () {
-      console.log(`deselecting... active: ${this.isActive}, keepAlive ${this.localKeepAlive}`)
       if (!this.isActive || this.localKeepAlive || this.$store.state.keepAlive) return;
       this.removeActiveItem();
       this.isActive = false;
