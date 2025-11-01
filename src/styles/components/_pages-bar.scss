@@ -1,4 +1,4 @@
-@mixin button-pulse($bg-color: rgba(0, 0, 0, 0.1)) {
+@mixin button-pulse($bg-color) {
   position: relative;
 
   &:after {
@@ -113,6 +113,7 @@
       align-items: center;
       border-radius: $page-br;
       padding-left: 10px;
+      font-size: 0.875rem;
 
       span,
       input {
@@ -136,7 +137,7 @@
         border-radius: 100px;
         background-color: transparent;
         opacity: 0;
-        @include button-pulse;
+        @include button-pulse($grey-200);
 
         .material-icons {
           font-size: 1rem;
@@ -173,6 +174,7 @@
     border-color: $primary-400;
     border-width: 2px;
     font-weight: 600;
+    font-size: 0.875rem;
     transition: background-color 0.2s ease-out;
 
     &:hover {
