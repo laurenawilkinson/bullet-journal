@@ -3,9 +3,9 @@ $topbar-tab-button-height: 40px;
 $topbar-height: $topbar-tab-content-height + $topbar-tab-button-height;
 
 .topbar {
-  background-color: $primary;
-  color: $text--light;
+  background-color: $grey-50;
   z-index: 20;
+  border-bottom: 1px solid $grey-200;
 
   .topbar__tab-button {
     text-transform: uppercase;
@@ -28,14 +28,14 @@ $topbar-height: $topbar-tab-content-height + $topbar-tab-button-height;
       &:not(:first-child) {
         position: relative;
         &:before {
-          content: '';
+          content: "";
           position: absolute;
           top: 50%;
           left: 15px;
           transform: translateY(-50%);
           width: 1px;
           height: 70%;
-          background-color: $primary-300;
+          background-color: $grey-200;
         }
       }
 
@@ -44,6 +44,7 @@ $topbar-height: $topbar-tab-content-height + $topbar-tab-button-height;
         font-weight: 600;
         font-size: 0.95rem;
         padding-bottom: 10px;
+        color: $grey-500;
       }
     }
   }
@@ -61,17 +62,18 @@ $topbar-height: $topbar-tab-content-height + $topbar-tab-button-height;
       height: 4rem;
       justify-content: center;
     }
-    
+
     span {
       margin: 0.2rem 0 0;
     }
 
     &.active {
-      background-color: $primary-800;
+      background-color: $primary-200;
+      color: $primary--dark;
     }
 
     &:not(.active):hover {
-      background-color: #711897;
+      background-color: $grey-100;
     }
   }
 
@@ -80,7 +82,7 @@ $topbar-height: $topbar-tab-content-height + $topbar-tab-button-height;
   }
 
   // mobile topbar
-  @include breakpoint-down('sm') {
+  @include breakpoint-down("sm") {
     .topbar__tablet-pages {
       display: none;
     }
@@ -99,11 +101,11 @@ $topbar-height: $topbar-tab-content-height + $topbar-tab-button-height;
           justify-content: center;
 
           &:not(.active) {
-            background-color: $primary-500;
+            background-color: $grey-200;
 
             &:hover,
             &:focus {
-              background-color: $primary-600;
+              background-color: $grey-300;
             }
           }
         }
@@ -125,7 +127,7 @@ $topbar-height: $topbar-tab-content-height + $topbar-tab-button-height;
   }
 
   // tablet topbar
-  @include breakpoint-up('sm') {
+  @include breakpoint-up("sm") {
     .topbar__main-container {
       display: flex;
     }
@@ -134,7 +136,7 @@ $topbar-height: $topbar-tab-content-height + $topbar-tab-button-height;
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: $primary-500;
+      background-color: $grey-200;
       cursor: pointer;
 
       .topbar__button {
@@ -145,9 +147,8 @@ $topbar-height: $topbar-tab-content-height + $topbar-tab-button-height;
     }
   }
 
-
   //desktop topbar
-  @include breakpoint-up('lg') {
+  @include breakpoint-up("lg") {
     .topbar__tab--pages,
     .topbar__tablet-pages {
       display: none;

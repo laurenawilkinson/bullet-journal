@@ -4,6 +4,8 @@
   transform: translateX(-50%);
   z-index: 2;
   border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .topbar {
@@ -11,8 +13,7 @@
     @include topbar-window();
     bottom: -55px;
     min-width: 120px;
-    background-color: $primary-600;
-    box-shadow: 1px 1px 6px $primary-900;
+
     padding: 0.5rem 1rem;
     display: flex;
     align-items: center;
@@ -25,22 +26,18 @@
       border-radius: 10px;
       padding: 0.4rem 1rem;
     }
-
   }
   .tick-type-preview {
     width: 24px;
     height: 24px;
-    background-color: $secondary;
+    background-color: $primary-300;
 
     &.circle {
       border-radius: 50px;
     }
   }
   .stroke-width-slider {
-  
     &__slider {
-      background-color: $primary-600;
-      box-shadow: 1px 1px 6px $primary-900;
       padding: 0.5rem 1rem;
       bottom: -45px;
       display: flex;
@@ -58,26 +55,25 @@
     }
 
     span.stroke-width-slider__preview {
-      background-color: white;
+      background-color: $text--dark;
       display: inline-block;
       border-radius: 15px;
       margin: 0;
     }
   }
-  
+
   .colour-picker {
     display: inline-flex;
     position: relative;
-  
+
     &__icon {
       width: 24px;
       height: 24px;
       border-radius: 50px;
       display: inline-block;
       justify-self: flex-end;
-      border: 1.5px solid white;
     }
-    
+
     .vc-chrome {
       @include topbar-window();
       bottom: -240px;

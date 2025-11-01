@@ -1,8 +1,8 @@
-@mixin button-pulse ($bg-color: rgba(0,0,0,0.1)) {
+@mixin button-pulse($bg-color: rgba(0, 0, 0, 0.1)) {
   position: relative;
 
   &:after {
-    content: '';
+    content: "";
     z-index: 199;
     background-color: $bg-color;
     border-radius: 100px;
@@ -20,27 +20,27 @@
     transform: scale(1);
   }
 
-  .material-icons { 
+  .material-icons {
     z-index: 200;
   }
 }
 
 .home.show-pages {
-  @include breakpoint-down ('lg') {
+  @include breakpoint-down("lg") {
     .page-container {
       position: relative;
-  
+
       &:after {
         position: absolute;
         top: 0;
         left: 0;
-        background-color: rgba(0,0,0,0.7);
+        background-color: rgba(0, 0, 0, 0.7);
         width: 100%;
         height: 100%;
-        content: '';
+        content: "";
         z-index: 50;
       }
-    }  
+    }
   }
 }
 
@@ -51,18 +51,17 @@
 }
 
 .pages-bar {
-
   $page-br: 10px;
 
   height: 100%;
   width: 250px;
-  background-color: #f9f9f9;
+  background-color: #fff;
   display: flex;
   flex-direction: column;
   padding: $topbar-heading-padding-top 10px 10px;
-  border-right: 1px solid #dddddd;
+  border-right: 1px solid $grey-200;
 
-  @include breakpoint-down ('lg') {
+  @include breakpoint-down("lg") {
     top: 0;
     left: 0;
     position: absolute;
@@ -84,7 +83,6 @@
 
     h2 {
       flex: 1;
-      text-transform: uppercase;
       margin-left: 10px;
       font-size: $large-font-size;
     }
@@ -92,13 +90,12 @@
     .pages-bar__btn-close {
       border-radius: 100px;
       background-color: transparent;
-      @include button-pulse(#ECECEC);
-      
-      @include breakpoint-up('lg') {
+      @include button-pulse($grey-100);
+
+      @include breakpoint-up("lg") {
         display: none;
       }
     }
-
   }
 
   &__pages {
@@ -147,7 +144,7 @@
       }
 
       &:hover {
-        background-color: $primary-50;
+        background-color: $grey-50;
       }
 
       &:hover,
@@ -158,7 +155,7 @@
       }
 
       &.active {
-        background-color: $primary-100;
+        background-color: $grey-100;
         font-weight: bold;
       }
     }
@@ -169,7 +166,17 @@
     padding: 0.5rem;
     display: flex;
     align-items: center;
+    justify-content: center;
     cursor: pointer;
     border-radius: $page-br;
+    background-color: transparent;
+    border-color: $primary-400;
+    border-width: 2px;
+    font-weight: 600;
+    transition: background-color 0.2s ease-out;
+
+    &:hover {
+      background-color: $primary-400;
+    }
   }
 }

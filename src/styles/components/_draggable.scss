@@ -3,16 +3,16 @@
   position: relative;
 
   &.active.vdr {
-    border-color: $secondary;
+    border-color: $primary-500;
     user-select: none;
   }
 
   &.vdr {
     border: 2px dashed transparent;
   }
-  
+
   .handle {
-    border: 2px solid $secondary;
+    border: 2px solid $primary-500;
     border-radius: 50px;
     background-color: white;
   }

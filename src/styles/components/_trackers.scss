@@ -1,24 +1,20 @@
 .tracker {
-  $light-grey: #dadada;
-  $dark-grey: #bababa;
+  $grey: $grey-300;
   $box-size: 25px;
 
   border-collapse: collapse;
-  // border: 1px solid $dark-grey;
 
   tr {
     td {
-      border-top: 1px solid $light-grey;
-      border-right: 1px solid $light-grey;
+      border-top: 1px solid $grey;
+      border-right: 1px solid $grey;
     }
     &:last-child td {
-      border-bottom: 1px solid $light-grey;
+      border-bottom: 1px solid $grey;
     }
   }
 
-
   &--vertical {
-
     .tracker__item-title {
       $title-size: 150px;
 
@@ -30,16 +26,15 @@
       position: relative;
       word-break: break-all;
       user-select: none;
-      
+
       input {
-        box-shadow: 1px 1px 6px rgba($secondary, 0.5);
         position: absolute;
         bottom: 0;
         left: 0;
         z-index: 100;
         background-color: white;
       }
-      
+
       span {
         display: block;
         transform: rotate(-90deg);
@@ -49,8 +44,6 @@
         left: 0;
         bottom: -10px;
         text-align: left;
-        // top: 100px;
-
       }
     }
   }
@@ -59,7 +52,7 @@
     min-width: 150px;
     max-width: 200px;
   }
-  
+
   &__item-title {
     cursor: text;
   }
@@ -72,7 +65,7 @@
     &--block {
       cursor: pointer;
       .tracker__tickmark {
-        background-color: $secondary;
+        background-color: $primary-400;
       }
     }
 
